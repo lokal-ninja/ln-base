@@ -97,7 +97,12 @@ function startFilter() {
   }
   const regex = new RegExp(this.value, 'gi');
   entries.forEach(function(entry) {
-    entry.style.display = regex.test(entry.textContent) ? 'initial' : 'none';
+    if (regex.test(entry.textContent)) {
+      entry.classList.remove('d-none');
+    }
+    else {
+      entry.classList.add('d-none');
+    }
   });
 }
 const input = document.querySelector('input');
@@ -133,14 +138,22 @@ buttons.forEach(function(button) {
       }
     }
     entries.forEach(function(entry) {
-      if (entry.dataset.shop === button.textContent) {
-        entry.classList.toggle('show-always');
+      if (button.classList.contains('active')) {
+        if (showAll) {
+          entry.classList.remove('show');
+          entry.classList.remove('hide');
+        }
+        else if (entry.dataset.shop === button.textContent) {
+          entry.classList.remove('show');
+          entry.classList.add('hide');
+        }
       }
-      if (button.classList.contains('active') && showAll) {
-        entry.style.display = 'list-item';
+      else if (entry.dataset.shop === button.textContent) {
+        entry.classList.remove('hide')
+        entry.classList.add('show');
       }
-      else {
-        entry.style.display = 'none';
+      else if (!entry.classList.contains('show')) {
+        entry.classList.add('hide')
       }
     });
     button.classList.toggle('active');

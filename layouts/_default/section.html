@@ -18,12 +18,12 @@ Einkaufen in {{ .Title }}
 {{ range .RegularPages }}
   {{ $shops = $shops | append (index .Site.Data $main $city .File.BaseFileName).shop }}
 {{ end }}
-<input type="text" placeholder="Kategorie und Name filtern..." aria-label="Kategorie und Name filtern...">
 <div class="categories">
   {{ range sort $shops | uniq }}
   <button>{{ . }}</button>
   {{ end }}
 </div>
+<input type="text" placeholder="Name filtern..." aria-label="Name filtern...">
 <ul class="columns">
   {{ range .RegularPages }}
   {{- $location := index .Site.Data $main $city .File.BaseFileName }}

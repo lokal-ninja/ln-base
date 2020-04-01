@@ -16,7 +16,10 @@
         columns: 5;
     }
 
-    > li.show-always {
-        display: list-item !important;
+    > li.show {
+        display: list-item;
+    }
+    > li.hide {
+        display: none;
     }
 }

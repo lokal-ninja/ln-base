@@ -31,7 +31,7 @@
     
     <link rel="icon" href="data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3e%3ctext y='.9em' font-size='90'%3e🛒%3c/text%3e%3c/svg%3e">
 
-    <link rel="manifest" href="/{{ .Site.Params.repo }}/site.webmanifest">
+    <link rel="manifest" href="{{ with .Site.Params.repo }}/{{ . }}{{ end }}/site.webmanifest">
     <meta name="theme-color" content="#675ccb">
 
     {{- $style := resources.Get "scss/main.scss" | toCSS | minify | fingerprint }}

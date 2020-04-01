@@ -6,7 +6,7 @@
     <title>{{ block "title" . }}{{ if ne .Kind "home" -}}{{ .Title }} | {{ end }}{{ .Site.Title }}{{ end }}</title>
     {{- $description := printf "Entdecke alle Einkaufsmöglichkeiten in %s" .Site.Params.region -}}
     {{- if eq .Kind "section" -}}
-      {{ $description = printf "Finde deinen Lieblingsdöner in %s" .Title }}
+      {{ $description = printf "Entdecke alle Einkaufsmöglichkeiten in %s" .Title }}
     {{- else if ne .Kind "home" -}}
       {{- $dirs := split .File.Dir "/" }}
       {{ $main := index $dirs 0 }}

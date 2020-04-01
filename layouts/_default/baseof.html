@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="de-DE">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>{{ block "title" . }}{{ if ne .Kind "home" -}}{{ .Title }} | {{ end }}{{ .Site.Title }}{{ end }}</title>
+    {{- $description := printf "Entdecke alle Einkaufsmöglichkeiten in %s" .Site.Params.region -}}
+    {{- if eq .Kind "section" -}}
+      {{ $description = printf "Finde deinen Lieblingsdöner in %s" .Title }}
+    {{- else if ne .Kind "home" -}}
+      {{- $dirs := split .File.Dir "/" }}
+      {{ $main := index $dirs 0 }}
+      {{ $city := index $dirs 1 }}
+      {{- $name := (index .Site.Data $main $city .File.BaseFileName).city -}}
+      {{ $description = printf "Adresse, Öffnungszeiten und Kontakt von %s in %s" .Title $name }}
+    {{- end }}
+    <meta name="description" content="{{ $description }}">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+
+    <meta property="og:site_name" content="{{ .Site.Title }}">
+    <meta property="og:title" content="lokal.ninja/bayern">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ .Permalink }}">
+    <meta property="og:image" content="">
+    <meta property="og:description" content="{{ $description }}">
+    
+    <link rel="canonical" href="{{- .Permalink -}}">
+    
+    <link rel="icon" href="data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3e%3ctext y='.9em' font-size='90'%3e🛒%3c/text%3e%3c/svg%3e">
+
+    <link rel="manifest" href="/{{ .Site.Params.repo }}/site.webmanifest">
+    <meta name="theme-color" content="#675ccb">
+
+    {{- $style := resources.Get "scss/main.scss" | toCSS | minify | fingerprint }}
+    <link rel="stylesheet" href="{{ $style.RelPermalink }}">
+  </head>
+  <body>
+
+    <header>
+      <h1><a href="/" aria-label="Zur Startseite navigieren">🛒</a> {{ block "heading" . }}{{ .Title }}{{ end }}</h1>
+    </header>
+
+    <main>
+      {{ block "main" . }}{{ end }}
+    </main>
+
+    {{ partialCached "footer.html" . }}
+    
+    {{- $app := resources.Get "/js/app.js" -}}
+    {{- $js := $app | minify | fingerprint }}
+    <script>
+    // IE11 polyfills
+    if (!('fetch' in window && 'assign' in Object)) {
+      const polyfills = ['polyfills', 'es6-promise.auto.min', 'fetch.umd'];
+      for (let i = 0; i < polyfills.length; i++) {
+        const script = document.createElement('script');
+        script.async = false;
+        script.src = '/js/' + polyfills[i] + '.js';
+        document.head.appendChild(script);
+      }
+    }
+    </script>
+    <script defer src="{{ $js.RelPermalink }}"></script>
+  </body>
+</html>

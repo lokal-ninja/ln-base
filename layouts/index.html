@@ -1,0 +1,15 @@
+{{ define "main" }}
+{{ .Content }}
+<p>Wo möchtest du in {{ .Site.Params.region }} einkaufen?</p>
+<input type="text" placeholder="Städte filtern..." aria-label="Städte filtern...">
+<ul class="columns">
+  {{ range (.Site.GetPage "section" "cities").Sections }}
+  <li><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>
+  {{ end }}
+</ul>
+{{ range $key, $value := .Site.Taxonomies.categories }}
+    {{ range first 1 (where .Page.Pages "Parent.Title" $.Title) }}
+      case "{{ $key }}": return ""<br> 
+    {{ end }}
+{{ end }}
+{{- end -}}

@@ -1,0 +1,36 @@
+{{ define "title" -}}
+Einkaufen bei {{ .Title }} | {{ .Site.Title }}
+{{- end }}
+{{ define "heading" -}}
+Einkaufen bei {{ .Title }}
+{{- end }}
+{{ define "main" }}
+{{- $dirs := split .File.Dir "/" }}
+{{ $main := index $dirs 0 }}
+{{ $city := index $dirs 1 }}
+{{ $location := index .Site.Data $main $city .File.BaseFileName }}
+<div id="map" class="is-overlay">
+  {{ partialCached "load-btn.html" . }}
+  <a href="https://www.openstreetmap.org/{{ $location.type }}/{{ $location.id }}" rel="nofollow noopener">OpenStreetMap ↗</a>
+  {{ partialCached "locate-btn.html" . }}
+</div>
+<ul>
+  {{ with $location.opening_hours }}<li>Öffnungszeiten: {{ . }}</li>{{ end }}
+  {{ with $location.phone }}<li>Telefon: {{ . }}</li>{{ end }}
+  <li>{{ $location.street }} {{ $location.housenumber }} in {{ $location.postcode }} {{ $location.city }}</li>
+  {{ with $location.website }}<li><a href="{{ . }}" rel="nofollow noopener">{{ . }}</a></li>{{ end }}
+  <li hidden><a href="{{ .RelPermalink }}" data-lat="{{ $location.latitude }}" data-lon="{{ $location.longitude }}">{{ .Title }}</a></li>
+</ul>
+{{ with .Content }}{{ . }}{{ else }}<p>Hier gibt es noch keinen Text über {{ .Title }} in {{ .Parent.Parent.Title }}. Du kannst eine Beschreibung <a href="https://github.com/{{ .Site.Params.org }}/{{ .Site.Params.repo }}/edit/master/content/{{ with .File }}{{ .Dir }}{{ end }}{{ .File.BaseFileName }}.md" rel="nofollow noopener">hier ↗</a> eintragen :)</p>{{ end }}
+<nav aria-label="Wechsle zu vorheriger oder nächster Lokalität">
+  <ul>
+    {{ with .NextInSection }}
+    <li><a href="{{ .RelPermalink }}">← {{ .Title }}</a></li>
+    {{ end }}
+    {{ with .PrevInSection }}
+    <li><a href="{{ .RelPermalink }}">{{ .Title }} →</a></li>
+    {{ end }}
+  </ul>
+</nav>
+<a href="/{{ .Site.Params.repo }}/{{ $city }}/">↶ zurück zu {{ .Parent.Title }}</a>
+{{ end }}

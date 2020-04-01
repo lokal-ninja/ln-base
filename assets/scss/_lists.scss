@@ -1,0 +1,22 @@
+.columns {
+    columns: 2;
+    column-gap: 5px;
+    list-style: none;
+    padding-left: 0;
+
+    @media (min-width: 576px) {
+        columns: 3;
+    }
+
+    @media (min-width: 768px) {
+        columns: 4;
+    }
+
+    @media (min-width: 992px) {
+        columns: 5;
+    }
+
+    > li.show-always {
+        display: list-item !important;
+    }
+}

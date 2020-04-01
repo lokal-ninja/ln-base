@@ -1,0 +1,35 @@
+{{ define "title" -}}
+Einkaufen in {{ .Title }} | {{ .Site.Title }}
+{{- end }}
+{{ define "heading" -}}
+Einkaufen in {{ .Title }}
+{{- end }}
+{{ define "main" }}
+{{- $dirs := split .File.Dir "/" }}
+{{ $main := index $dirs 0 }}
+{{ $city := index $dirs 1 }}
+<div id="map" class="is-overlay">
+  {{ partialCached "load-btn.html" . }}
+  <a href="https://www.openstreetmap.org/search?query={{ .Title }}" rel="nofollow noopener">OpenStreetMap ↗</a>
+  {{ partialCached "locate-btn.html" . }}
+</div>
+<p>Du möchtest gerne in {{ .Title }} einkaufen? Super Idee! Probiers doch mal bei</p>
+{{ $shops := slice }}
+{{ range .RegularPages }}
+  {{ $shops = $shops | append (index .Site.Data $main $city .File.BaseFileName).shop }}
+{{ end }}
+<input type="text" placeholder="Kategorie und Name filtern..." aria-label="Kategorie und Name filtern...">
+<div class="categories">
+  {{ range sort $shops | uniq }}
+  <button>{{ . }}</button>
+  {{ end }}
+</div>
+<ul class="columns">
+  {{ range .RegularPages }}
+  {{- $location := index .Site.Data $main $city .File.BaseFileName }}
+  <li data-shop="{{ $location.shop }}" data-lat="{{ $location.latitude }}" data-lon="{{ $location.longitude }}"><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>
+  {{ end }}
+</ul>
+{{ with .Content }}{{ . }}{{ else }}<p>Es gibt noch keinen Text zur allgemeinen Einkaufslage in {{ .Title }}. Du kannst eine Beschreibung <a href="https://github.com/{{ .Site.Params.org }}/{{ .Site.Params.repo }}/edit/master/content/{{ with .File }}{{ .Dir }}{{ end }}_index.md" rel="nofollow noopener">hier ↗</a> eintragen :)</p>{{ end }}
+<a href="/{{ .Site.Params.repo }}/">↶ zurück zu {{ .Site.Params.region }}</a>
+{{ end }}

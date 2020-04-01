@@ -4,7 +4,7 @@
     <a href="https://kiwiirc.com/nextclient/#irc://irc.freenode.net:+6697/#{{ .Site.Params.org }}" rel="nofollow noopener">
       Chat ↗
     </a>
-    <a href="https://github.com/{{ .Site.Params.org }}/{{ .Site.Params.repo }}" rel="noopener">
+    <a href="https://github.com/{{ .Site.Params.org }}{{ with .Site.Params.repo }}/{{ . }}{{ end }}" rel="noopener">
       Quelltext ↗
     </a>
     <a href="https://creativecommons.org/licenses/by-nc/4.0/deed.de" rel="nofollow noopener">
@@ -18,7 +18,8 @@
     </a>
   </div>
   <p>Mit &lt;3 gebaut von <a href="https://rohner.io/" rel="noopener">Rohner Solutions ↗</a></p>
+  <samp>{{ with .Site.Params.repo }}
   {{ $citiesCount := len (.Site.GetPage "section" "cities").Sections }}
   {{ $locationsCount := len .Site.RegularPages }}
-  <samp>{{ $locationsCount }} Einkaufsmöglichkeiten in {{ $citiesCount }} Orten<br>Letztes Update am {{ now.Format "January 2, 2006" }}</samp>
+  {{ $locationsCount }} Einkaufsmöglichkeiten in {{ $citiesCount }} Orten<br>{{- end }}Letztes Update am {{ now.Format "January 2, 2006" }}</samp>
 </footer>

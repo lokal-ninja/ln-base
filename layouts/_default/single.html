@@ -21,7 +21,7 @@ Einkaufen bei {{ .Title }}
   {{ with $location.website }}<li><a href="{{ . }}" rel="nofollow noopener">{{ . }}</a></li>{{ end }}
   <li hidden data-lat="{{ $location.latitude }}" data-lon="{{ $location.longitude }}"></li>
 </ul>
-{{ with .Content }}{{ . }}{{ else }}<p>Hier gibt es noch keinen Text über {{ .Title }} in {{ .Parent.Parent.Title }}. Du kannst eine Beschreibung <a href="https://github.com/{{ .Site.Params.org }}/{{ .Site.Params.repo }}/edit/master/content/{{ with .File }}{{ .Dir }}{{ end }}{{ .File.BaseFileName }}.md" rel="nofollow noopener">hier ↗</a> eintragen :)</p>{{ end }}
+{{ with .Content }}{{ . }}{{ else }}<p>Hier gibt es noch keinen Text über {{ .Title }} in {{ .Parent.Title }}. Du kannst eine Beschreibung <a href="https://github.com/{{ .Site.Params.org }}/{{ .Site.Params.repo }}/edit/master/content/{{ with .File }}{{ .Dir }}{{ end }}{{ .File.BaseFileName }}.md" rel="nofollow noopener">hier ↗</a> eintragen :)</p>{{ end }}
 <nav aria-label="Wechsle zu vorheriger oder nächster Lokalität">
   <ul>
     {{ with .NextInSection }}

@@ -17,19 +17,25 @@ function getLatLngCenter(entries) {
   let sumZ = 0;
   const count = entries.length;
   for (let i = 0; i < count; i++) {
-      const lat = degr2rad(entries[i].dataset.lat);
-      const lng = degr2rad(entries[i].dataset.lon);
+    const lat = entries[i].dataset.lat;
+    const lon = entries[i].dataset.lon;
+
+    if (lat && lon) {
+      // May be empty for cities without coords, see Bremerhaven for example
+      const latRad = degr2rad(lat);
+      const lngRad = degr2rad(lon);
       
-      // sum of cartesian coordinates
-      sumX += Math.cos(lat) * Math.cos(lng);
-      sumY += Math.cos(lat) * Math.sin(lng);
-      sumZ += Math.sin(lat);
+      // Sum of cartesian coordinates
+      sumX += Math.cos(latRad) * Math.cos(lngRad);
+      sumY += Math.cos(latRad) * Math.sin(lngRad);
+      sumZ += Math.sin(latRad);
+    }
   }
   const avgX = sumX / count;
   const avgY = sumY / count;
   const avgZ = sumZ / count;
 
-  // convert average x, y, z coordinate to latitude and longtitude
+  // Convert average x, y, z coordinate to latitude and longtitude
   const lng = Math.atan2(avgY, avgX);
   const hyp = Math.sqrt(avgX * avgX + avgY * avgY);
   const lat = Math.atan2(avgZ, hyp);
@@ -197,16 +203,17 @@ function buildMap() {
   entries.forEach(function(entry) {
     const lat = entry.dataset.lat;
     const lon = entry.dataset.lon;
-
-    // Define markers as "features" of the vector layer:
-    const link = entry.firstElementChild;
-    const feature = new OpenLayers.Feature.Vector(
-      createGeometryPoint(lon, lat),
-      {
-        description: '<a href="' + link.href + '">' + link.textContent + '</a>'
-      }
-    );
-    vectorLayer.addFeatures(feature);
+    if (lat && lon) {
+      // Define markers as "features" of the vector layer:
+      const link = entry.firstElementChild;
+      const feature = new OpenLayers.Feature.Vector(
+        createGeometryPoint(lon, lat),
+        {
+          description: '<a href="' + link.href + '">' + link.textContent + '</a>'
+        }
+      );
+      vectorLayer.addFeatures(feature);
+    }
   });
   // Determine map center
   const count = entries.length;

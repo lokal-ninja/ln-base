@@ -4,7 +4,7 @@
 <input type="text" placeholder="Städte filtern..." aria-label="Städte filtern...">
 <ul class="columns">
   {{ range (.Site.GetPage "section" "cities").Sections }}
-  <li><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>
+  <li data-lat><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>
   {{ end }}
 </ul>
 {{ range $key, $value := .Site.Taxonomies.categories }}

@@ -102,6 +102,21 @@ function startFilter() {
       entry.classList.add('d-none');
     }
   });
+  if (vectorLayer) {
+    // Update map, too
+    vectorLayer.features.forEach(function(feature) {
+      const description = feature.attributes.description;
+      if (description !== myPlaceString) {
+        if (regex.test(description)) {
+          feature.style = null;
+        }
+        else {
+          feature.style = { display: 'none' };
+        }
+      }
+    });
+    vectorLayer.redraw();
+  }
 }
 const input = document.querySelector('input');
 if (input) {
@@ -170,7 +185,7 @@ function buildMap() {
   
   const map = new OpenLayers.Map('map');
   map.addLayer(new OpenLayers.Layer.OSM());
-  const vectorLayer = new OpenLayers.Layer.Vector('Overlay');
+  vectorLayer = new OpenLayers.Layer.Vector('Overlay');
   map.addLayer(vectorLayer);
 
   const epsg4326 = new OpenLayers.Projection('EPSG:4326'); // WGS 1984 projection
@@ -189,13 +204,6 @@ function buildMap() {
       createGeometryPoint(lon, lat),
       {
         description: '<a href="' + link.href + '">' + link.textContent + '</a>'
-      },
-      {
-        externalGraphic: '/js/img/marker.png',
-        graphicHeight: 25,
-        graphicWidth: 21,
-        graphicXOffset: -10,
-        graphicYOffset: -12
       }
     );
     vectorLayer.addFeatures(feature);
@@ -253,10 +261,10 @@ function buildMap() {
       userFeature = new OpenLayers.Feature.Vector(
         createGeometryPoint(longitude, latitude),
         {
-          description: 'Mein Standort'
+          description: myPlaceString
         },
         {
-          externalGraphic: '/js/img/marker-green.png',
+          externalGraphic: '/js/img/marker.png',
           graphicHeight: 25,
           graphicWidth: 21,
           graphicXOffset: -10,
@@ -318,3 +326,7 @@ if (mapButton) {
 }
 // Cache entries
 let entries;
+let vectorLayer;
+
+// Constants
+const myPlaceString = 'Mein Standort';

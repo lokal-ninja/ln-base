@@ -1,10 +1,15 @@
 {{ define "main" }}
 {{ .Content }}
+<div id="map" class="is-overlay">
+  {{ partialCached "load-btn.html" . }}
+  <a href="https://www.openstreetmap.org/search?query={{ .Title }}" rel="nofollow noopener">OpenStreetMap ↗</a>
+  {{ partialCached "locate-btn.html" . }}
+</div>
 <p>Wo möchtest du in {{ .Site.Params.region }} einkaufen?</p>
 <input type="text" placeholder="Städte filtern..." aria-label="Städte filtern...">
 <ul class="columns">
   {{ range (.Site.GetPage "section" "cities").Sections }}
-  <li data-lat><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>
+  <li data-lat="{{ .Params.latitude }}" data-lon="{{ .Params.longitude }}"><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>
   {{ end }}
 </ul>
 {{ range $key, $value := .Site.Taxonomies.categories }}

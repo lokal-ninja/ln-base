@@ -12,10 +12,6 @@
         columns: 4;
     }
 
-    @media (min-width: 992px) {
-        columns: 5;
-    }
-
     > li.show {
         display: list-item;
     }

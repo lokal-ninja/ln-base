@@ -209,16 +209,49 @@ function buildMap() {
     vectorLayer.addFeatures(feature);
   });
   // Determine map center
-  let zoom = 15;
   const count = entries.length;
-  if (count > 50) {
-    zoom = 12;
-  }
-  else if (count > 25) {
-    zoom = 13;
-  }
-  else if (count > 5) {
-    zoom = 14;
+  const page = window.location.pathname.split('/').length; // 3, 4, 5
+  let zoom;
+  switch (page) {
+    case 3:
+      // Region page
+      if (count > 1000) {
+        zoom = 8;
+      }
+      else if (count > 250) {
+        zoom = 9;
+      }
+      else if (count > 50) {
+        zoom = 10;
+      }
+      else {
+        zoom = 11;
+      }
+      break;
+    case 4:
+      // City page
+      if (count > 1000) {
+        zoom = 11;
+      }
+      else if (count > 250) {
+        zoom = 12;
+      }
+      else if (count > 25) {
+        zoom = 13;
+      }
+      else if (count > 5) {
+        zoom = 14;
+      }
+      else {
+        zoom = 15;
+      }
+      break;
+    case 5:
+      // Entry page
+      zoom = 16;
+      break;
+    default:
+      console.error('Unknown page for map.')
   }
   const center = getLatLngCenter(entries);
   map.setCenter(createLonLat(center[1], center[0]), zoom);

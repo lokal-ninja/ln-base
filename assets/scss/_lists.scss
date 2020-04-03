@@ -1,15 +1,15 @@
 .columns {
-    columns: 2;
+    columns: 2 145px;
     column-gap: 5px;
     list-style: none;
     padding-left: 0;
 
     @media (min-width: 576px) {
-        columns: 3;
+        columns: 3 189px;
     }
 
     @media (min-width: 768px) {
-        columns: 4;
+        columns: 4 189px;
     }
 
     > li.show {

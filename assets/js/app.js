@@ -189,7 +189,7 @@ function buildMap() {
     return new OpenLayers.Geometry.Point(longitude, latitude).transform(epsg4326, projectTo);
   }
   
-  const map = new OpenLayers.Map('map');
+  const map = new OpenLayers.Map('karte');
   map.addLayer(new OpenLayers.Layer.OSM());
   vectorLayer = new OpenLayers.Layer.Vector('Overlay');
   map.addLayer(vectorLayer);
@@ -223,30 +223,33 @@ function buildMap() {
     case 3:
       // Region page
       if (count > 1000) {
+        zoom = 7;
+      }
+      else if (count > 200) {
         zoom = 8;
       }
-      else if (count > 250) {
+      else if (count > 40) {
         zoom = 9;
       }
-      else if (count > 50) {
-        zoom = 10;
-      }
       else {
-        zoom = 11;
+        zoom = 10;
       }
       break;
     case 4:
       // City page
-      if (count > 1000) {
+      if (count > 2500) {
+        zoom = 10;
+      }
+      else if (count > 500) {
         zoom = 11;
       }
-      else if (count > 250) {
+      else if (count > 100) {
         zoom = 12;
       }
-      else if (count > 25) {
+      else if (count > 20) {
         zoom = 13;
       }
-      else if (count > 5) {
+      else if (count > 4) {
         zoom = 14;
       }
       else {
@@ -346,7 +349,7 @@ function buildMap() {
     }
   }
 }
-const mapButton = document.querySelector('#map button');
+const mapButton = document.querySelector('#karte button');
 if (mapButton) {
   mapButton.onclick = function () {
     loadScript('OpenLayers.js')

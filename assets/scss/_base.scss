@@ -1,6 +1,12 @@
 /* based on MVP.css v1.1 - https://github.com/andybrewer/mvp */
 
 /* Layout */
+article aside {
+    background: $color-secondary-accent;
+    border-left: 4px solid $color-secondary;
+    padding: 0.01rem 0.8rem;
+}
+
 body {
     background: $color-bg;
     color: $color-text;
@@ -8,7 +14,7 @@ body {
     line-height: $line-height;
     margin: 0 auto;
     max-width: $width-content;
-    padding: 2rem 1rem;
+    padding: 1.5rem 0.75rem;
     overflow-x: hidden;
 }
 
@@ -17,6 +23,25 @@ hr {
     border: none;
     height: 1px;
     margin: 4rem 0;
+}
+
+section {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: $justify-important;
+}
+
+section aside {
+    border: 1px solid $color-bg-secondary;
+    border-radius: $border-radius;
+    box-shadow: $box-shadow $color-shadow;
+    margin: 1rem;
+    padding: 1.25rem;
+    width: $width-card;
+}
+
+section aside:hover {
+    box-shadow: $box-shadow $color-bg-secondary;
 }
 
 /* Nav */

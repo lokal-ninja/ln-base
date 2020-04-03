@@ -1,20 +1,28 @@
+{{- define "title" -}}
+{{ .Site.Title }} | {{ .Site.Params.Site }}
+{{- end }}
+{{- define "heading" -}}
+Orte mit Geschäften in {{ .Site.Title }}
+{{- end }}
 {{ define "main" }}
-{{ .Content }}
-<div id="map" class="is-overlay">
-  {{ partialCached "load-btn.html" . }}
-  <a href="https://www.openstreetmap.org/search?query={{ .Title }}" rel="nofollow noopener">OpenStreetMap ↗</a>
-  {{ partialCached "locate-btn.html" . }}
-</div>
-<p>Wo möchtest du in {{ .Site.Params.region }} einkaufen?</p>
+<nav aria-label="Wechsle zur Startseite oder springe zur Karte">
+  <ul>
+    <li><a href="/">↶ zurück zur Startseite</a></li>
+    <li><a href="#karte">zur Karte ⇣</a></li>
+  </ul>
+</nav>
+<p>Wo möchtest du in {{ .Site.Title }} einkaufen?</p>
 <input type="text" placeholder="Städte filtern..." aria-label="Städte filtern...">
 <ul class="columns">
-  {{ range (.Site.GetPage "section" "cities").Sections }}
+  {{- range (.Site.GetPage "section" "cities").Sections }}
   <li data-lat="{{ .Params.latitude }}" data-lon="{{ .Params.longitude }}"><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>
-  {{ end }}
+  {{- end }}
 </ul>
-{{ range $key, $value := .Site.Taxonomies.categories }}
-    {{ range first 1 (where .Page.Pages "Parent.Title" $.Title) }}
-      case "{{ $key }}": return ""<br> 
-    {{ end }}
-{{ end }}
-{{- end -}}
+<section>
+  <div id="karte" class="is-overlay">
+    {{ partialCached "load-btn.html" . -}}
+    <a href="https://www.openstreetmap.org/search?query={{ .Site.Title }}" rel="nofollow noopener">OpenStreetMap ↗</a>
+    {{ partialCached "locate-btn.html" . -}}
+  </div>
+</section>
+{{- end }}

@@ -45,8 +45,12 @@
     </header>
     <main>
       {{- block "main" . }}{{ end }}
-      <p><a href="#oben">nach oben ⇡</a><p>
     </main>
+    <nav aria-label="Springe nach oben">
+      <ul>
+        <li><a href="#oben">nach oben ⇡</a></li>
+      </ul>
+    </nav>
     {{ partialCached "footer.html" . }}
     {{- $app := resources.Get "/js/app.js" }}
     {{- $js := $app | minify | fingerprint }}

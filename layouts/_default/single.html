@@ -18,6 +18,7 @@ Einkaufen bei {{ .Title }}
 <article>
   {{ with .Content }}{{ . }}{{ else }}<aside><p>Es gibt noch keinen Text über {{ .Title }} in {{ .Parent.Title }}. Du kannst eine Beschreibung <a href="https://github.com/{{ .Site.Params.org }}/{{ .Site.Params.repo }}/edit/master/content/{{ with .File }}{{ .Dir }}{{ end }}{{ .File.BaseFileName }}.md" rel="nofollow noopener">hier ↗</a> eintragen :)</p></aside>{{ end }}
 </article>
+<hr>
 <section>
   <aside>
     <ul>

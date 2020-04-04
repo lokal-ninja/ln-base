@@ -420,6 +420,25 @@ if (mapButton) {
     });
   };
 }
+// Select to category
+window.addEventListener('DOMContentLoaded', function() {
+  let hash = window.location.hash;
+  if (hash) {
+    hash = decodeURIComponent(hash.replace('#', '')).toLowerCase();
+    for (let i = 0; i < buttons.length; i++) {
+      const button = buttons[i];
+      if (button.textContent.toLowerCase() === hash) {
+        const y = button.getBoundingClientRect().top + window.scrollY;
+        window.scroll({
+          top: y,
+          behavior: 'smooth'
+        });
+        button.click();
+        break;
+      }
+    }
+  }
+});
 // Globals
 let entries;
 let epsg4326;

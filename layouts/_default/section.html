@@ -14,29 +14,31 @@ Einkaufsmöglichkeiten in {{ .Title }}
     <li><a href="#karte">zur Karte ⇣</a></li>
   </ul>
 </nav>
-<article>
+<article id="beschreibung">
   {{ with .Content }}{{ . }}{{ else }}<aside><p>Es gibt noch keinen Text zur allgemeinen Einkaufslage in {{ .Title }}. Du kannst eine Beschreibung <a href="https://github.com/{{ .Site.Params.org }}/{{ .Site.Params.repo }}/edit/master/content/{{ with .File }}{{ .Dir }}{{ end }}_index.md" rel="nofollow noopener">hier ↗</a> eintragen :)</p></aside>{{ end }}
 </article>
 <hr>
-<p>Du möchtest gerne in {{ .Title }} einkaufen? Super Idee! Probiers doch mal bei</p>
-{{- $shops := slice }}
-{{- range .RegularPages }}
-  {{- $shops = $shops | append (index .Site.Data $main $city .File.BaseFileName).shop }}
-{{- end }}
-<div class="categories">
-  {{- range sort $shops | uniq }}
-  <button>{{ . }}</button>
-  {{- end }}
-</div>
-<input type="text" placeholder="Name filtern..." aria-label="Name filtern...">
-<ul class="columns">
+<div id="eintraege">
+  <p>Du möchtest gerne in {{ .Title }} einkaufen? Super Idee! Probiers doch mal bei</p>
+  {{- $shops := slice }}
   {{- range .RegularPages }}
-  {{- $location := index .Site.Data $main $city .File.BaseFileName }}
-  <li data-shop="{{ $location.shop }}" data-lat="{{ $location.latitude }}" data-lon="{{ $location.longitude }}"><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>
+    {{- $shops = $shops | append (index .Site.Data $main $city .File.BaseFileName).shop }}
   {{- end }}
-</ul>
-<section>
-  <div id="karte" class="is-overlay">
+  <div class="categories">
+    {{- range sort $shops | uniq }}
+    <button>{{ . }}</button>
+    {{- end }}
+  </div>
+  <input type="text" placeholder="Name filtern..." aria-label="Name filtern...">
+  <ul class="columns">
+    {{- range .RegularPages }}
+    {{- $location := index .Site.Data $main $city .File.BaseFileName }}
+    <li data-shop="{{ $location.shop }}" data-lat="{{ $location.latitude }}" data-lon="{{ $location.longitude }}"><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>
+    {{- end }}
+  </ul>
+</div>
+<section id="karte">
+  <div id="map" class="is-overlay">
     {{ partialCached "load-btn.html" . -}}
     <a href="https://www.openstreetmap.org/search?query={{ .Title }}" rel="nofollow noopener">OpenStreetMap ↗</a>
     {{ partialCached "locate-btn.html" . -}}

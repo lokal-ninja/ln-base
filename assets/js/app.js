@@ -189,7 +189,7 @@ function buildMap() {
     return new OpenLayers.Geometry.Point(longitude, latitude).transform(epsg4326, projectTo);
   }
   
-  const map = new OpenLayers.Map('karte');
+  const map = new OpenLayers.Map('map');
   map.addLayer(new OpenLayers.Layer.OSM());
   vectorLayer = new OpenLayers.Layer.Vector('Overlay');
   map.addLayer(vectorLayer);
@@ -349,7 +349,7 @@ function buildMap() {
     }
   }
 }
-const mapButton = document.querySelector('#karte button');
+const mapButton = document.querySelector('#map button');
 if (mapButton) {
   mapButton.onclick = function () {
     loadScript('OpenLayers.js')

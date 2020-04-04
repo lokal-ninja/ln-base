@@ -37,6 +37,7 @@ Einkaufen bei {{ .Title }}
     {{ partialCached "locate-btn.html" . -}}
   </div>
 </section>
+{{- if (or .NextInSection .PrevInSection) }}
 <nav aria-label="Wechsle zu vorheriger oder nächster Lokalität">
   <ul>
     {{- with .NextInSection }}
@@ -47,4 +48,5 @@ Einkaufen bei {{ .Title }}
     {{- end }}
   </ul>
 </nav>
+{{- end }}
 {{- end }}

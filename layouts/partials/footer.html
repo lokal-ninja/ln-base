@@ -18,5 +18,5 @@
   <samp>{{ if .Site.Params.repo -}}
   {{- $citiesCount := len (.Site.GetPage "section" "cities").Sections }}
   {{- $locationsCount := len .Site.RegularPages -}}
-  {{ $locationsCount }} Einkaufsmöglichkeiten in {{ $citiesCount }} Orten<br>{{- end }}Letztes Update am {{ now.Format "January 2, 2006" }}</samp>
+  {{ $locationsCount }} Geschäfte in {{ $citiesCount }} Orten<br>{{- end }}Letztes Update am {{ now.Format "January 2, 2006" }}</samp>
 </footer>

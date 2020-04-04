@@ -51,6 +51,7 @@
         <li><a href="#oben">nach oben ⇡</a></li>
       </ul>
     </nav>
+    <hr>
     {{ partialCached "footer.html" . }}
     {{- $app := resources.Get "/js/app.js" }}
     {{- $js := $app | minify | fingerprint }}

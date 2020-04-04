@@ -1,4 +1,18 @@
 // Helpers
+// adopted from https://github.com/gabmontes/fast-haversine
+const R = 6378;
+const PI_360 = Math.PI / 360;
+
+function distance(lat1, lon1, lat2, lon2) {
+  const cLat = Math.cos((lat1 + lat2) * PI_360);
+  const dLat = (lat2 - lat1) * PI_360;
+  const dLon = (lon2 - lon1) * PI_360;
+
+  const f = dLat * dLat + cLat * cLat * dLon * dLon;
+  const c = 2 * Math.atan2(Math.sqrt(f), Math.sqrt(1 - f));
+
+  return R * c;
+}
 // via https://stackoverflow.com/a/30033564
 /**
  * @param latLngInDeg array of arrays with latitude and longtitude
@@ -94,15 +108,101 @@ if (findButton) {
     }
   };
 }
+
+function setCenter (entries) {
+  const count = entries.length;
+  if (count) {
+    // Get center
+    const center = getLatLngCenter(entries);
+    const centerLat = center[0];
+    const centerLon = center[1];
+
+    // Calculate maximum distance to center point
+    let maximumDistance = 0;
+    entries.forEach(function(entry) {
+      const result = distance(
+        centerLat,
+        centerLon,
+        parseFloat(entry.dataset.lat),
+        parseFloat(entry.dataset.lon)
+      );
+      if (result > maximumDistance) {
+        maximumDistance = result;
+      }
+    });
+    // Determine zoom factor
+    const page = window.location.pathname.split('/').length; // 3, 4, 5
+    let zoom;
+    switch (page) {
+      case 3:
+        // Region page
+        if (maximumDistance > 128) {
+          zoom = 6;
+        }
+        else if (count > 1250 || maximumDistance > 64) {
+          zoom = 7;
+        }
+        else if (count > 250 || maximumDistance > 32) {
+          zoom = 8;
+        }
+        else if (count > 50 || maximumDistance > 16) {
+          zoom = 9;
+        }
+        else if (count > 10 || maximumDistance > 8) {
+          zoom = 10;
+        }
+        else if (count > 1 || maximumDistance > 4) {
+          zoom = 11;
+        }
+        else {
+          zoom = 12;
+        }
+        break;
+      case 4:
+        // City page
+        if (count > 2500 || maximumDistance > 8) {
+          zoom = 10;
+        }
+        else if (count > 500 || maximumDistance > 4) {
+          zoom = 11;
+        }
+        else if (count > 100 || maximumDistance > 2) {
+          zoom = 12;
+        }
+        else if (count > 20 || maximumDistance > 1) {
+          zoom = 13;
+        }
+        else if (count > 4 || maximumDistance > 0.5) {
+          zoom = 14;
+        }
+        else if (count > 1 || maximumDistance > 0.25) {
+          zoom = 15;
+        }
+        else {
+          zoom = 16;
+        }
+        break;
+      case 5:
+        // Entry page
+        zoom = 16;
+        break;
+      default:
+        console.error('Unknown page for map.')
+    }
+    vectorLayer.map.setCenter(createLonLat(centerLon, centerLat), zoom);
+  }
+}
 // Filter input
 function startFilter() {
   if (!entries) {
     entries = Array.from(document.querySelectorAll('li[data-lat]'));
   }
+  const matches = [];
   const regex = new RegExp(this.value, 'i');
   entries.forEach(function(entry) {
     if (regex.test(entry.textContent)) {
       entry.classList.remove('d-none');
+      matches.push(entry);
     }
     else {
       entry.classList.add('d-none');
@@ -111,9 +211,9 @@ function startFilter() {
   if (vectorLayer) {
     // Update map, too
     vectorLayer.features.forEach(function(feature) {
-      const description = feature.attributes.description;
-      if (description !== myPlaceString) {
-        if (regex.test(description)) {
+      const name = feature.attributes.name;
+      if (name) {
+        if (regex.test(name)) {
           feature.style = null;
         }
         else {
@@ -122,6 +222,7 @@ function startFilter() {
       }
     });
     vectorLayer.redraw();
+    setCenter(matches);
   }
 }
 const input = document.querySelector('input');
@@ -180,22 +281,22 @@ buttons.forEach(function(button) {
 // Map
 // multiple markers with clickable popups
 // via http://harrywood.co.uk/maps/examples/openlayers/marker-popups.view.html
+function createLonLat(longitude, latitude) {
+  return new OpenLayers.LonLat(longitude, latitude).transform(epsg4326, projectTo);
+}
+
+function createGeometryPoint(longitude, latitude) {
+  return new OpenLayers.Geometry.Point(longitude, latitude).transform(epsg4326, projectTo);
+}
+
 function buildMap() {
-  function createLonLat(longitude, latitude) {
-    return new OpenLayers.LonLat(longitude, latitude).transform(epsg4326, projectTo);
-  }
-  
-  function createGeometryPoint(longitude, latitude) {
-    return new OpenLayers.Geometry.Point(longitude, latitude).transform(epsg4326, projectTo);
-  }
-  
   const map = new OpenLayers.Map('map');
   map.addLayer(new OpenLayers.Layer.OSM());
   vectorLayer = new OpenLayers.Layer.Vector('Overlay');
   map.addLayer(vectorLayer);
 
-  const epsg4326 = new OpenLayers.Projection('EPSG:4326'); // WGS 1984 projection
-  const projectTo = map.getProjectionObject(); // The map projection (Spherical Mercator)
+  epsg4326 = new OpenLayers.Projection('EPSG:4326'); // WGS 1984 projection
+  projectTo = map.getProjectionObject(); // The map projection (Spherical Mercator)
 
   if (!entries) {
     entries = Array.from(document.querySelectorAll('li[data-lat]'));
@@ -209,62 +310,14 @@ function buildMap() {
       const feature = new OpenLayers.Feature.Vector(
         createGeometryPoint(lon, lat),
         {
-          description: '<a href="' + link.href + '">' + link.textContent + '</a>'
+          link: '<a href="' + link.href + '">' + link.textContent + '</a>',
+          name: link.textContent
         }
       );
       vectorLayer.addFeatures(feature);
     }
   });
-  // Determine map center
-  const count = entries.length;
-  const page = window.location.pathname.split('/').length; // 3, 4, 5
-  let zoom;
-  switch (page) {
-    case 3:
-      // Region page
-      if (count > 1000) {
-        zoom = 7;
-      }
-      else if (count > 200) {
-        zoom = 8;
-      }
-      else if (count > 40) {
-        zoom = 9;
-      }
-      else {
-        zoom = 10;
-      }
-      break;
-    case 4:
-      // City page
-      if (count > 2500) {
-        zoom = 10;
-      }
-      else if (count > 500) {
-        zoom = 11;
-      }
-      else if (count > 100) {
-        zoom = 12;
-      }
-      else if (count > 20) {
-        zoom = 13;
-      }
-      else if (count > 4) {
-        zoom = 14;
-      }
-      else {
-        zoom = 15;
-      }
-      break;
-    case 5:
-      // Entry page
-      zoom = 16;
-      break;
-    default:
-      console.error('Unknown page for map.')
-  }
-  const center = getLatLngCenter(entries);
-  map.setCenter(createLonLat(center[1], center[0]), zoom);
+  setCenter(entries);
 
   // Add a selector control to the vectorLayer with popup functions
   const controls = {
@@ -275,7 +328,7 @@ function buildMap() {
     feature.popup = new OpenLayers.Popup.FramedCloud('pop',
       feature.geometry.getBounds().getCenterLonLat(),
       null,
-      feature.attributes.description,
+      feature.attributes.link,
       null,
       true,
       function() {
@@ -304,7 +357,7 @@ function buildMap() {
       userFeature = new OpenLayers.Feature.Vector(
         createGeometryPoint(longitude, latitude),
         {
-          description: myPlaceString
+          link: 'Mein Standort'
         },
         {
           externalGraphic: '/js/img/marker.png',
@@ -367,9 +420,8 @@ if (mapButton) {
     });
   };
 }
-// Cache entries
+// Globals
 let entries;
+let epsg4326;
+let projectTo;
 let vectorLayer;
-
-// Constants
-const myPlaceString = 'Mein Standort';

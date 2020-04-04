@@ -3,11 +3,11 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>{{ block "title" . }}{{ .Title }} | {{ .Site.Title }}{{ end }}</title>
+    <title>{{ block "title" . }}{{ .Title }} | {{ .Site.Params.site }}{{ end }}</title>
     {{- $description := printf "Entdecke alle Einkaufsmöglichkeiten in %s" .Site.Title }}
     {{- if eq .Kind "section" }}
       {{- $description = printf "Entdecke alle Einkaufsmöglichkeiten in %s" .Title }}
-    {{- else if ne .Kind "home" }}
+    {{- else if .IsPage }}
       {{- $dirs := split .File.Dir "/" }}
       {{- $main := index $dirs 0 }}
       {{- $city := index $dirs 1 }}
@@ -41,7 +41,7 @@
   </head>
   <body>
     <header id="oben">
-      <h1><a href="/" aria-label="Zur Startseite navigieren">🛒</a>{{ block "heading" . }}{{ .Title }}{{ end }}</h1>
+      <h1><a href="/" aria-label="Zur Startseite navigieren">🛒</a> {{ block "heading" . }}{{ .Title }}{{ end }}</h1>
     </header>
     <main>
       {{- block "main" . }}{{ end }}

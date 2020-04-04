@@ -135,3 +135,22 @@ button:focus,
 input:focus {
     outline: none;
 }
+
+/* Quotes */
+blockquote {
+    display: block;
+    font-size: x-large;
+    line-height: $line-height;
+    margin: 1rem auto;
+    max-width: $width-card-medium;
+    padding: 1.5rem 1rem;
+    text-align: $justify-important;
+}
+
+blockquote footer {
+    color: $color-text-secondary;
+    display: block;
+    font-size: small;
+    line-height: $line-height;
+    padding: 1.5rem 0;
+}

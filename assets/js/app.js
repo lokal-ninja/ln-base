@@ -99,7 +99,7 @@ function startFilter() {
   if (!entries) {
     entries = Array.from(document.querySelectorAll('li[data-lat]'));
   }
-  const regex = new RegExp(this.value, 'gi');
+  const regex = new RegExp(this.value, 'i');
   entries.forEach(function(entry) {
     if (regex.test(entry.textContent)) {
       entry.classList.remove('d-none');

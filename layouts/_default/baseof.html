@@ -64,7 +64,7 @@
     {{ partialCached "footer.html" . }}
     {{- $choices := resources.Get "/js/choices.js" }}
     {{- $app := resources.Get "/js/app.js" }}
-    {{- $js := slice $choices $app | resources.Concat "css/main.js" | minify | fingerprint }}
+    {{- $js := slice $choices $app | resources.Concat "js/main.js" | minify | fingerprint }}
     <script>
     if (!('fetch' in window && 'assign' in Object)) {
       const polyfills = ['polyfills', 'es6-promise.auto.min', 'fetch.umd'];

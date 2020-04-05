@@ -453,7 +453,7 @@ const citiesChoices  = new Choices(document.getElementById('cities'), {
   renderChoiceLimit: 5,
 })
 .setChoices(function() {
-  const regions = ['baden-wuerttemberg', 'bayern', 'brandenburg', 'bremen', 'hamburg', 'hessen', 'mecklenburg-vorpommern', 'niedersachsen', 'nordrhein-westfalen', 'oesterreich', 'rheinland-pfalz', 'saarland', 'sachsen-anhalt', 'sachsen', 'schleswig-holstein', 'switzerland', 'thueringen'];
+  const regions = ['baden-wuerttemberg', 'bayern', 'brandenburg', 'bremen', 'hamburg', 'hessen', 'mecklenburg-vorpommern', 'niedersachsen', 'nordrhein-westfalen', 'oesterreich', 'rheinland-pfalz', 'saarland', 'sachsen-anhalt', 'sachsen', 'schleswig-holstein', 'schweiz', 'thueringen'];
   const promises = regions.map(function(region) {
     return fetchRegion(region);
   });

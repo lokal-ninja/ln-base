@@ -4,15 +4,23 @@
 {{- define "heading" -}}
 Orte mit Geschäften in {{ .Site.Title }}
 {{- end }}
-{{ define "main" }}
-<nav aria-label="Wechsle zur Startseite oder springe zur Karte">
+{{- define "back" }}
+<nav aria-label="Wechsle zur Startseite">
   <ul>
     <li><a href="/">↶ zurück zur Startseite</a></li>
-    <li><a href="#karte">zur Karte ⇣</a></li>
   </ul>
 </nav>
+{{- end }}
+{{ define "main" }}
 <div id="eintraege">
   <p>Wo möchtest du in {{ .Site.Title }} einkaufen?</p>
+  <section id="karte">
+    <div id="map" class="is-overlay">
+      {{ partialCached "load-btn.html" . -}}
+      <a href="https://www.openstreetmap.org/search?query={{ .Site.Title }}" rel="nofollow noopener">OpenStreetMap ↗</a>
+      {{ partialCached "locate-btn.html" . -}}
+    </div>
+  </section>
   <input type="text" placeholder="Städte filtern..." aria-label="Städte filtern...">
   <ul class="columns">
     {{- range (.Site.GetPage "section" "cities").Sections }}
@@ -20,11 +28,4 @@ Orte mit Geschäften in {{ .Site.Title }}
     {{- end }}
   </ul>
 </div>
-<section id="karte">
-  <div id="map" class="is-overlay">
-    {{ partialCached "load-btn.html" . -}}
-    <a href="https://www.openstreetmap.org/search?query={{ .Site.Title }}" rel="nofollow noopener">OpenStreetMap ↗</a>
-    {{ partialCached "locate-btn.html" . -}}
-  </div>
-</section>
 {{- end }}

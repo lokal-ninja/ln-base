@@ -1,0 +1,9 @@
+[
+    {{- range $i, $c := (.Site.GetPage "section" "cities").Sections -}}
+    {{ if $i }},{{ end }}
+    {
+        "name": "{{ .Title }}",
+        "slug": "{{ replace .Params.url "/" "" }}"
+    }
+    {{- end }}
+]

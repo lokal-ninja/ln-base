@@ -1,0 +1,14 @@
+[
+    {{- range $j, $l := .RegularPages -}}
+    {{ if $j }},{{ end }}
+    {
+    {{- $dirs := split .File.Dir "/" }}
+    {{- $main := index $dirs 0 }}
+    {{- $city := index $dirs 1 }}
+    {{- $location := index .Site.Data $main $city .File.BaseFileName }}
+        "name": "{{ .Title }}",
+        "shop": "{{ $location.shop }}",
+        "slug": "{{ .File.BaseFileName }}"
+    }
+    {{- end }}
+]

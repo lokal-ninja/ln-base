@@ -36,25 +36,35 @@
     <link rel="icon" href="data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3e%3ctext y='.9em' font-size='90'%3e🛒%3c/text%3e%3c/svg%3e">
     <link rel="manifest" href="/site.webmanifest">
     <meta name="theme-color" content="#f57c00">
-    {{- $style := resources.Get "scss/main.scss" | toCSS | minify | fingerprint }}
+    {{- $choices := resources.Get "scss/vendor/choices.scss" | toCSS }}
+    {{- $app := resources.Get "scss/app.scss" | toCSS }}
+    {{- $style := slice $choices $app | resources.Concat "css/main.css" | minify | fingerprint }}
     <link rel="stylesheet" href="{{ $style.RelPermalink }}">
   </head>
   <body>
     <header id="oben">
-      <h1><a href="/" aria-label="Zur Startseite navigieren">🛒</a> {{ block "heading" . }}{{ .Title }}{{ end }}</h1>
+      <h1><a href="/" aria-label="Zur Startseite navigieren">🛒</a>{{ block "heading" . }}{{ .Title }}{{ end }}</h1>
+      {{- block "back" . }}{{ end }}
+      <label for="cities">1. Ort</label>
+      <select class="form-control" name="cities" id="cities"></select>
+      <label for="shops">2. Geschäft oder Kategorie</label>
+      <select class="form-control" name="shops" id="shops"></select>
+      <button disabled id="search-btn">3. Gehe zur Auswahl</button>
     </header>
+    <hr>
     <main>
       {{- block "main" . }}{{ end }}
     </main>
     <nav aria-label="Springe nach oben">
       <ul>
-        <li><a href="#oben">nach oben ⇡</a></li>
+        <li><a href="#oben">nach oben ↑</a></li>
       </ul>
     </nav>
     <hr>
     {{ partialCached "footer.html" . }}
+    {{- $choices := resources.Get "/js/choices.js" }}
     {{- $app := resources.Get "/js/app.js" }}
-    {{- $js := $app | minify | fingerprint }}
+    {{- $js := slice $choices $app | resources.Concat "css/main.js" | minify | fingerprint }}
     <script>
     if (!('fetch' in window && 'assign' in Object)) {
       const polyfills = ['polyfills', 'es6-promise.auto.min', 'fetch.umd'];

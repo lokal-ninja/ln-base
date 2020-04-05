@@ -4,20 +4,20 @@
 {{- define "heading" -}}
 Geschäfte in {{ .Title }}
 {{- end }}
+{{- define "back" }}
+<nav aria-label="Wechsle zu {{ .Site.Title }}">
+  <ul>
+    <li><a href="/{{ .Site.Params.repo }}/">↶ zurück zu {{ .Site.Title }}</a></li>
+  </ul>
+</nav>
+{{- end }}
 {{ define "main" }}
 {{- $dirs := split .File.Dir "/" }}
 {{- $main := index $dirs 0 }}
 {{- $city := index $dirs 1 }}
-<nav aria-label="Wechsle zu {{ .Site.Title }} oder springe zur Karte">
-  <ul>
-    <li><a href="/{{ .Site.Params.repo }}/">↶ zurück zu {{ .Site.Title }}</a></li>
-    <li><a href="#karte">zur Karte ⇣</a></li>
-  </ul>
-</nav>
 <article id="beschreibung">
   {{ with .Content }}{{ . }}{{ else }}<aside><p>Es gibt noch keinen Text zur allgemeinen Einkaufslage in {{ .Title }}. Du kannst eine Beschreibung <a href="https://github.com/{{ .Site.Params.org }}/{{ .Site.Params.repo }}/edit/master/content/{{ with .File }}{{ .Dir }}{{ end }}_index.md" rel="nofollow noopener">hier ↗</a> eintragen :)</p></aside>{{ end }}
 </article>
-<hr>
 <div id="eintraege">
   <p>Du möchtest gerne in {{ .Title }} einkaufen? Super Idee! Probiers doch mal bei</p>
   {{- $shops := slice }}
@@ -29,6 +29,13 @@ Geschäfte in {{ .Title }}
     <button>{{ . }}</button>
     {{- end }}
   </div>
+  <section id="karte">
+    <div id="map" class="is-overlay">
+      {{ partialCached "load-btn.html" . -}}
+      <a href="https://www.openstreetmap.org/search?query={{ .Title }}" rel="nofollow noopener">OpenStreetMap ↗</a>
+      {{ partialCached "locate-btn.html" . -}}
+    </div>
+  </section>
   <input type="text" placeholder="Name filtern..." aria-label="Name filtern...">
   <ul class="columns">
     {{- range .RegularPages }}
@@ -37,11 +44,4 @@ Geschäfte in {{ .Title }}
     {{- end }}
   </ul>
 </div>
-<section id="karte">
-  <div id="map" class="is-overlay">
-    {{ partialCached "load-btn.html" . -}}
-    <a href="https://www.openstreetmap.org/search?query={{ .Title }}" rel="nofollow noopener">OpenStreetMap ↗</a>
-    {{ partialCached "locate-btn.html" . -}}
-  </div>
-</section>
 {{- end }}

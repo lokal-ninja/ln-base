@@ -96,19 +96,6 @@ function geolocationAlert() {
   alert('Geolocation wird von deinem Browser nicht unterstützt.');
 }
 
-const findButton = document.getElementById('find-btn');
-if (findButton) {
-  findButton.onclick = function () {
-    if (navigator.geolocation) {
-      // We might need permission for this
-      navigator.geolocation.getCurrentPosition(findSuccess, geolocationError);
-    }
-    else {
-      geolocationAlert();
-    }
-  };
-}
-
 function setCenter (entries) {
   const count = entries.length;
   if (count) {
@@ -439,6 +426,116 @@ window.addEventListener('DOMContentLoaded', function() {
     }
   }
 });
+// Search
+function fetchRegion (region) {
+  return fetch('/' + region + '/index.json')
+  .then(function(response) {
+    return response.json();
+  })
+  .then(function(data) {
+    return data.map(function(item) {
+      return {
+        value: item.slug,
+        label: item.name,
+        customProperties: {
+          region: region,
+        }
+      };
+    });
+  })
+  .catch(function(error) {
+    console.error(error);
+  });
+}
+const citiesChoices  = new Choices(document.getElementById('cities'), {
+  placeholderValue: 'Wähle einen Ort',
+  searchPlaceholderValue: 'Tippen für genauere Ergebnisse',
+  renderChoiceLimit: 5,
+})
+.setChoices(function() {
+  const regions = ['baden-wuerttemberg', 'bayern', 'brandenburg', 'bremen', 'hamburg', 'hessen', 'mecklenburg-vorpommern', 'niedersachsen', 'nordrhein-westfalen', 'oesterreich', 'rheinland-pfalz', 'saarland', 'sachsen-anhalt', 'sachsen', 'schleswig-holstein', 'switzerland', 'thueringen'];
+  const promises = regions.map(function(region) {
+    return fetchRegion(region);
+  });
+  return Promise.all(promises)
+  .then(function(result) {
+    let cities = [];
+    result.forEach(function(array) {
+      if (array) {
+        cities = cities.concat(array);
+      }
+    });
+    return cities;
+  })
+  .catch(function(error) {
+    console.error(error);
+  })
+})
+.then(function(instance) {
+  instance.passedElement.element.addEventListener('change', function(e) {
+    const value = e.detail.value;
+    if (value) {
+      searchButton.disabled = true;
+      shopsChoices.clearStore();
+      shopsChoices.setChoices(function() {
+        const city = instance.getValue();
+        return fetch('/' + city.customProperties.region + '/' + value + '/index.json')
+        .then(function(response) {
+          return response.json();
+        })
+        .then(function(data) {
+          let names = [];
+          let shops = [];
+          data.forEach(function(item) {
+            names.push({
+              value: item.name,
+              slug: item.slug
+            });
+            if (shops.indexOf(item.shop) === -1) {
+              shops.push(item.shop);
+            }
+          });
+          shops = shops.map(function(shop) {
+            return {
+              value: shop,
+              slug: "none"
+            }
+          });
+          names = names.concat(shops);
+          return names.map(function(item) {
+            return {
+              value: item.slug,
+              label: item.value
+            };
+          });
+        })
+      })
+      .then(function(instance2) {
+        instance2.passedElement.element.addEventListener('change', function(e) {
+          searchButton.disabled = e.detail.value ? false : true;
+        });
+      });
+      shopsChoices.enable();
+    }
+    else {
+      shopsChoices.disable();
+    }
+  });
+  const searchButton = document.getElementById('search-btn');
+  if (searchButton) {
+    searchButton.onclick = function () {
+      const city = instance.getValue();
+      const shop = shopsChoices.getValue();
+      window.location = '/' + city.customProperties.region + '/' + city.value + '/' + (shop.value !== 'none' ? shop.value + '/' : '#' + shop.label);
+    };
+  }
+});
+const shopsChoices = new Choices(document.getElementById('shops'), {
+  placeholderValue: 'Wähle ein Geschäft oder eine Kategorie',
+  searchPlaceholderValue: 'Tippen für genauere Ergebnisse',
+  renderChoiceLimit: 5
+}).disable();
+
 // Globals
 let entries;
 let epsg4326;

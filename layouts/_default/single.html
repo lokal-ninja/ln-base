@@ -4,21 +4,23 @@
 {{- define "heading" -}}
 Einkaufen bei {{ .Title }}
 {{- end }}
+{{- define "back" }}
+{{- $dirs := split .File.Dir "/" }}
+{{- $city := index $dirs 1 }}
+<nav aria-label="Wechsle zu {{ .Parent.Title }}">
+  <ul>
+    <li><a href="/{{ .Site.Params.repo }}/{{ $city }}/">↶ zurück zu {{ .Parent.Title }}</a></li>
+  </ul>
+</nav>
+{{- end }}
 {{ define "main" }}
 {{- $dirs := split .File.Dir "/" }}
 {{- $main := index $dirs 0 }}
 {{- $city := index $dirs 1 }}
 {{- $location := index .Site.Data $main $city .File.BaseFileName }}
-<nav aria-label="Wechsle zu {{ .Parent.Title }} oder springe zur Karte">
-  <ul>
-    <li><a href="/{{ .Site.Params.repo }}/{{ $city }}/">↶ zurück zu {{ .Parent.Title }}</a></li>
-    <li><a href="#karte">zur Karte ⇣</a></li>
-  </ul>
-</nav>
 <article id="beschreibung">
   {{ with .Content }}{{ . }}{{ else }}<aside><p>Es gibt noch keinen Text über {{ .Title }} in {{ .Parent.Title }}. Du kannst eine Beschreibung <a href="https://github.com/{{ .Site.Params.org }}/{{ .Site.Params.repo }}/edit/master/content/{{ with .File }}{{ .Dir }}{{ end }}{{ .File.BaseFileName }}.md" rel="nofollow noopener">hier ↗</a> eintragen :)</p></aside>{{ end }}
 </article>
-<hr>
 <section id="infos">
   <aside>
     <ul>
@@ -38,7 +40,7 @@ Einkaufen bei {{ .Title }}
   </div>
 </section>
 {{- if (or .NextInSection .PrevInSection) }}
-<nav aria-label="Wechsle zu vorheriger oder nächster Lokalität">
+<nav aria-label="Wechsle zu vorherigem oder nächsten Geschäft in {{ .Parent.Title }}">
   <ul>
     {{- with .NextInSection }}
     <li><a href="{{ .RelPermalink }}">← {{ .Title }}</a></li>

@@ -1,6 +1,10 @@
 /* based on MVP.css v1.1 - https://github.com/andybrewer/mvp */
 
 /* Layout */
+*, :after, :before {
+    box-sizing: border-box;
+}
+
 article aside {
     background: $color-secondary-accent;
     border-left: 4px solid $color-secondary;
@@ -129,6 +133,17 @@ input {
     border-radius: $border-radius;
     margin-bottom: 1rem;
     padding: 0.4rem 0.8rem;
+}
+
+button:disabled {
+    background: $color-bg-secondary;
+    border-color: $color-bg-secondary;
+    color: $color-text-secondary;
+    cursor: not-allowed;
+}
+
+button[disabled]:hover {
+    filter: none;
 }
 
 button:focus,

@@ -1,14 +1,13 @@
-[
-    {{- range $j, $l := .RegularPages -}}
-    {{ if $j }},{{ end }}
-    {
-    {{- $dirs := split .File.Dir "/" }}
-    {{- $main := index $dirs 0 }}
-    {{- $city := index $dirs 1 }}
-    {{- $location := index .Site.Data $main $city .File.BaseFileName }}
-        "name": "{{ .Title }}",
-        "shop": "{{ $location.shop }}",
-        "slug": "{{ .File.BaseFileName }}"
-    }
-    {{- end }}
-]
+
+{{- $nameSlice := slice -}}
+{{- $shopSlice := slice }}
+{{- range $i, $p := .RegularPages -}}
+{{- $dirs := split .File.Dir "/" }}
+{{- $main := index $dirs 0 }}
+{{- $city := index $dirs 1 }}
+{{- $location := index .Site.Data $main $city .File.BaseFileName }}
+{{- $nameSlice = $nameSlice | append .Title }}
+{{- $shopSlice = $shopSlice | append (printf "#%s" $location.shop) }}
+{{- end }}
+{{- $nameSlice = $nameSlice | append $shopSlice}}
+{{- jsonify (sort (uniq $nameSlice)) -}}

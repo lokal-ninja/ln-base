@@ -428,17 +428,18 @@ window.addEventListener('DOMContentLoaded', function() {
 });
 // Search
 function fetchRegion (region) {
-  return fetch('/' + region + '/index.json')
+  const regionSlug = slugo(region);
+  return fetch('/' + regionSlug + '/index.json')
   .then(function(response) {
     return response.json();
   })
   .then(function(data) {
     return data.map(function(item) {
       return {
-        value: item.slug,
-        label: item.name,
+        value: item,
+        label: item + ', ' + region,
         customProperties: {
-          region: region,
+          region: regionSlug,
         }
       };
     });
@@ -448,12 +449,20 @@ function fetchRegion (region) {
   });
 }
 const citiesChoices  = new Choices(document.getElementById('cities'), {
-  placeholderValue: 'Wähle einen Ort',
-  searchPlaceholderValue: 'Tippen für genauere Ergebnisse',
-  renderChoiceLimit: 5,
+  placeholderValue: 'Ort auswählen',
+  searchFields: ['value'],
+  searchPlaceholderValue: 'Suchen...',
+  loadingText: 'Lädt...',
+  noResultsText: 'Keine Ergebnisse gefunden',
+  itemSelectText: '+',
+  noChoicesText: 'mit wenigstens drei Buchstaben',
+  renderChoiceLimit : 0,
+  searchResultLimit: 100,
+  shouldSort: false,
+  position: 'bottom'
 })
 .setChoices(function() {
-  const regions = ['baden-wuerttemberg', 'bayern', 'brandenburg', 'bremen', 'hamburg', 'hessen', 'mecklenburg-vorpommern', 'niedersachsen', 'nordrhein-westfalen', 'oesterreich', 'rheinland-pfalz', 'saarland', 'sachsen-anhalt', 'sachsen', 'schleswig-holstein', 'schweiz', 'thueringen'];
+  const regions = ['Baden-Württemberg', 'Bayern', 'Brandenburg', 'Bremen', 'Hamburg', 'Hessen', 'Mecklenburg-Vorpommern', 'Niedersachsen', 'Nordrhein-Westfalen', 'Österreich', 'Rheinland-Pfalz', 'Saarland', 'Sachsen-Anhalt', 'Sachsen', 'Schleswig-Holstein', 'Schweiz', 'Thüringen'];
   const promises = regions.map(function(region) {
     return fetchRegion(region);
   });
@@ -479,33 +488,15 @@ const citiesChoices  = new Choices(document.getElementById('cities'), {
       shopsChoices.clearStore();
       shopsChoices.setChoices(function() {
         const city = instance.getValue();
-        return fetch('/' + city.customProperties.region + '/' + value + '/index.json')
+        return fetch('/' + city.customProperties.region + '/' + slugo(value) + '/index.json')
         .then(function(response) {
           return response.json();
         })
         .then(function(data) {
-          let names = [];
-          let shops = [];
-          data.forEach(function(item) {
-            names.push({
-              value: item.name,
-              slug: item.slug
-            });
-            if (shops.indexOf(item.shop) === -1) {
-              shops.push(item.shop);
-            }
-          });
-          shops = shops.map(function(shop) {
+          return data.map(function(item) {
             return {
-              value: shop,
-              slug: "none"
-            }
-          });
-          names = names.concat(shops);
-          return names.map(function(item) {
-            return {
-              value: item.slug,
-              label: item.value
+              value: item,
+              label: item
             };
           });
         })
@@ -525,15 +516,22 @@ const citiesChoices  = new Choices(document.getElementById('cities'), {
   if (searchButton) {
     searchButton.onclick = function () {
       const city = instance.getValue();
-      const shop = shopsChoices.getValue();
-      window.location = '/' + city.customProperties.region + '/' + city.value + '/' + (shop.value !== 'none' ? shop.value + '/' : '#' + shop.label);
+      const shop = shopsChoices.getValue(true);
+      window.location = '/' + city.customProperties.region + '/' + slugo(city.value) + '/' + (shop[0] === '#' ? shop : slugo(shop) + '/');
     };
   }
 });
 const shopsChoices = new Choices(document.getElementById('shops'), {
-  placeholderValue: 'Wähle ein Geschäft oder eine Kategorie',
-  searchPlaceholderValue: 'Tippen für genauere Ergebnisse',
-  renderChoiceLimit: 5
+  placeholderValue: '#Kategorie oder Geschäft auswählen',
+  searchFields: ['value'],
+  searchPlaceholderValue: 'Filtern...',
+  loadingText: 'Lädt...',
+  noResultsText: 'Keine Ergebnisse gefunden',
+  itemSelectText: '+',
+  shouldSort: false,
+  //renderChoiceLimit : -1,
+  searchResultLimit: 100,
+  position: 'bottom'
 }).disable();
 
 // Globals

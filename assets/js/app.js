@@ -482,35 +482,29 @@ const citiesChoices  = new Choices(document.getElementById('cities'), {
 })
 .then(function(instance) {
   instance.passedElement.element.addEventListener('change', function(e) {
-    const value = e.detail.value;
-    if (value) {
-      searchButton.disabled = true;
-      shopsChoices.clearStore();
-      shopsChoices.setChoices(function() {
-        const city = instance.getValue();
-        return fetch('/' + city.customProperties.region + '/' + slugo(value) + '/index.json')
-        .then(function(response) {
-          return response.json();
-        })
-        .then(function(data) {
-          return data.map(function(item) {
-            return {
-              value: item,
-              label: item
-            };
-          });
-        })
+    searchButton.disabled = true;
+    shopsChoices.clearStore();
+    shopsChoices.setChoices(function() {
+      const city = instance.getValue();
+      return fetch('/' + city.customProperties.region + '/' + slugo(e.detail.value) + '/index.json')
+      .then(function(response) {
+        return response.json();
       })
-      .then(function(instance2) {
-        instance2.passedElement.element.addEventListener('change', function(e) {
-          searchButton.disabled = e.detail.value ? false : true;
+      .then(function(data) {
+        return data.map(function(item) {
+          return {
+            value: item,
+            label: item
+          };
         });
+      })
+    })
+    .then(function(instance2) {
+      instance2.passedElement.element.addEventListener('change', function() {
+        searchButton.disabled = false;
       });
-      shopsChoices.enable();
-    }
-    else {
-      shopsChoices.disable();
-    }
+    });
+    shopsChoices.enable();
   });
   const searchButton = document.getElementById('search-btn');
   if (searchButton) {

@@ -26,12 +26,12 @@
     <meta property="og:title" content="{{ $.Title }}">
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ .Permalink }}">
-    <meta property="og:image" content="{{ .Site.BaseURL }}img/logo-1200x1200.png">
+    <meta property="og:image" content="{{ "/img/logo-1200x1200.png" | absURL }}">
     <meta property="og:image:width " content="1200">
     <meta property="og:image:height" content="1200">
     <meta property="og:image:alt" content="Einkaufswagen">
     <meta property="og:description" content="{{ $description }}">
-    <meta property="og:locale" content="{{ replace .Site.LanguageCode "-" "_"}}">
+    <meta property="og:locale" content="{{ replace .Site.LanguageCode "-" "_" }}">
     <link rel="canonical" href="{{ .Permalink }}">
     <link rel="icon" href="data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3e%3ctext y='.9em' font-size='90'%3e🛒%3c/text%3e%3c/svg%3e">
     <link rel="manifest" href="/site.webmanifest">

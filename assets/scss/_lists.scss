@@ -4,6 +4,8 @@
     list-style: none;
     padding-left: 0;
     margin-top: 0;
+    max-height: 256px;
+    overflow: auto;
 
     @media (min-width: 576px) {
         columns: 3 189px;

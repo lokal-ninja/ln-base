@@ -11,7 +11,10 @@ Orte mit Geschäften in {{ .Site.Title }}
     <a href="https://www.openstreetmap.org/search?query={{ .Site.Title }}" rel="nofollow noopener">OpenStreetMap ↗</a>
     {{ partialCached "locate-btn.html" . -}}
   </div>
-  <input type="text" placeholder="Städte filtern..." aria-label="Städte filtern...">
+  <div class="filter">
+    <input type="text" placeholder="Name filtern..." aria-label="Name filtern...">
+    <div><samp>{{ len (.Site.GetPage "section" "cities").Sections }}</samp>Orte</div>
+  </div>
   <ul class="columns">
     {{- range (.Site.GetPage "section" "cities").Sections }}
     <li data-lat="{{ .Params.latitude }}" data-lon="{{ .Params.longitude }}"><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>

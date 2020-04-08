@@ -29,7 +29,10 @@ Geschäfte in {{ .Title }}
       </div>  
     </div>
   </div>
-  <input type="text" placeholder="Name filtern..." aria-label="Name filtern...">
+  <div class="filter">
+    <input type="text" placeholder="Name filtern..." aria-label="Name filtern...">
+    <div><samp>{{ len .RegularPages }}</samp>Einträge</div>
+  </div>
   <ul class="columns">
     {{- range .RegularPages }}
     {{- $location := index .Site.Data $main $city .File.BaseFileName }}

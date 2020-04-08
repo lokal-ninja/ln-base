@@ -180,6 +180,15 @@ function setCenter (entries) {
   }
 }
 // Filter input
+function updateCount () {
+  let count = 0;
+  entries.forEach(function(entry) {
+    if (entry.getClientRects().length !== 0) {
+      count++;
+    }
+  });
+  document.querySelector('samp').textContent = count;
+}
 function startFilter() {
   if (!entries) {
     entries = Array.from(document.querySelectorAll('li[data-lat]'));
@@ -211,6 +220,7 @@ function startFilter() {
     vectorLayer.redraw();
     setCenter(matches);
   }
+  updateCount();
 }
 const input = document.querySelector('input');
 if (input) {
@@ -263,6 +273,7 @@ buttons.forEach(function(button) {
       }
     });
     button.classList.toggle('active');
+    updateCount();
   }
 });
 // Map

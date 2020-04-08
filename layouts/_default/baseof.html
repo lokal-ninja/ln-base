@@ -44,8 +44,7 @@
   <body>
     <header id="oben">
       <h1><a href="/" aria-label="Zur Startseite navigieren">🛒</a>{{ block "heading" . }}{{ .Title }}{{ end }}</h1>
-      {{- block "back" . }}{{ end }}
-      <section id="suche" class="row">
+      <section id="suche" class="row mt-1">
         <div class="col-sm-6 col-md-5">
           <label for="cities">1. Ort</label>
           <select type="select-one" class="form-control" name="cities" id="cities"></select>
@@ -59,6 +58,7 @@
           <button disabled id="search-btn" name="finish">🚀</button>
         </div>
       </section>
+      {{- block "back" . }}{{ end }}
     </header>
     <hr>
     <main>

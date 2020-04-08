@@ -4,15 +4,6 @@
 {{- define "heading" -}}
 Einkaufen bei {{ .Title }}
 {{- end }}
-{{- define "back" }}
-{{- $dirs := split .File.Dir "/" }}
-{{- $city := index $dirs 1 }}
-<nav aria-label="Wechsle zu {{ .Parent.Title }}">
-  <ul>
-    <li><a href="/{{ .Site.Params.repo }}/{{ $city }}/">↶ zurück zu {{ .Parent.Title }}</a></li>
-  </ul>
-</nav>
-{{- end }}
 {{ define "main" }}
 {{- $dirs := split .File.Dir "/" }}
 {{- $main := index $dirs 0 }}
@@ -53,4 +44,14 @@ Einkaufen bei {{ .Title }}
   </ul>
 </nav>
 {{- end }}
+{{- end }}
+{{- define "back" }}
+{{- $dirs := split .File.Dir "/" }}
+{{- $city := index $dirs 1 }}
+<nav aria-label="Wechsle zu {{ .Parent.Title }} oder springe nach oben">
+  <ul>
+    <li><a href="/{{ .Site.Params.repo }}/{{ $city }}/">↶ zurück zu {{ .Parent.Title }}</a></li>
+    <li><a href="#oben">nach oben ↑</a></li>
+  </ul>
+</nav>
 {{- end }}

@@ -4,13 +4,6 @@
 {{- define "heading" -}}
 Orte mit Geschäften in {{ .Site.Title }}
 {{- end }}
-{{- define "back" }}
-<nav aria-label="Wechsle zur Startseite">
-  <ul>
-    <li><a href="/">↶ zurück zur Startseite</a></li>
-  </ul>
-</nav>
-{{- end }}
 {{ define "main" }}
 <section id="eintraege">
   <div id="map" class="is-overlay">
@@ -25,4 +18,12 @@ Orte mit Geschäften in {{ .Site.Title }}
     {{- end }}
   </ul>
 </section>
+{{- end }}
+{{- define "back" }}
+<nav aria-label="Wechsle zur Startseite oder springe nach oben">
+  <ul>
+    <li><a href="/">↶ zurück zur Startseite</a></li>
+    <li><a href="#oben">nach oben ↑</a></li>
+  </ul>
+</nav>
 {{- end }}

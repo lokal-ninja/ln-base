@@ -58,17 +58,18 @@
           <button disabled id="search-btn" name="finish">🚀</button>
         </div>
       </section>
-      {{- block "back" . }}{{ end }}
     </header>
     <hr>
     <main>
       {{- block "main" . }}{{ end }}
     </main>
+    {{- block "back" . }}
     <nav aria-label="Springe nach oben">
       <ul>
         <li><a href="#oben">nach oben ↑</a></li>
       </ul>
     </nav>
+    {{ end }}
     <hr>
     {{ partialCached "footer.html" . }}
     {{- $choices := resources.Get "/js/choices.js" }}

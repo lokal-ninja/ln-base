@@ -4,13 +4,6 @@
 {{- define "heading" -}}
 Geschäfte in {{ .Title }}
 {{- end }}
-{{- define "back" }}
-<nav aria-label="Wechsle zu {{ .Site.Title }}">
-  <ul>
-    <li><a href="/{{ .Site.Params.repo }}/">↶ zurück zu {{ .Site.Title }}</a></li>
-  </ul>
-</nav>
-{{- end }}
 {{ define "main" }}
 {{- $dirs := split .File.Dir "/" }}
 {{- $main := index $dirs 0 }}
@@ -47,4 +40,12 @@ Geschäfte in {{ .Title }}
 <article id="beschreibung" class="mt-1">
   {{ with .Content }}{{ . }}{{ else }}<aside><p>Es gibt noch keinen Text zur allgemeinen Einkaufslage in {{ .Title }}. Du kannst eine Beschreibung <a href="https://github.com/{{ .Site.Params.org }}/{{ .Site.Params.repo }}/edit/master/content/{{ with .File }}{{ .Dir }}{{ end }}_index.md" rel="nofollow noopener">hier ↗</a> eintragen :)</p></aside>{{ end }}
 </article>
+{{- end }}
+{{- define "back" }}
+<nav aria-label="Wechsle zu {{ .Site.Title }} oder springe nach oben">
+  <ul>
+    <li><a href="/{{ .Site.Params.repo }}/">↶ zurück zu {{ .Site.Title }}</a></li>
+    <li><a href="#oben">nach oben ↑</a></li>
+  </ul>
+</nav>
 {{- end }}

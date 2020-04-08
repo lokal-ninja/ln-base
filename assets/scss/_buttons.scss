@@ -8,11 +8,13 @@
 }
 
 #search-btn {
+  display: block;
   margin: 0;
 }
 
 .categories {
-  margin-bottom: 1rem;
+  max-height: 256px;
+  overflow-y: auto;
   
   > button {
     background-color: $white;

@@ -1,0 +1,35 @@
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    margin-right: -0.5rem;
+    margin-left: -0.5rem;
+}
+  
+.row > * {
+    width: 100%;
+    max-width: 100%;
+    padding-right: 0.5rem;
+    padding-left: 0.5rem;
+    margin-top: 1rem;
+}
+
+@media (min-width: 576px) {
+    .col-sm-6 {
+        flex: 0 0 auto;
+        width: 50%;
+        margin-top: 0;
+    }
+}
+
+@media (min-width: 768px) {
+    .col-md-2 {
+        flex: 0 0 auto;
+        width: 16.666667%;
+        margin-top: 0;
+    }
+
+    .col-md-5 {
+        flex: 0 0 auto;
+        width: 41.666667%;
+    }
+}

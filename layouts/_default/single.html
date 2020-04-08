@@ -18,27 +18,29 @@ Einkaufen bei {{ .Title }}
 {{- $main := index $dirs 0 }}
 {{- $city := index $dirs 1 }}
 {{- $location := index .Site.Data $main $city .File.BaseFileName }}
-<article id="beschreibung">
-  {{ with .Content }}{{ . }}{{ else }}<aside><p>Es gibt noch keinen Text über {{ .Title }} in {{ .Parent.Title }}. Du kannst eine Beschreibung <a href="https://github.com/{{ .Site.Params.org }}/{{ .Site.Params.repo }}/edit/master/content/{{ with .File }}{{ .Dir }}{{ end }}{{ .File.BaseFileName }}.md" rel="nofollow noopener">hier ↗</a> eintragen :)</p></aside>{{ end }}
-</article>
-<section id="infos">
-  <aside>
-    <ul>
-      <li>{{ $location.street }} {{ $location.housenumber }} in {{ $location.postcode }} {{ $location.city }}</li>
-      {{ with $location.opening_hours }}<li>Öffnungszeiten: {{ . }}</li>{{ end }}
-      {{ with $location.phone }}<li>Telefon: {{ . }}</li>{{ end }}
-      {{ with $location.website }}<li><a href="{{ . }}" rel="nofollow noopener">{{ . }}</a></li>{{ end }}
-      <li hidden data-lat="{{ $location.latitude }}" data-lon="{{ $location.longitude }}"><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>
-    </ul>
-  </aside>
-</section>
-<section id="karte">
-  <div id="map" class="is-overlay">
-    {{ partialCached "load-btn.html" . -}}
-    <a href="https://www.openstreetmap.org/{{ $location.type }}/{{ $location.id }}" rel="nofollow noopener">OpenStreetMap ↗</a>
-    {{ partialCached "locate-btn.html" . -}}
+<section id="infos" class="row">
+  <div class="col-sm-6">
+    <aside>
+      <ul>
+        <li>{{ $location.street }} {{ $location.housenumber }} in {{ $location.postcode }} {{ $location.city }}</li>
+        {{ with $location.opening_hours }}<li>Öffnungszeiten: {{ . }}</li>{{ end }}
+        {{ with $location.phone }}<li>Telefon: {{ . }}</li>{{ end }}
+        {{ with $location.website }}<li><a href="{{ . }}" rel="nofollow noopener">{{ . }}</a></li>{{ end }}
+        <li hidden data-lat="{{ $location.latitude }}" data-lon="{{ $location.longitude }}"><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>
+      </ul>
+    </aside>
+  </div>
+  <div class="col-sm-6">
+    <div id="map" class="is-overlay">
+      {{ partialCached "load-btn.html" . -}}
+      <a href="https://www.openstreetmap.org/{{ $location.type }}/{{ $location.id }}" rel="nofollow noopener">OpenStreetMap ↗</a>
+      {{ partialCached "locate-btn.html" . -}}
+    </div>
   </div>
 </section>
+<article id="beschreibung" class="mt-1">
+  {{ with .Content }}{{ . }}{{ else }}<aside><p>Es gibt noch keinen Text über {{ .Title }} in {{ .Parent.Title }}. Du kannst eine Beschreibung <a href="https://github.com/{{ .Site.Params.org }}/{{ .Site.Params.repo }}/edit/master/content/{{ with .File }}{{ .Dir }}{{ end }}{{ .File.BaseFileName }}.md" rel="nofollow noopener">hier ↗</a> eintragen :)</p></aside>{{ end }}
+</article>
 {{- if (or .NextInSection .PrevInSection) }}
 <nav aria-label="Wechsle zu vorherigem oder nächsten Geschäft in {{ .Parent.Title }}">
   <ul>

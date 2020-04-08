@@ -12,20 +12,17 @@ Orte mit Geschäften in {{ .Site.Title }}
 </nav>
 {{- end }}
 {{ define "main" }}
-<div id="eintraege">
-  <p>Wo möchtest du in {{ .Site.Title }} einkaufen?</p>
-  <section id="karte">
-    <div id="map" class="is-overlay">
-      {{ partialCached "load-btn.html" . -}}
-      <a href="https://www.openstreetmap.org/search?query={{ .Site.Title }}" rel="nofollow noopener">OpenStreetMap ↗</a>
-      {{ partialCached "locate-btn.html" . -}}
-    </div>
-  </section>
+<section id="eintraege">
+  <div id="map" class="is-overlay">
+    {{ partialCached "load-btn.html" . -}}
+    <a href="https://www.openstreetmap.org/search?query={{ .Site.Title }}" rel="nofollow noopener">OpenStreetMap ↗</a>
+    {{ partialCached "locate-btn.html" . -}}
+  </div>
   <input type="text" placeholder="Städte filtern..." aria-label="Städte filtern...">
   <ul class="columns">
     {{- range (.Site.GetPage "section" "cities").Sections }}
     <li data-lat="{{ .Params.latitude }}" data-lon="{{ .Params.longitude }}"><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>
     {{- end }}
   </ul>
-</div>
+</section>
 {{- end }}

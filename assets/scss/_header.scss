@@ -10,6 +10,7 @@ header {
     margin-top: 1rem;
   }
 
+  // Choices adaptions and overrides
   label {
     cursor: pointer;
   }
@@ -24,11 +25,18 @@ header {
     font-size: 14px;
     -webkit-appearance: none;
     appearance: none;
-    margin-bottom: 24px;
     height: 49px;
   }
   
   .choices__inner {
     height: 49px;
+  }
+
+  .choices__list--dropdown {
+    word-break: normal;
+  }
+
+  .choices__list--dropdown .choices__item--selectable {
+    padding-right: 25px;
   }
 }

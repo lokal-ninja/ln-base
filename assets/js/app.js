@@ -438,7 +438,7 @@ window.addEventListener('DOMContentLoaded', function() {
   }
 });
 // Search
-function fetchRegion (region) {
+async function fetchRegion (region) {
   const regionSlug = slugo(region);
   return fetch('/' + regionSlug + '/index.json')
   .then(function(response) {
@@ -472,7 +472,7 @@ const citiesChoices  = new Choices(document.getElementById('cities'), {
   shouldSort: false,
   position: 'bottom'
 })
-.setChoices(function() {
+.setChoices(async function() {
   const regions = ['Baden-Württemberg', 'Bayern', 'Brandenburg', 'Bremen', 'Hamburg', 'Hessen', 'Mecklenburg-Vorpommern', 'Niedersachsen', 'Nordrhein-Westfalen', 'Österreich', 'Rheinland-Pfalz', 'Saarland', 'Sachsen-Anhalt', 'Sachsen', 'Schleswig-Holstein', 'Schweiz', 'Thüringen'];
   const promises = regions.map(function(region) {
     return fetchRegion(region);
@@ -495,7 +495,7 @@ const citiesChoices  = new Choices(document.getElementById('cities'), {
   instance.passedElement.element.addEventListener('change', function(e) {
     searchButton.disabled = true;
     shopsChoices.clearStore();
-    shopsChoices.setChoices(function() {
+    shopsChoices.setChoices(async function() {
       const city = instance.getValue();
       return fetch('/' + city.customProperties.region + '/' + slugo(e.detail.value) + '/index.json')
       .then(function(response) {

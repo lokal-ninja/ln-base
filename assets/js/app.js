@@ -419,22 +419,21 @@ if (mapButton) {
   };
 }
 // Select to category
-window.addEventListener('DOMContentLoaded', function() {
-  let hash = window.location.hash;
-  if (hash) {
-    hash = decodeURIComponent(hash.replace('#', '')).toLowerCase();
-    for (let i = 0; i < buttons.length; i++) {
-      const button = buttons[i];
-      if (button.textContent.toLowerCase() === hash) {
-        const y = button.getBoundingClientRect().top + window.scrollY;
-        window.scroll({
-          top: y,
-          behavior: 'smooth'
-        });
-        button.click();
-        break;
-      }
+function clickScrollCategory (category) {
+  const name = category.replace('#', '').toLowerCase();
+  for (let i = 0; i < buttons.length; i++) {
+    const button = buttons[i];
+    if (button.textContent.toLowerCase() === name) {
+      button.click();
+      button.scrollIntoView();
+      break;
     }
+  }
+}
+window.addEventListener('DOMContentLoaded', function() {
+  const hash = window.location.hash;
+  if (hash) {
+    clickScrollCategory(decodeURIComponent(hash));
   }
 });
 // Search
@@ -522,7 +521,16 @@ const citiesChoices  = new Choices(document.getElementById('cities'), {
     searchButton.onclick = function () {
       const city = instance.getValue();
       const shop = shopsChoices.getValue(true);
-      window.location = '/' + city.customProperties.region + '/' + slugo(city.value) + '/' + (shop[0] === '#' ? shop : slugo(shop) + '/');
+      const pathname = '/' + city.customProperties.region + '/' + slugo(city.value) + '/';
+      const isCategory = shop[0] === '#';
+      if (window.location.pathname === pathname && isCategory) {
+        // We're on the right page already, only scroll to category
+        clickScrollCategory(shop);
+      }
+      else {
+        // Relocate to new location
+        window.location =  pathname + (isCategory ? shop : slugo(shop) + '/');
+      }
     };
   }
 });

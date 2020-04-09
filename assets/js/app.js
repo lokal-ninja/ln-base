@@ -180,6 +180,31 @@ function setCenter (entries) {
   }
 }
 // Filter input
+function updateGUI () {
+  updateMap();
+  updateCount();
+}
+function updateMap () {
+  if (vectorLayer) {
+    // Update map, too
+    const matches = [];
+    vectorLayer.features.forEach(function(feature) {
+      const entry = feature.attributes.entry;
+      if (entry) {
+        if (entry.getClientRects().length !== 0) {
+          feature.style = null;
+          matches.push(entry);
+        }
+        else {
+          feature.style = { display: 'none' };
+        }
+      }
+    });
+    setCenter(matches);
+    vectorLayer.redraw();
+  }
+}
+
 function updateCount () {
   let count = 0;
   entries.forEach(function(entry) {
@@ -189,38 +214,21 @@ function updateCount () {
   });
   document.querySelector('samp').textContent = count;
 }
+
 function startFilter() {
   if (!entries) {
     entries = Array.from(document.querySelectorAll('li[data-lat]'));
   }
-  const matches = [];
   const regex = new RegExp(this.value, 'i');
   entries.forEach(function(entry) {
     if (regex.test(entry.textContent)) {
       entry.classList.remove('d-none');
-      matches.push(entry);
     }
     else {
       entry.classList.add('d-none');
     }
   });
-  if (vectorLayer) {
-    // Update map, too
-    vectorLayer.features.forEach(function(feature) {
-      const name = feature.attributes.name;
-      if (name) {
-        if (regex.test(name)) {
-          feature.style = null;
-        }
-        else {
-          feature.style = { display: 'none' };
-        }
-      }
-    });
-    vectorLayer.redraw();
-    setCenter(matches);
-  }
-  updateCount();
+  updateGUI();
 }
 const input = document.querySelector('input');
 if (input) {
@@ -243,10 +251,7 @@ buttons.forEach(function(button) {
       // Check sibling buttons if there is any other active
       let count = 0;
       for (let i = 0; i < buttons.length; i++) {
-        if (buttons[i].classList.contains('active')) {
-          count++
-        }
-        if (count === 2) {
+        if (buttons[i].classList.contains('active') && ++count === 2) {
           // We found at least one other active button
           showAll = false;
           break
@@ -273,7 +278,7 @@ buttons.forEach(function(button) {
       }
     });
     button.classList.toggle('active');
-    updateCount();
+    updateGUI();
   }
 });
 // Map
@@ -309,7 +314,7 @@ function buildMap() {
         createGeometryPoint(lon, lat),
         {
           link: '<a href="' + link.href + '">' + link.textContent + '</a>',
-          name: link.textContent
+          entry: entry
         }
       );
       vectorLayer.addFeatures(feature);
@@ -399,6 +404,7 @@ function buildMap() {
       geolocationAlert();
     }
   }
+  updateGUI();
 }
 const mapButton = document.querySelector('#map button');
 if (mapButton) {

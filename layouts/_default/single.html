@@ -10,7 +10,7 @@ Einkaufen bei {{ .Title }}
 {{- $city := index $dirs 1 }}
 {{- $location := index .Site.Data $main $city .File.BaseFileName }}
 <section id="infos" class="row">
-  <div class="col-sm-6">
+  <div class="col-md-6">
     <aside>
       <ul>
         <li>{{ $location.street }} {{ $location.housenumber }} in {{ $location.postcode }} {{ $location.city }}</li>
@@ -21,7 +21,7 @@ Einkaufen bei {{ .Title }}
       </ul>
     </aside>
   </div>
-  <div class="col-sm-6">
+  <div class="col-md-6">
     <div id="map" class="is-overlay">
       {{ partialCached "load-btn.html" . -}}
       <a href="https://www.openstreetmap.org/{{ $location.type }}/{{ $location.id }}" rel="nofollow noopener">OpenStreetMap ↗</a>

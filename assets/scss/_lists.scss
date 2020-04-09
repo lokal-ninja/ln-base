@@ -4,15 +4,17 @@
     list-style: none;
     padding-left: 0;
     margin-top: 0;
-    max-height: 256px;
-    overflow: auto;
 
     @media (min-width: 576px) {
-        columns: 3 189px;
+        columns: 3 168px;
     }
 
     @media (min-width: 768px) {
-        columns: 4 189px;
+        columns: 4 170px;
+    }
+
+    @media (min-width: 992px) {
+        columns: 5 183px;
     }
 
     > li.show {

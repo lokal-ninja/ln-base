@@ -10,7 +10,7 @@ Orte mit Geschäften in {{ .Site.Title }}
     <div class="col-md-6 content">
       {{ .Content }}
     </div>
-    <div class="col-md-6">
+    <div class="col-md-6 mt-sm-1">
       <div id="map" class="is-overlay">
         {{ partialCached "load-btn.html" . -}}
         <a href="https://www.openstreetmap.org/search?query={{ .Site.Title }}" rel="nofollow noopener">OpenStreetMap ↗</a>

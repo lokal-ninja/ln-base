@@ -18,6 +18,12 @@
     }
 }
 
+@media (max-width: 991px) {
+    .mt-md-1 {
+        margin-top: 1rem;
+    }
+}
+
 @media (min-width: 768px) {
     .col-md-6 {
         flex: 0 0 auto;

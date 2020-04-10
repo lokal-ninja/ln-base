@@ -477,26 +477,38 @@ const citiesChoices  = new Choices(document.getElementById('cities'), {
   shouldSort: false,
   position: 'bottom'
 })
-.setChoices(async function() {
-  const regions = ['Baden-Württemberg', 'Bayern', 'Brandenburg', 'Bremen', 'Hamburg', 'Hessen', 'Mecklenburg-Vorpommern', 'Niedersachsen', 'Nordrhein-Westfalen', 'Österreich', 'Rheinland-Pfalz', 'Saarland', 'Sachsen-Anhalt', 'Sachsen', 'Schleswig-Holstein', 'Schweiz', 'Thüringen'];
-  const promises = regions.map(function(region) {
-    return fetchRegion(region);
+.setChoices(function() {
+  return new Promise(function (resolve) {
+    resolve();
   });
-  return Promise.all(promises)
-  .then(function(result) {
-    let cities = [];
-    result.forEach(function(array) {
-      if (array) {
-        cities = cities.concat(array);
-      }
-    });
-    return cities;
-  })
-  .catch(function(error) {
-    console.error(error);
-  })
 })
 .then(function(instance) {
+  instance.containerOuter.element.addEventListener('focus', function() {
+    // Load data after user input
+    instance.setChoices(async function() {
+      const regions = ['Baden-Württemberg', 'Bayern', 'Brandenburg', 'Bremen', 'Hamburg', 'Hessen', 'Mecklenburg-Vorpommern', 'Niedersachsen', 'Nordrhein-Westfalen', 'Österreich', 'Rheinland-Pfalz', 'Saarland', 'Sachsen-Anhalt', 'Sachsen', 'Schleswig-Holstein', 'Schweiz', 'Thüringen'];
+      const promises = regions.map(function(region) {
+        return fetchRegion(region);
+      });
+      return Promise.all(promises)
+      .then(function(result) {
+        let cities = [];
+        result.forEach(function(array) {
+          if (array) {
+            cities = cities.concat(array);
+          }
+        });
+        return cities;
+      })
+      .catch(function(error) {
+        console.error(error);
+      })
+    })
+    .then(function() {
+      // We have to re-set focus on input again
+      instance.input.element.focus();
+    });
+  }, { once: true });
   instance.passedElement.element.addEventListener('change', function(e) {
     searchButton.disabled = true;
     shopsChoices.clearStore();

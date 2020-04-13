@@ -191,7 +191,7 @@ function updateMap () {
     vectorLayer.features.forEach(function(feature) {
       const entry = feature.attributes.entry;
       if (entry) {
-        if (entry.getClientRects().length !== 0) {
+        if (entry.getClientRects().length !== 0 || entry.hidden) {
           feature.style = null;
           matches.push(entry);
         }
@@ -206,13 +206,16 @@ function updateMap () {
 }
 
 function updateCount () {
-  let count = 0;
-  entries.forEach(function(entry) {
-    if (entry.getClientRects().length !== 0) {
-      count++;
-    }
-  });
-  document.querySelector('samp').textContent = count;
+  const samp = document.querySelector('section samp');
+  if (samp) {
+    let count = 0;
+    entries.forEach(function(entry) {
+      if (entry.getClientRects().length !== 0) {
+        count++;
+      }
+    });
+    samp.textContent = count;
+  }
 }
 
 function startFilter() {

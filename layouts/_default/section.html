@@ -41,7 +41,7 @@ Geschäfte in {{ .Title }}
   </ul>
 </section>
 <article id="beschreibung" class="mt-1">
-  {{ with .Content }}{{ . }}{{ else }}<aside><p>Es gibt noch keinen Text zur allgemeinen Einkaufslage in {{ .Title }}. Du kannst eine Beschreibung <a href="https://github.com/{{ .Site.Params.org }}/{{ .Site.Params.repo }}/edit/master/content/{{ with .File }}{{ .Dir }}{{ end }}_index.md" rel="nofollow noopener">hier ↗</a> eintragen :)</p></aside>{{ end }}
+  {{ with .Content }}{{ . }}{{ else }}<aside><p>Es gibt noch keinen Text zur allgemeinen Einkaufslage in {{ .Title }}. Du kannst eine Beschreibung <a href="https://github.com/{{ .Site.Params.org }}/{{ .Site.Params.repo }}/edit/master/content/{{ with .File }}{{ .Dir }}{{ end }}_index.md" rel="nofollow noopener">hier ↗</a> eintragen 🙂</p></aside>{{ end }}
 </article>
 {{- end }}
 {{- define "back" }}

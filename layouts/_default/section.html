@@ -2,7 +2,7 @@
 {{ .Title }} - {{ .Site.Title }} | {{ .Site.Params.site }}
 {{- end }}
 {{- define "heading" -}}
-Geschäfte in {{ .Title }}
+Shops in {{ .Title }}
 {{- end }}
 {{ define "main" }}
 {{- $dirs := split .File.Dir "/" }}
@@ -30,8 +30,8 @@ Geschäfte in {{ .Title }}
     </div>
   </div>
   <div class="filter">
-    <input type="text" placeholder="Name filtern..." aria-label="Name filtern...">
-    <div><samp>{{ len .RegularPages }}</samp>Einträge</div>
+    <input type="text" placeholder="Filter name..." aria-label="Filter name...">
+    <div><samp>{{ len .RegularPages }}</samp>entries</div>
   </div>
   <ul class="columns">
     {{- range .RegularPages }}
@@ -40,15 +40,15 @@ Geschäfte in {{ .Title }}
     {{- end }}
   </ul>
 </section>
-<article id="beschreibung" class="mt-1">
-  {{ with .Content }}{{ . }}{{ else }}<aside><p>Es gibt noch keinen Text zur allgemeinen Einkaufslage in {{ .Title }}. Du kannst eine Beschreibung <a href="https://github.com/{{ .Site.Params.org }}/{{ .Site.Params.repo }}/edit/master/content/{{ with .File }}{{ .Dir }}{{ end }}_index.md" rel="nofollow noopener">hier ↗</a> eintragen 🙂</p></aside>{{ end }}
+<article id="description" class="mt-1">
+  {{ with .Content }}{{ . }}{{ else }}<aside><p>There is no text on the general purchasing situation in {{ .Title }} yet. You can enter a description <a href="https://github.com/{{ .Site.Params.org }}/{{ .Site.Params.repo }}/edit/master/content/{{ with .File }}{{ .Dir }}{{ end }}_index.md" rel="nofollow noopener">here ↗</a> 🙂</p></aside>{{ end }}
 </article>
 {{- end }}
 {{- define "back" }}
-<nav aria-label="Wechsle zu {{ .Site.Title }} oder springe nach oben">
+<nav aria-label="Change to {{ .Site.Title }} or jump to top">
   <ul>
-    <li><a href="/{{ .Site.Params.repo }}/">↶ zurück zu {{ .Site.Title }}</a></li>
-    <li><a href="#oben">nach oben ↑</a></li>
+    <li><a href="/{{ .Site.Params.repo }}/">↶ back to {{ .Site.Title }}</a></li>
+    <li><a href="#oben">to top ↑</a></li>
   </ul>
 </nav>
 {{- end }}

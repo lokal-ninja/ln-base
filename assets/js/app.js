@@ -74,26 +74,26 @@ function loadScript(file) {
 }
 
 function geolocationError(error) {
-  let message = 'Standortabfrage nicht erfolgreich.';
+  let message = 'Location query not successful.';
   switch(error.code) {
     case error.PERMISSION_DENIED:
-      message = 'Nutzer verweigerte die Geolocationanfrage.';
+      message = 'User refused the geolocation request.';
       break;
     case error.POSITION_UNAVAILABLE:
-      message = 'Standortinformation nicht verfügbar.';
+      message = 'Location information not available.';
       break;
     case error.TIMEOUT:
-      message = 'Zeitüberschreiung bei der Anfrage des Nutzerstandorts.';
+      message = 'Timeout for user location request.';
       break;
     case error.UNKNOWN_ERROR:
-      message = 'Ein unbekannter Fehler trat auf.';
+      message = 'An unknown error occurred.';
       break;
   }
   alert(message);
 }
 
 function geolocationAlert() {
-  alert('Geolocation wird von deinem Browser nicht unterstützt.');
+  alert('Geolocation is not supported by your browser.');
 }
 
 function setCenter (entries) {
@@ -363,7 +363,7 @@ function buildMap() {
       userFeature = new OpenLayers.Feature.Vector(
         createGeometryPoint(longitude, latitude),
         {
-          link: 'Mein Standort'
+          link: 'My location'
         },
         {
           externalGraphic: '/js/img/marker.png',
@@ -385,7 +385,7 @@ function buildMap() {
     }
     // Set button
     locateButton.classList.add('tracking');
-    locateButton.textContent = 'Tracken beenden';
+    locateButton.textContent = 'Stop tracking';
   }
   let userFeature;
   let first = true;
@@ -399,7 +399,7 @@ function buildMap() {
       else {
         navigator.geolocation.clearWatch(watchID);
         this.classList.remove('tracking');
-        this.textContent = 'Standort tracken';
+        this.textContent = 'Track location';
         centering = true;
       }
     }
@@ -468,13 +468,13 @@ async function fetchRegion (region) {
   });
 }
 const citiesChoices  = new Choices(document.getElementById('cities'), {
-  placeholderValue: 'Ort auswählen',
+  placeholderValue: 'Choose place',
   searchFields: ['value'],
-  searchPlaceholderValue: 'Suchen...',
-  loadingText: 'Lädt...',
-  noResultsText: 'Keine Ergebnisse gefunden',
+  searchPlaceholderValue: 'Search...',
+  loadingText: 'Loading...',
+  noResultsText: 'No results found',
   itemSelectText: '+',
-  noChoicesText: 'mit wenigstens drei Buchstaben',
+  noChoicesText: 'with at least three letters',
   renderChoiceLimit : 0,
   searchResultLimit: 100,
   shouldSort: false,
@@ -489,7 +489,7 @@ const citiesChoices  = new Choices(document.getElementById('cities'), {
   instance.containerOuter.element.addEventListener('focus', function() {
     // Load data after user input
     instance.setChoices(async function() {
-      const regions = ['Baden-Württemberg', 'Bayern', 'Brandenburg', 'Bremen', 'Hamburg', 'Hessen', 'Mecklenburg-Vorpommern', 'Niedersachsen', 'Nordrhein-Westfalen', 'Österreich', 'Rheinland-Pfalz', 'Saarland', 'Sachsen-Anhalt', 'Sachsen', 'Schleswig-Holstein', 'Schweiz', 'Thüringen'];
+      const regions = ['Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware', 'District of Columbia', 'Florida', 'Georgia', 'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana', 'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota', 'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire', 'New Jersey', 'New Mexico', 'New York', 'North Carolina', 'North Dakota', 'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania', 'Puerto Rico', 'Rhode Island', 'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont', 'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming'];
       const promises = regions.map(function(region) {
         return fetchRegion(region);
       });
@@ -556,11 +556,11 @@ const citiesChoices  = new Choices(document.getElementById('cities'), {
   }
 });
 const shopsChoices = new Choices(document.getElementById('shops'), {
-  placeholderValue: '#Kategorie oder Geschäft auswählen',
+  placeholderValue: 'Choose #category or shop',
   searchFields: ['value'],
-  searchPlaceholderValue: 'Filtern...',
-  loadingText: 'Lädt...',
-  noResultsText: 'Keine Ergebnisse gefunden',
+  searchPlaceholderValue: 'Filter...',
+  loadingText: 'Loading...',
+  noResultsText: 'No results found',
   itemSelectText: '+',
   shouldSort: false,
   //renderChoiceLimit : -1,

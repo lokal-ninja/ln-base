@@ -4,19 +4,19 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>{{ block "title" . }}{{ .Title }} | {{ .Site.Params.site }}{{ end }}</title>
-    {{- $description := printf "Entdecke alle Einkaufsmöglichkeiten in %s" .Site.Title }}
+    {{- $description := printf "Discover all shopping facilities in %s" .Site.Title }}
     {{- if eq .Kind "section" }}
-      {{- $description = printf "Entdecke alle Einkaufsmöglichkeiten in %s" .Title }}
+      {{- $description = printf "Discover all shopping facilities in %s" .Title }}
     {{- else if .IsPage }}
       {{- $dirs := split .File.Dir "/" }}
       {{- $main := index $dirs 0 }}
       {{- $city := index $dirs 1 }}
       {{- $entry := index .Site.Data $main $city .File.BaseFileName }}
       {{- $name := $entry.city }}
-      {{- $opening_hours := "" }}{{ if $entry.opening_hours }}{{ $opening_hours = ", Öffnungszeiten" }}{{ end }}
-      {{- $phone := "" }}{{ if $entry.phone }}{{ $phone = ", Telefonnummer" }}{{ end }}
-      {{- $website := "" }}{{ if $entry.website }}{{ $website = " und Link zur Webseite" }}{{ end }}
-      {{- $description = printf "Adresse%s%s%s von %s in %s" $opening_hours $phone $website .Title $name }}
+      {{- $opening_hours := "" }}{{ if $entry.opening_hours }}{{ $opening_hours = ", opening hours" }}{{ end }}
+      {{- $phone := "" }}{{ if $entry.phone }}{{ $phone = ", phone number" }}{{ end }}
+      {{- $website := "" }}{{ if $entry.website }}{{ $website = " and link to website" }}{{ end }}
+      {{- $description = printf "Address%s%s%s of %s in %s" $opening_hours $phone $website .Title $name }}
     {{- end }}
     <meta name="description" content="{{ $description }}">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -29,7 +29,7 @@
     <meta property="og:image" content="{{ "/img/logo-1200x1200.png" | absURL }}">
     <meta property="og:image:width " content="1200">
     <meta property="og:image:height" content="1200">
-    <meta property="og:image:alt" content="Einkaufswagen">
+    <meta property="og:image:alt" content="Shopping cart">
     <meta property="og:description" content="{{ $description }}">
     <meta property="og:locale" content="{{ replace .Site.LanguageCode "-" "_" }}">
     <link rel="canonical" href="{{ .Permalink }}">
@@ -51,19 +51,19 @@
   <body>
     <div class="container">
       <header id="oben">
-        <h1><a href="/" aria-label="Zur Startseite navigieren">🛒</a> {{ block "heading" . }}{{ .Title }}{{ end }}</h1>
+        <h1><a href="/" aria-label="Navigate to home page">🛒</a> {{ block "heading" . }}{{ .Title }}{{ end }}</h1>
         <section id="suche" class="row mt-1">
           <div class="col-md-6 col-lg-5">
-            <label for="cities">1. Ort</label>
+            <label for="cities">1. Place</label>
             <select type="select-one" class="form-control" name="cities" id="cities"></select>
           </div>
           <div class="col-md-6 col-lg-5 mt-sm-1">
-            <label for="shops">2. Kategorie / Geschäft</label>
+            <label for="shops">2. Category / Shop</label>
             <select type="select-one" class="form-control" name="shops" id="shops"></select>
           </div>
           <div class="col-lg-2 mt-md-1">
-            <label for="finish">3. Fertig</label>
-            <button disabled id="search-btn" name="finish">Los 🚀</button>
+            <label for="finish">3. Finish</label>
+            <button disabled id="search-btn" name="finish">Go 🚀</button>
           </div>
         </section>
       </header>
@@ -72,9 +72,9 @@
         {{- block "main" . }}{{ end }}
       </main>
       {{- block "back" . }}
-      <nav aria-label="Springe nach oben">
+      <nav aria-label="Jump to top">
         <ul>
-          <li><a href="#oben">nach oben ↑</a></li>
+          <li><a href="#oben">to top ↑</a></li>
         </ul>
       </nav>
       {{ end }}

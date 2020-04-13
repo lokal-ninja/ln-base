@@ -2,7 +2,7 @@
 {{ .Title }} - {{ .Parent.Title }} - {{ .Site.Title }} | {{ .Site.Params.site }}
 {{- end }}
 {{- define "heading" -}}
-Einkaufen bei {{ .Title }}
+Shop at {{ .Title }}
 {{- end }}
 {{ define "main" }}
 {{- $dirs := split .File.Dir "/" }}
@@ -14,8 +14,8 @@ Einkaufen bei {{ .Title }}
     <aside>
       <ul>
         <li>{{ $location.street }} {{ $location.housenumber }} in {{ $location.postcode }} {{ $location.city }}</li>
-        {{ with $location.opening_hours }}<li>Öffnungszeiten: {{ . }}</li>{{ end }}
-        {{ with $location.phone }}<li>Telefon: {{ . }}</li>{{ end }}
+        {{ with $location.opening_hours }}<li>Opening hours: {{ . }}</li>{{ end }}
+        {{ with $location.phone }}<li>Phone: {{ . }}</li>{{ end }}
         {{ with $location.website }}<li><a href="{{ . }}" rel="nofollow noopener">{{ . }}</a></li>{{ end }}
         <li hidden data-lat="{{ $location.latitude }}" data-lon="{{ $location.longitude }}"><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>
       </ul>
@@ -30,10 +30,10 @@ Einkaufen bei {{ .Title }}
   </div>
 </section>
 <article id="beschreibung" class="mt-1">
-  {{ with .Content }}{{ . }}{{ else }}<aside><p>Es gibt noch keinen Text über {{ .Title }} in {{ .Parent.Title }}. Du kannst eine Beschreibung <a href="https://github.com/{{ .Site.Params.org }}/{{ .Site.Params.repo }}/edit/master/content/{{ with .File }}{{ .Dir }}{{ end }}{{ .File.BaseFileName }}.md" rel="nofollow noopener">hier ↗</a> eintragen 🙂</p></aside>{{ end }}
+  {{ with .Content }}{{ . }}{{ else }}<aside><p>There is no text about {{ .Title }} in {{ .Parent.Title }} yet. You can enter a description <a href="https://github.com/{{ .Site.Params.org }}/{{ .Site.Params.repo }}/edit/master/content/{{ with .File }}{{ .Dir }}{{ end }}{{ .File.BaseFileName }}.md" rel="nofollow noopener">here ↗</a> 🙂</p></aside>{{ end }}
 </article>
 {{- if (or .NextInSection .PrevInSection) }}
-<nav aria-label="Wechsle zu vorherigem oder nächsten Geschäft in {{ .Parent.Title }}">
+<nav aria-label="Change to previous or next shop in {{ .Parent.Title }}">
   <ul>
     {{- with .NextInSection }}
     <li><a href="{{ .RelPermalink }}">← {{ .Title }}</a></li>
@@ -48,10 +48,10 @@ Einkaufen bei {{ .Title }}
 {{- define "back" }}
 {{- $dirs := split .File.Dir "/" }}
 {{- $city := index $dirs 1 }}
-<nav aria-label="Wechsle zu {{ .Parent.Title }} oder springe nach oben">
+<nav aria-label="Change to {{ .Parent.Title }} or jump to top">
   <ul>
-    <li><a href="/{{ .Site.Params.repo }}/{{ $city }}/">↶ zurück zu {{ .Parent.Title }}</a></li>
-    <li><a href="#oben">nach oben ↑</a></li>
+    <li><a href="/{{ .Site.Params.repo }}/{{ $city }}/">↶ back to {{ .Parent.Title }}</a></li>
+    <li><a href="#oben">to top ↑</a></li>
   </ul>
 </nav>
 {{- end }}

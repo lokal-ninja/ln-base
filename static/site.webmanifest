@@ -1,8 +1,8 @@
 {
-    "name": "Lokal Ninja",
-    "lang": "de",
-    "short_name": "Lokal Ninja",
-    "description": "Entdecke alle Einkaufsmöglichkeiten in deiner Stadt",
+    "name": "Shoogle",
+    "lang": "en",
+    "short_name": "Shoogle",
+    "description": "Discover all shopping facilities in your place",
     "icons": [
         {
           "src": "/img/logo-192x192.png",

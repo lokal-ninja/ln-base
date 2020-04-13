@@ -2,10 +2,10 @@
 {{ .Site.Title }} | {{ .Site.Params.Site }}
 {{- end }}
 {{- define "heading" -}}
-Orte mit Geschäften in {{ .Site.Title }}
+Places with shops in {{ .Site.Title }}
 {{- end }}
 {{ define "main" }}
-<section id="eintraege">
+<section id="entries">
   <div class="row">
     <div class="col-md-6 content">
       {{ .Content }}
@@ -19,8 +19,8 @@ Orte mit Geschäften in {{ .Site.Title }}
     </div>
   </div>
   <div class="filter">
-    <input type="text" placeholder="Name filtern..." aria-label="Name filtern...">
-    <div><samp>{{ len (.Site.GetPage "section" "cities").Sections }}</samp>Orte</div>
+    <input type="text" placeholder="Filter name..." aria-label="Filter name...">
+    <div><samp>{{ len (.Site.GetPage "section" "cities").Sections }}</samp>places</div>
   </div>
   <ul class="columns">
     {{- range (.Site.GetPage "section" "cities").Sections }}
@@ -30,10 +30,10 @@ Orte mit Geschäften in {{ .Site.Title }}
 </section>
 {{- end }}
 {{- define "back" }}
-<nav aria-label="Wechsle zur Startseite oder springe nach oben">
+<nav aria-label="Change to home page or jump to top">
   <ul>
-    <li><a href="/">↶ zurück zur Startseite</a></li>
-    <li><a href="#oben">nach oben ↑</a></li>
+    <li><a href="/">↶ back to home page</a></li>
+    <li><a href="#oben">to top ↑</a></li>
   </ul>
 </nav>
 {{- end }}

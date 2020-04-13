@@ -11,8 +11,8 @@
     // Replace dots and spaces with a short dash
     .replace(/(\s|\.)/g, '-') // Replace long dash with a single dash
     .replace(/—/g, '-') // Make the whole thing lowercase
-    .toLowerCase() // Replace '&' with 'und'
-    .replace(/[&]/g, 'und') // Replace Umlauts
+    .toLowerCase() // Replace '&' with 'and'
+    .replace(/[&]/g, 'and') // Replace Umlauts
     .replace(/[ÄäÖöÜü]/g, function (char) {
       var umlauts = {
         'ä': 'ae',

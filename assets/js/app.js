@@ -486,7 +486,7 @@ const citiesChoices  = new Choices(document.getElementById('cities'), {
   });
 })
 .then(function(instance) {
-  instance.containerOuter.element.addEventListener('focus', function() {
+  instance.containerOuter.element.addEventListener('click', function() {
     // Load data after user input
     instance.setChoices(async function() {
       const regions = ['Baden-Württemberg', 'Bayern', 'Brandenburg', 'Bremen', 'Hamburg', 'Hessen', 'Mecklenburg-Vorpommern', 'Niedersachsen', 'Nordrhein-Westfalen', 'Österreich', 'Rheinland-Pfalz', 'Saarland', 'Sachsen-Anhalt', 'Sachsen', 'Schleswig-Holstein', 'Schweiz', 'Thüringen'];

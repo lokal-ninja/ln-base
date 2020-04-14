@@ -23,7 +23,7 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta property="og:site_name" content="{{ .Site.Params.site }}">
-    <meta property="og:title" content="{{ $.Title }}">
+    <meta property="og:title" content="{{ with .Title }}{{ . }}{{ else }}{{ .Site.Title }}{{ end }}">
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ .Permalink }}">
     <meta property="og:image" content="{{ "/img/logo-1200x1200.png" | absURL }}">

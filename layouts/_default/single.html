@@ -25,6 +25,7 @@ Einkaufen bei {{ .Title }}
     <div id="map" class="is-overlay">
       {{ partialCached "load-btn.html" . -}}
       <a href="https://www.openstreetmap.org/{{ $location.type }}/{{ $location.id }}" rel="nofollow noopener">OpenStreetMap ↗</a>
+      <a href="https://www.google.com/maps/dir//{{ $location.street }} {{ $location.housenumber }},{{ $location.postcode }} {{ $location.city }}" rel="nofollow noopener">Google Maps ↗</a>
       {{ partialCached "locate-btn.html" . -}}
     </div>
   </div>

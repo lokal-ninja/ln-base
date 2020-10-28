@@ -50,7 +50,7 @@
   </head>
   <body>
     <div class="container">
-      <header id="oben">
+      <header id="top">
         <h1><a href="/" aria-label="Navigate to home page">🛒</a> {{ block "heading" . }}{{ .Title }}{{ end }}</h1>
         <section id="suche" class="row mt-1">
           <div class="col-md-6 col-lg-5">
@@ -74,7 +74,7 @@
       {{- block "back" . }}
       <nav aria-label="Jump to top">
         <ul>
-          <li><a href="#oben">to top ↑</a></li>
+          <li><a href="#top">to top ↑</a></li>
         </ul>
       </nav>
       {{ end }}

@@ -25,6 +25,7 @@ Shops in {{ .Title }}
       <div id="map" class="is-overlay">
         {{ partialCached "load-btn.html" . -}}
         <a href="https://www.openstreetmap.org/search?query={{ .Title }}" rel="nofollow noopener">OpenStreetMap ↗</a>
+        <a href="https://www.google.com/maps/dir//{{ .Title }}" rel="nofollow noopener">Google Maps ↗</a>
         {{ partialCached "locate-btn.html" . -}}
       </div>
     </div>

@@ -446,6 +446,12 @@ window.addEventListener('DOMContentLoaded', function() {
   }
 });
 // Search
+async function fetchRegions() {
+  const response = await fetch('/' + window.location.hostname.split(".")[0] + '.json');
+  const regions = await response.json();
+  return regions;
+}
+
 async function fetchRegion (region) {
   const regionSlug = slugo(region);
   return fetch('/' + regionSlug + '/index.json')
@@ -488,24 +494,26 @@ const citiesChoices  = new Choices(document.getElementById('cities'), {
 .then(function(instance) {
   instance.containerOuter.element.addEventListener('click', function() {
     // Load data after user input
-    instance.setChoices(async function() {
-      const regions = ['Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware', 'District of Columbia', 'Florida', 'Georgia', 'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana', 'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota', 'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire', 'New Jersey', 'New Mexico', 'New York', 'North Carolina', 'North Dakota', 'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania', 'Puerto Rico', 'Rhode Island', 'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont', 'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming'];
-      const promises = regions.map(function(region) {
-        return fetchRegion(region);
-      });
-      return Promise.all(promises)
-      .then(function(result) {
-        let cities = [];
-        result.forEach(function(array) {
-          if (array) {
-            cities = cities.concat(array);
-          }
+    instance.setChoices(async function() {     
+      fetchRegions()
+      .then(function(regions) {
+        const promises = regions.map(function(region) {
+          return fetchRegion(region);
         });
-        return cities;
-      })
-      .catch(function(error) {
-        console.error(error);
-      })
+        return Promise.all(promises)
+        .then(function(result) {
+          let cities = [];
+          result.forEach(function(array) {
+            if (array) {
+              cities = cities.concat(array);
+            }
+          });
+          return cities;
+        })
+        .catch(function(error) {
+          console.error(error);
+        })
+      });
     })
     .then(function() {
       // We have to re-set focus on input again

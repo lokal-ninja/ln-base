@@ -476,7 +476,7 @@ async function fetchRegion (region) {
 
 const cities = document.getElementById('cities');
 if (cities) {
-  const citiesChoices  = new Choices(cities, {
+  const citiesChoices = new Choices(cities, {
     placeholderValue: 'Choose place',
     searchFields: ['value'],
     searchPlaceholderValue: 'Search...',

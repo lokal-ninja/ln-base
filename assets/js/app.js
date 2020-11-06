@@ -1,3 +1,11 @@
+// Globals
+let entries;
+let epsg4326;
+let projectTo;
+let vectorLayer;
+let citiesChoices;
+let shopsChoices;
+
 // Helpers
 // adopted from https://github.com/gabmontes/fast-haversine
 const R = 6378;
@@ -476,7 +484,7 @@ async function fetchRegion (region) {
 
 const cities = document.getElementById('cities');
 if (cities) {
-  const citiesChoices = new Choices(cities, {
+  citiesChoices = new Choices(cities, {
     placeholderValue: 'Ort auswählen',
     searchFields: ['value'],
     searchPlaceholderValue: 'Suchen...',
@@ -498,8 +506,8 @@ if (cities) {
     instance.containerOuter.element.addEventListener('click', function() {
       // Load data after user input
       instance.setChoices(async function() {     
-        fetchRegions()
-        .then(function(regions) {
+        return fetchRegions()
+        .then(async function(regions) {
           const promises = regions.map(function(region) {
             return fetchRegion(region);
           });
@@ -516,7 +524,7 @@ if (cities) {
           .catch(function(error) {
             console.error(error);
           })
-        });
+        })
       })
       .then(function() {
         // We have to re-set focus on input again
@@ -548,46 +556,29 @@ if (cities) {
       });
       shopsChoices.enable();
     });
-    const searchButton = document.getElementById('search-btn');
-    if (searchButton) {
-      searchButton.onclick = function () {
-        const city = instance.getValue();
-        const shop = shopsChoices.getValue(true);
-        const pathname = '/' + city.customProperties.region + '/' + slugo(city.value) + '/';
-        const isCategory = shop[0] === '#';
-        if (window.location.pathname === pathname && isCategory) {
-          // We're on the right page already, only scroll to category
-          clickScrollCategory(shop);
-        }
-        else {
-          // Relocate to new location
-          window.location =  pathname + (isCategory ? shop : slugo(shop) + '/');
-        }
-      };
+  })
+}
+const searchButton = document.getElementById('search-btn');
+if (searchButton) {
+  searchButton.onclick = function () {
+    const city = instance.getValue();
+    const shop = shopsChoices.getValue(true);
+    const pathname = '/' + city.customProperties.region + '/' + slugo(city.value) + '/';
+    const isCategory = shop[0] === '#';
+    if (window.location.pathname === pathname && isCategory) {
+      // We're on the right page already, only scroll to category
+      clickScrollCategory(shop);
     }
-  });
-  const searchButton = document.getElementById('search-btn');
-  if (searchButton) {
-    searchButton.onclick = function () {
-      const city = instance.getValue();
-      const shop = shopsChoices.getValue(true);
-      const pathname = '/' + city.customProperties.region + '/' + slugo(city.value) + '/';
-      const isCategory = shop[0] === '#';
-      if (window.location.pathname === pathname && isCategory) {
-        // We're on the right page already, only scroll to category
-        clickScrollCategory(shop);
-      }
-      else {
-        // Relocate to new location
-        window.location =  pathname + (isCategory ? shop : slugo(shop) + '/');
-      }
-    };
-  }
+    else {
+      // Relocate to new location
+      window.location =  pathname + (isCategory ? shop : slugo(shop) + '/');
+    }
+  };
 }
 
 const shops = document.getElementById('shops');
 if (shops) {
-  const shopsChoices = new Choices(shops, {
+  shopsChoices = new Choices(shops, {
     placeholderValue: '#Kategorie oder Geschäft auswählen',
     searchFields: ['value'],
     searchPlaceholderValue: 'Filtern...',
@@ -600,8 +591,3 @@ if (shops) {
     position: 'bottom'
   }).disable();
 }
-// Globals
-let entries;
-let epsg4326;
-let projectTo;
-let vectorLayer;

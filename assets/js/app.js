@@ -473,109 +473,116 @@ async function fetchRegion (region) {
     console.error(error);
   });
 }
-const citiesChoices  = new Choices(document.getElementById('cities'), {
-  placeholderValue: 'Choose place',
-  searchFields: ['value'],
-  searchPlaceholderValue: 'Search...',
-  loadingText: 'Loading...',
-  noResultsText: 'No results found',
-  itemSelectText: '+',
-  noChoicesText: 'with at least three letters',
-  renderChoiceLimit : 0,
-  searchResultLimit: 100,
-  shouldSort: false,
-  position: 'bottom'
-})
-.setChoices(function() {
-  return new Promise(function (resolve) {
-    resolve();
-  });
-})
-.then(function(instance) {
-  instance.containerOuter.element.addEventListener('click', function() {
-    // Load data after user input
-    instance.setChoices(async function() {     
-      fetchRegions()
-      .then(function(regions) {
-        const promises = regions.map(function(region) {
-          return fetchRegion(region);
-        });
-        return Promise.all(promises)
-        .then(function(result) {
-          let cities = [];
-          result.forEach(function(array) {
-            if (array) {
-              cities = cities.concat(array);
-            }
-          });
-          return cities;
-        })
-        .catch(function(error) {
-          console.error(error);
-        })
-      });
-    })
-    .then(function() {
-      // We have to re-set focus on input again
-      instance.input.element.focus();
-    });
-  }, { once: true });
-  instance.passedElement.element.addEventListener('change', function(e) {
-    searchButton.disabled = true;
-    shopsChoices.clearStore();
-    shopsChoices.setChoices(async function() {
-      const city = instance.getValue();
-      return fetch('/' + city.customProperties.region + '/' + slugo(e.detail.value) + '/index.json')
-      .then(function(response) {
-        return response.json();
-      })
-      .then(function(data) {
-        return data.map(function(item) {
-          return {
-            value: item,
-            label: item
-          };
-        });
-      })
-    })
-    .then(function(instance2) {
-      instance2.passedElement.element.addEventListener('change', function() {
-        searchButton.disabled = false;
-      });
-    });
-    shopsChoices.enable();
-  });
-  const searchButton = document.getElementById('search-btn');
-  if (searchButton) {
-    searchButton.onclick = function () {
-      const city = instance.getValue();
-      const shop = shopsChoices.getValue(true);
-      const pathname = '/' + city.customProperties.region + '/' + slugo(city.value) + '/';
-      const isCategory = shop[0] === '#';
-      if (window.location.pathname === pathname && isCategory) {
-        // We're on the right page already, only scroll to category
-        clickScrollCategory(shop);
-      }
-      else {
-        // Relocate to new location
-        window.location =  pathname + (isCategory ? shop : slugo(shop) + '/');
-      }
-    };
-  }
-});
-const shopsChoices = new Choices(document.getElementById('shops'), {
-  placeholderValue: 'Choose #category or shop',
-  searchFields: ['value'],
-  searchPlaceholderValue: 'Filter...',
-  loadingText: 'Loading...',
-  noResultsText: 'No results found',
-  itemSelectText: '+',
-  shouldSort: false,
-  //renderChoiceLimit : -1,
-  searchResultLimit: 100,
-  position: 'bottom'
-}).disable();
 
+const cities = document.getElementById('cities');
+if (cities) {
+  const citiesChoices  = new Choices(cities, {
+    placeholderValue: 'Choose place',
+    searchFields: ['value'],
+    searchPlaceholderValue: 'Search...',
+    loadingText: 'Loading...',
+    noResultsText: 'No results found',
+    itemSelectText: '+',
+    noChoicesText: 'with at least three letters',
+    renderChoiceLimit : 0,
+    searchResultLimit: 100,
+    shouldSort: false,
+    position: 'bottom'
+  })
+  .setChoices(function() {
+    return new Promise(function (resolve) {
+      resolve();
+    });
+  })
+  .then(function(instance) {
+    instance.containerOuter.element.addEventListener('click', function() {
+      // Load data after user input
+      instance.setChoices(async function() {     
+        fetchRegions()
+        .then(function(regions) {
+          const promises = regions.map(function(region) {
+            return fetchRegion(region);
+          });
+          return Promise.all(promises)
+          .then(function(result) {
+            let citiesArray = [];
+            result.forEach(function(array) {
+              if (array) {
+                citiesArray = citiesArray.concat(array);
+              }
+            });
+            return citiesArray;
+          })
+          .catch(function(error) {
+            console.error(error);
+          })
+        });
+      })
+      .then(function() {
+        // We have to re-set focus on input again
+        instance.input.element.focus();
+      });
+    }, { once: true });
+    instance.passedElement.element.addEventListener('change', function(e) {
+      searchButton.disabled = true;
+      shopsChoices.clearStore();
+      shopsChoices.setChoices(async function() {
+        const city = instance.getValue();
+        return fetch('/' + city.customProperties.region + '/' + slugo(e.detail.value) + '/index.json')
+        .then(function(response) {
+          return response.json();
+        })
+        .then(function(data) {
+          return data.map(function(item) {
+            return {
+              value: item,
+              label: item
+            };
+          });
+        })
+      })
+      .then(function(instance2) {
+        instance2.passedElement.element.addEventListener('change', function() {
+          searchButton.disabled = false;
+        });
+      });
+      shopsChoices.enable();
+    });
+    const searchButton = document.getElementById('search-btn');
+    if (searchButton) {
+      searchButton.onclick = function () {
+        const city = instance.getValue();
+        const shop = shopsChoices.getValue(true);
+        const pathname = '/' + city.customProperties.region + '/' + slugo(city.value) + '/';
+        const isCategory = shop[0] === '#';
+        if (window.location.pathname === pathname && isCategory) {
+          // We're on the right page already, only scroll to category
+          clickScrollCategory(shop);
+        }
+        else {
+          // Relocate to new location
+          window.location =  pathname + (isCategory ? shop : slugo(shop) + '/');
+        }
+      };
+    }
+  });
+}
+
+const shops = document.getElementById('shops');
+if (shops) {
+  const shopsChoices = new Choices(shops, {
+    placeholderValue: 'Choose #category or shop',
+    searchFields: ['value'],
+    searchPlaceholderValue: 'Filter...',
+    loadingText: 'Loading...',
+    noResultsText: 'No results found',
+    itemSelectText: '+',
+    shouldSort: false,
+    //renderChoiceLimit : -1,
+    searchResultLimit: 100,
+    position: 'bottom'
+  }).disable();
+}
 // Globals
 let entries;
 let epsg4326;

@@ -583,7 +583,8 @@ if (cities) {
       }
     };
   }
-};
+}
+
 const shops = document.getElementById('shops');
 if (shops) {
   const shopsChoices = new Choices(shops, {

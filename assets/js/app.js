@@ -556,24 +556,24 @@ if (cities) {
       });
       shopsChoices.enable();
     });
+    const searchButton = document.getElementById('search-btn');
+    if (searchButton) {
+      searchButton.onclick = function () {
+        const city = instance.getValue();
+        const shop = shopsChoices.getValue(true);
+        const pathname = '/' + city.customProperties.region + '/' + slugo(city.value) + '/';
+        const isCategory = shop[0] === '#';
+        if (window.location.pathname === pathname && isCategory) {
+          // We're on the right page already, only scroll to category
+          clickScrollCategory(shop);
+        }
+        else {
+          // Relocate to new location
+          window.location =  pathname + (isCategory ? shop : slugo(shop) + '/');
+        }
+      };
+    }
   })
-}
-const searchButton = document.getElementById('search-btn');
-if (searchButton) {
-  searchButton.onclick = function () {
-    const city = instance.getValue();
-    const shop = shopsChoices.getValue(true);
-    const pathname = '/' + city.customProperties.region + '/' + slugo(city.value) + '/';
-    const isCategory = shop[0] === '#';
-    if (window.location.pathname === pathname && isCategory) {
-      // We're on the right page already, only scroll to category
-      clickScrollCategory(shop);
-    }
-    else {
-      // Relocate to new location
-      window.location =  pathname + (isCategory ? shop : slugo(shop) + '/');
-    }
-  };
 }
 
 const shops = document.getElementById('shops');

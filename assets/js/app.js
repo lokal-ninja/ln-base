@@ -425,15 +425,14 @@ if (mapButton) {
       buildMap();
 
       // and hide buttons and overlay
-      mapButton.style.display = 'none';
       const parent = mapButton.parentNode;
-      parent.querySelectorAll('a').forEach(function(element) {
-        element.style.display = 'none';
-      })
+      for (let i = 0; i < 3; i++) {
+        parent.children[i].style.display = 'none'
+      }
       parent.classList.remove('is-overlay');
 
       // Dont forget to show locate button
-      parent.lastElementChild.style.display = 'inline-block';
+      document.getElementById('locate-btn').style.display = 'inline-block';
     });
   };
 }

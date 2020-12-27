@@ -1,0 +1,8 @@
+#chatbox {
+    max-height: 350px;
+    overflow-y: auto;
+}
+
+#chatbox > li:nth-child(odd) {
+    background: $color-bg-secondary;
+}

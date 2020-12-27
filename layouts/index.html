@@ -29,6 +29,7 @@ Places with shops in {{ .Site.Title }}
     {{- end }}
   </ul>
 </section>
+{{ partialCached "chat.html" . -}}
 {{- end }}
 {{- define "back" }}
 <nav aria-label="Change to home page or jump to top">

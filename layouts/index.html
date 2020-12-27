@@ -5,7 +5,7 @@
 Orte mit Geschäften in {{ .Site.Title }}
 {{- end }}
 {{ define "main" }}
-<section id="eintraege">
+<section id="infos">
   <div class="row">
     <div class="col-md-6 content">
       {{ .Content }}
@@ -19,6 +19,9 @@ Orte mit Geschäften in {{ .Site.Title }}
       </div>
     </div>
   </div>
+</section>
+{{ partialCached "chat.html" . -}}
+<section id="eintraege">
   <div class="filter">
     <input type="text" placeholder="Name filtern..." aria-label="Name filtern...">
     <div><samp>{{ len (.Site.GetPage "section" "cities").Sections }}</samp>Orte</div>
@@ -29,7 +32,6 @@ Orte mit Geschäften in {{ .Site.Title }}
     {{- end }}
   </ul>
 </section>
-{{ partialCached "chat.html" . -}}
 {{- end }}
 {{- define "back" }}
 <nav aria-label="Wechsle zur Startseite oder springe nach oben">

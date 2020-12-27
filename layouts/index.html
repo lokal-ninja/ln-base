@@ -5,7 +5,7 @@
 Places with shops in {{ .Site.Title }}
 {{- end }}
 {{ define "main" }}
-<section id="entries">
+<section id="infos">
   <div class="row">
     <div class="col-md-6 content">
       {{ .Content }}
@@ -19,6 +19,9 @@ Places with shops in {{ .Site.Title }}
       </div>
     </div>
   </div>
+</section>
+{{ partialCached "chat.html" . -}}
+<section id="entries">
   <div class="filter">
     <input type="text" placeholder="Filter name..." aria-label="Filter name...">
     <div><samp>{{ len (.Site.GetPage "section" "cities").Sections }}</samp>places</div>
@@ -29,7 +32,6 @@ Places with shops in {{ .Site.Title }}
     {{- end }}
   </ul>
 </section>
-{{ partialCached "chat.html" . -}}
 {{- end }}
 {{- define "back" }}
 <nav aria-label="Change to home page or jump to top">

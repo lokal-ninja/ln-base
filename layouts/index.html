@@ -29,6 +29,7 @@ Orte mit Geschäften in {{ .Site.Title }}
     {{- end }}
   </ul>
 </section>
+{{ partialCached "chat.html" . -}}
 {{- end }}
 {{- define "back" }}
 <nav aria-label="Wechsle zur Startseite oder springe nach oben">

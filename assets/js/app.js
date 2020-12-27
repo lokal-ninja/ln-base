@@ -536,7 +536,7 @@ if (cities) {
       });
     }, { once: true });
     instance.passedElement.element.addEventListener('change', function(e) {
-      searchButton.disabled = true;
+      searchButton.disabled = false;
       shopsChoices.clearStore();
       shopsChoices.setChoices(async function() {
         const city = instance.getValue();
@@ -551,11 +551,6 @@ if (cities) {
               label: item
             };
           });
-        })
-      })
-      .then(function(instance2) {
-        instance2.passedElement.element.addEventListener('change', function() {
-          searchButton.disabled = false;
         });
       });
       shopsChoices.enable();
@@ -566,14 +561,16 @@ if (cities) {
         const city = instance.getValue();
         const shop = shopsChoices.getValue(true);
         const pathname = '/' + city.customProperties.region + '/' + slugo(city.value) + '/';
-        const isCategory = shop[0] === '#';
-        if (window.location.pathname === pathname && isCategory) {
-          // We're on the right page already, only scroll to category
-          clickScrollCategory(shop);
+        const isCategory = shop ? shop[0] === '#' : false;
+        if (window.location.pathname === pathname) {
+          if (isCategory) {
+            // We're on the right page already, only scroll to category
+            clickScrollCategory(shop);
+          }
         }
         else {
           // Relocate to new location
-          window.location =  pathname + (isCategory ? shop : slugo(shop) + '/');
+          window.location =  pathname + (shop ? isCategory ? shop : slugo(shop) + '/' : '');
         }
       };
     }

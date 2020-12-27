@@ -1,0 +1,24 @@
+.form-control {
+    display: block;
+    width: 100%;
+    background-color: #f9f9f9;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 2.5px;
+    font-size: 14px;
+    -webkit-appearance: none;
+    appearance: none;
+    height: 49px;
+}
+
+.choices__inner {
+    height: 49px;
+}
+
+.choices__list--dropdown {
+    word-break: normal;
+}
+
+.choices__list--dropdown .choices__item--selectable {
+    padding-right: 25px;
+}

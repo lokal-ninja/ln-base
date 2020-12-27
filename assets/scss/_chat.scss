@@ -6,3 +6,33 @@
 #chatbox > li:nth-child(odd) {
     background: $color-bg-secondary;
 }
+
+#chat-btn {
+    margin: 1rem 0;
+}
+
+.input-group {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+    width: 100%;
+
+    > .form-control {
+        position: relative;
+        flex: 1 1 auto;
+        width: 1%;
+        min-width: 0;
+    }
+
+    > :not(:last-child) {
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+    }
+
+    > :not(:first-child) {
+        margin-left: -1px;
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+    }
+}

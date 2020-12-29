@@ -217,15 +217,15 @@ function updateMap () {
 }
 
 function updateCount () {
-  const samp = document.querySelector('section samp');
-  if (samp) {
+  const filterSamp = document.querySelector('.filter samp');
+  if (filterSamp) {
     let count = 0;
     entries.forEach(function(entry) {
       if (entry.getClientRects().length !== 0) {
         count++;
       }
     });
-    samp.textContent = count;
+    filterSamp.textContent = count;
   }
 }
 
@@ -244,10 +244,10 @@ function startFilter() {
   });
   updateGUI();
 }
-const input = document.querySelector('input');
-if (input) {
-  input.addEventListener('keyup', startFilter);
-  input.addEventListener('keypress', function(event) {
+const filterInput = document.querySelector('.filter input');
+if (filterInput) {
+  filterInput.addEventListener('keyup', startFilter);
+  filterInput.addEventListener('keypress', function(event) {
     if (event.keyCode === 13) {
       event.preventDefault();
     }
@@ -719,8 +719,8 @@ if (openingHours) {
   const opening = new SimpleOpeningHours(openingHours.textContent);
   if (opening.isOpen()) {
     // Append banner
-    const isOpen = document.createElement('samp');
-    isOpen.textContent = 'open now!';
-    openingHours.appendChild(isOpen);
+    const openSamp = document.createElement('samp');
+    openSamp.textContent = 'open now!';
+    openingHours.appendChild(openSamp);
   }
 }

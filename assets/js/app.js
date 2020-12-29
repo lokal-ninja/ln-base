@@ -594,36 +594,36 @@ if (shops) {
 }
 // Chat
 function removeTags (string) {
-  return string.replace(/<(?:.|\n)*?>/gm, '')
+  return string.replace(/<(?:.|\n)*?>/gm, '');
 }
 
 function md2html (md) {
-  const bold_pattern1 = /\*{2}(.+)\*{2}/gim // <b>
-  const bold_pattern2 = /\_{2}(.+)\_{2}/gim  // <b>
-  const italic_pattern1 = /\_(.+)\_/gim // <i>
-  const italic_pattern2 = /\*(.+)\*/gim // <i>
-  const striketrough_pattern = /\~{2}(.+)\~{2}/gim // <del>
-  const a_pattern1 = /\[(.+)\]\((.+)\)/gim // <a>
-  const a_pattern2 = /\[(.+)\]\((.+) \"(.+)\"\)/gim // <a>
-  const a_pattern3 = /\[(.+)\]/gim // <a>
+  const bold_pattern1 = /\*{2}(.+)\*{2}/gim; // <b>
+  const bold_pattern2 = /\_{2}(.+)\_{2}/gim;  // <b>
+  const italic_pattern1 = /\_(.+)\_/gim; // <i>
+  const italic_pattern2 = /\*(.+)\*/gim; // <i>
+  const striketrough_pattern = /\~{2}(.+)\~{2}/gim; // <del>
+  const a_pattern1 = /\[(.+)\]\((.+)\)/gim; // <a>
+  const a_pattern2 = /\[(.+)\]\((.+) \"(.+)\"\)/gim; // <a>
+  const a_pattern3 = /\[(.+)\]/gim; // <a>
 
   /* links */
   md = md.replace(a_pattern1, function(match, title, url) {
-    return '<a href="' + url + '">' + title + '</a>'
+    return '<a href="' + url + '">' + title + '</a>';
   })
   md = md.replace(a_pattern2, function(match, title, url, tooltip) {
-    return '<a href="' + url + '" title="' + tooltip + '">' + title + '</a>'
+    return '<a href="' + url + '" title="' + tooltip + '">' + title + '</a>';
   })
   md = md.replace(a_pattern3, function(match, url) {
-    return '<a href="' + url + '">' + url + '</a>'
+    return '<a href="' + url + '">' + url + '</a>';
   })
 
   /* bold */
   md = md.replace(bold_pattern1, function(match, str) {
-    return '<b>' + str + '</b>'
+    return '<b>' + str + '</b>';
   })
   md = md.replace(bold_pattern2, function(match, str) {
-    return '<b>' + str + '</b>'
+    return '<b>' + str + '</b>';
   })
 
   /* italic */
@@ -636,34 +636,34 @@ function md2html (md) {
 
   /* striketrough */
   md = md.replace(striketrough_pattern, function(match, str) {
-    return '<del>' + str + '</del>'
+    return '<del>' + str + '</del>';
   })
 
-  return md
+  return md;
 }
 
 function createMessage (content) {
-  const item = document.createElement('li')
-  item.innerHTML = md2html(content)
+  const item = document.createElement('li');
+  item.innerHTML = md2html(content);
 
-  return item
+  return item;
 }
 
 function appendToList (child) {
-  chatbox.appendChild(child)
-  chatbox.scrollTop = chatbox.scrollHeight
+  chatbox.appendChild(child);
+  chatbox.scrollTop = chatbox.scrollHeight;
 }
 
 function sendMessage (message) {
-  appendToList(createMessage(message))
-  ws.send(message)
+  appendToList(createMessage(message));
+  ws.send(message);
 }
 
 function sendTextMessage () {
   if (chatInput.value) {
-    sendMessage(removeTags(chatInput.value))
-    chatInput.value = ''
-    updateNumberMessages(1)
+    sendMessage(removeTags(chatInput.value));
+    chatInput.value = '';
+    updateNumberMessages(1);
   }
 }
 
@@ -674,45 +674,46 @@ function updateNumberMessages(length) {
 
 const chatbox = document.getElementById('chatbox'),
   chatInput = document.getElementById('chat-input'),
-  chatSamp = document.getElementById('chat-samp')
+  chatSamp = document.getElementById('chat-samp');
 
 let incomingMessages = [],
-  scheduled
-
-let prefix = ''
+  scheduled,
+  prefix = '',
+  numberMessages = 0;
 if (SUBDOMAIN !== 'localhost') {
-  prefix = SUBDOMAIN + '_'
+  prefix = SUBDOMAIN + '_';
 }
-const protocol = prefix + window.location.pathname.replace(/\//g, '_')
-const ws = new WebSocket('wss://chat.shoogle.net/',  protocol)
-let numberMessages = 0;
+const protocol = prefix + window.location.pathname.replace(/\//g, '_');
+const ws = new WebSocket('wss://chat.shoogle.net/',  protocol);
 
-ws.onmessage = message => {
-  incomingMessages.push(createMessage(message.data))
+ws.onmessage = function(message) {
+  incomingMessages.push(createMessage(message.data));
 
   if (!scheduled) {
-    scheduled = true
-    window.requestAnimationFrame(() => {
-      const frag = document.createDocumentFragment()
+    scheduled = true;
+    window.requestAnimationFrame(function() {
+      const frag = document.createDocumentFragment();
       for (let i = 0, len = incomingMessages.length; i < len; i++) {
-        frag.appendChild(incomingMessages[i])
+        frag.appendChild(incomingMessages[i]);
       }
-      appendToList(frag)
-      updateNumberMessages(incomingMessages.length)
-      incomingMessages.length = 0
-      scheduled = false
+      appendToList(frag);
+      updateNumberMessages(incomingMessages.length);
+      incomingMessages.length = 0;
+      scheduled = false;
     })
   }
 }
 
-document.getElementById('chat-btn').onclick = () => sendTextMessage()
+document.getElementById('chat-btn').onclick = function() {
+  sendTextMessage()
+};
 
-document.getElementById('chat-form').onkeypress = event => {
+document.getElementById('chat-form').onkeypress = function(event) {
   if (event.keyCode === 13) {
-    event.preventDefault()
-    sendTextMessage()
+    event.preventDefault();
+    sendTextMessage();
   }
-}
+};
 // Shop open
 const openingHours = document.getElementById('opening-hours');
 if (openingHours) {

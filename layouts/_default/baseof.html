@@ -93,15 +93,16 @@
       }
     }
     </script>
+    {{- $openinghours := resources.Get "/js/simple-opening-hours.js" }}
     {{- $choices := resources.Get "/js/choices.js" }}
     {{- $slugo := resources.Get "/js/slugo.js" }}
     {{- $app := resources.Get "/js/app.js" }}
-    {{- $js := slice $choices $slugo $app | resources.Concat "js/main.js" }}
+    {{- $js := slice $openinghours $choices $slugo $app | resources.Concat "js/main.js" }}
     {{- if hugo.IsProduction }}
       {{- if eq (len (findRE "/" .Site.BaseURL)) 3 }}
-      {{- $js = slice $choices $slugo $app | resources.Concat "../js/main.js" | minify | fingerprint }}
+      {{- $js = slice $openinghours $choices $slugo $app | resources.Concat "../js/main.js" | minify | fingerprint }}
       {{- else }}
-      {{- $js = slice $choices $slugo $app | resources.Concat "js/main.js" | minify | fingerprint }}
+      {{- $js = slice $openinghours $choices $slugo $app | resources.Concat "js/main.js" | minify | fingerprint }}
       {{- end }}
     {{- end }}
     <script defer src="{{ $js.RelPermalink }}"></script>

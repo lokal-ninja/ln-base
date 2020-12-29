@@ -12,7 +12,7 @@ Shop at {{ .Title }}
 <section id="infos" class="row">
   <div class="col-md-6">
     <aside>
-      <ul>
+      <ul class="list-unstyled">
         <li>Address: {{ $location.street }} {{ $location.housenumber }} in {{ $location.postcode }} {{ $location.city }}</li>
         {{ with $location.opening_hours }}<li>Opening hours: <span id="opening-hours">{{ . }}</span></li>{{ end }}
         {{ with $location.phone }}<li>Telephone: <a href="tel:{{ urlize . }}">{{ . }}</a></li>{{ end }}

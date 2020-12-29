@@ -423,19 +423,19 @@ function buildMap() {
 const mapButton = document.querySelector('#map button');
 if (mapButton) {
   mapButton.onclick = function () {
+    // Hide buttons and overlay
+    const parent = mapButton.parentNode;
+    for (let i = 0; i < 3; i++) {
+      parent.children[i].style.display = 'none';
+    }
+    parent.classList.remove('is-overlay');
+
+    // Dont forget to show locate button
+    document.getElementById('locate-btn').style.display = 'inline-block';
+
     loadScript('OpenLayers.js')
     .then(function() {
       buildMap();
-
-      // and hide buttons and overlay
-      const parent = mapButton.parentNode;
-      for (let i = 0; i < 3; i++) {
-        parent.children[i].style.display = 'none'
-      }
-      parent.classList.remove('is-overlay');
-
-      // Dont forget to show locate button
-      document.getElementById('locate-btn').style.display = 'inline-block';
     });
   };
 }

@@ -713,3 +713,14 @@ document.getElementById('chat-form').onkeypress = event => {
     sendTextMessage()
   }
 }
+// Shop open
+const openingHours = document.getElementById('opening-hours');
+if (openingHours) {
+  const opening = new SimpleOpeningHours(openingHours.textContent);
+  if (opening.isOpen()) {
+    // Append banner
+    const isOpen = document.createElement('samp');
+    isOpen.textContent = 'jetzt geöffnet!';
+    openingHours.appendChild(isOpen);
+  }
+}

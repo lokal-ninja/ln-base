@@ -14,7 +14,7 @@ Einkaufen bei {{ .Title }}
     <aside>
       <ul>
         <li>{{ $location.street }} {{ $location.housenumber }} in {{ $location.postcode }} {{ $location.city }}</li>
-        {{ with $location.opening_hours }}<li>Öffnungszeiten: {{ . }}</li>{{ end }}
+        {{ with $location.opening_hours }}<li>Öffnungszeiten: <span id="opening-hours">{{ . }}</span></li>{{ end }}
         {{ with $location.phone }}<li>Telefon: <a href="tel:{{ urlize . }}">{{ . }}</a></li>{{ end }}
         {{ with $location.website }}<li><a href="{{ . }}" rel="nofollow noopener">{{ . }}</a></li>{{ end }}
         <li hidden data-lat="{{ $location.latitude }}" data-lon="{{ $location.longitude }}"><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>

@@ -717,6 +717,13 @@ document.getElementById('chat-form').onkeypress = event => {
 const openingHours = document.getElementById('opening-hours');
 if (openingHours) {
   const opening = new SimpleOpeningHours(openingHours.textContent);
+  // Translate
+  openingHours.textContent = openingHours.textContent.replace('Tu', 'Di')
+                                                     .replace('We', 'Mi')
+                                                     .replace('Th', 'Do')
+                                                     .replace('Su', 'So')
+                                                     .replace('PH', 'Feiertage')
+                                                     .replace('off', 'geschlossen');
   if (opening.isOpen()) {
     // Append banner
     const isOpen = document.createElement('samp');

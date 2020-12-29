@@ -32,6 +32,9 @@ Geschäfte in {{ .Title }}
   </div>
 </section>
 {{ partialCached "chat.html" . -}}
+<article id="beschreibung" class="mt-1">
+  {{ with .Content }}{{ . }}{{ else }}<aside><p>Es gibt noch keinen Text zur allgemeinen Einkaufslage in {{ .Title }}. Du kannst eine Beschreibung <a href="https://github.com/{{ .Site.Params.org }}/{{ .Site.Params.repo }}/edit/master/content/{{ with .File }}{{ .Dir }}{{ end }}_index.md" rel="nofollow noopener">hier ↗</a> eintragen 🙂</p></aside>{{ end }}
+</article>
 <section id="eintraege">
   <div class="filter">
     <input type="text" placeholder="Name filtern..." aria-label="Name filtern...">
@@ -44,9 +47,6 @@ Geschäfte in {{ .Title }}
     {{- end }}
   </ul>
 </section>
-<article id="beschreibung" class="mt-1">
-  {{ with .Content }}{{ . }}{{ else }}<aside><p>Es gibt noch keinen Text zur allgemeinen Einkaufslage in {{ .Title }}. Du kannst eine Beschreibung <a href="https://github.com/{{ .Site.Params.org }}/{{ .Site.Params.repo }}/edit/master/content/{{ with .File }}{{ .Dir }}{{ end }}_index.md" rel="nofollow noopener">hier ↗</a> eintragen 🙂</p></aside>{{ end }}
-</article>
 {{- end }}
 {{- define "back" }}
 <nav aria-label="Wechsle zu {{ .Site.Title }} oder springe nach oben">

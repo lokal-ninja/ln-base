@@ -13,10 +13,10 @@ Shop at {{ .Title }}
   <div class="col-md-6">
     <aside>
       <ul>
-        <li>Adresse: {{ $location.street }} {{ $location.housenumber }} in {{ $location.postcode }} {{ $location.city }}</li>
-        {{ with $location.opening_hours }}<li>Öffnungszeiten: <span id="opening-hours">{{ . }}</span></li>{{ end }}
-        {{ with $location.phone }}<li>Telefon: <a href="tel:{{ urlize . }}">{{ . }}</a></li>{{ end }}
-        {{ with $location.website }}<li>Webseite: <a href="{{ . }}" rel="nofollow noopener">{{ . }}</a></li>{{ end }}
+        <li>Address: {{ $location.street }} {{ $location.housenumber }} in {{ $location.postcode }} {{ $location.city }}</li>
+        {{ with $location.opening_hours }}<li>Opening hours: <span id="opening-hours">{{ . }}</span></li>{{ end }}
+        {{ with $location.phone }}<li>Telephone: <a href="tel:{{ urlize . }}">{{ . }}</a></li>{{ end }}
+        {{ with $location.website }}<li>Website: <a href="{{ . }}" rel="nofollow noopener">{{ . }}</a></li>{{ end }}
         <li hidden data-lat="{{ $location.latitude }}" data-lon="{{ $location.longitude }}"><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>
       </ul>
     </aside>
@@ -31,7 +31,7 @@ Shop at {{ .Title }}
   </div>
 </section>
 {{ partialCached "chat.html" . -}}
-<article id="beschreibung" class="mt-1">
+<article id="description" class="mt-1">
   {{ with .Content }}{{ . }}{{ else }}<aside><p>There is no text about {{ .Title }} in {{ .Parent.Title }} yet. You can enter a description <a href="https://github.com/{{ .Site.Params.org }}/{{ .Site.Params.repo }}/edit/master/content/{{ with .File }}{{ .Dir }}{{ end }}{{ .File.BaseFileName }}.md" rel="nofollow noopener">here ↗</a> 🙂</p></aside>{{ end }}
 </article>
 {{- if (or .NextInSection .PrevInSection) }}

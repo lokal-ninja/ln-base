@@ -720,7 +720,7 @@ if (openingHours) {
   if (opening.isOpen()) {
     // Append banner
     const isOpen = document.createElement('samp');
-    isOpen.textContent = 'jetzt geöffnet!';
+    isOpen.textContent = 'open now!';
     openingHours.appendChild(isOpen);
   }
 }

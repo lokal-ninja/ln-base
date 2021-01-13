@@ -33,7 +33,7 @@
     <meta property="og:description" content="{{ $description }}">
     <meta property="og:locale" content="{{ replace .Site.LanguageCode "-" "_" }}">
     <link rel="canonical" href="{{ .Permalink }}">
-    <link rel="icon" href="data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3e%3ctext y='.9em' font-size='90'%3e🛒%3c/text%3e%3c/svg%3e">
+    <link rel="icon" href="data:image/svg+xml,%3csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20100%20100'%3e%3ctext%20y='.9em'%20font-size='90'%3e🛒%3c/text%3e%3c/svg%3e">
     <link rel="manifest" href="/site.webmanifest">
     <meta name="theme-color" content="#f57c00">
     {{- $choices := resources.Get "scss/vendor/choices.scss" | toCSS }}
@@ -55,14 +55,14 @@
         <section id="suche" class="row mt-1" aria-hidden="true">
           <div class="col-md-6 col-lg-5">
             <label for="cities">Ort</label>
-            <select type="select-one" class="form-control" name="cities" id="cities"></select>
+            <select data-type="select-one" class="form-control" name="cities" id="cities"></select>
           </div>
           <div class="col-md-6 col-lg-5 mt-sm-1">
             <label for="shops">Kategorie / Geschäft</label>
-            <select type="select-one" class="form-control" name="shops" id="shops"></select>
+            <select data-type="select-one" class="form-control" name="shops" id="shops"></select>
           </div>
           <div class="col-lg-2 mt-md-1">
-            <label for="finish">Fertig</label>
+            <label for="search-btn">Fertig</label>
             <button disabled id="search-btn" name="finish">Los 🚀</button>
           </div>
         </section>

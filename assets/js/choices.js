@@ -1400,9 +1400,9 @@ function () {
       throw TypeError('Expected one of the following types text|select-one|select-multiple');
     }
 
-    this._isTextElement = passedElement.type === constants_1.TEXT_TYPE;
-    this._isSelectOneElement = passedElement.type === constants_1.SELECT_ONE_TYPE;
-    this._isSelectMultipleElement = passedElement.type === constants_1.SELECT_MULTIPLE_TYPE;
+    this._isTextElement = passedElement.dataset.type === constants_1.TEXT_TYPE;
+    this._isSelectOneElement = passedElement.dataset.type === constants_1.SELECT_ONE_TYPE;
+    this._isSelectMultipleElement = passedElement.dataset.type === constants_1.SELECT_MULTIPLE_TYPE;
     this._isSelectElement = this._isSelectOneElement || this._isSelectMultipleElement;
     this.config.searchEnabled = this._isSelectMultipleElement || this.config.searchEnabled;
 

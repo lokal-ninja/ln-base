@@ -16,6 +16,10 @@
         columns: 5 183px;
     }
 
+    > li {
+        word-break: break-word;
+    }
+
     > li.show {
         display: list-item;
     }

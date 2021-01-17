@@ -5,49 +5,58 @@
 Shops in {{ .Title }}
 {{- end }}
 {{ define "main" }}
-{{- $dirs := split .File.Dir "/" }}
-{{- $main := index $dirs 0 }}
-{{- $city := index $dirs 1 }}
-<section id="infos">
-  {{- $shops := slice }}
-  {{- range .RegularPages }}
-    {{- $shops = $shops | append (index .Site.Data $main $city .File.BaseFileName).shop }}
-  {{- end }}
-  <div class="row">
-    <div class="col-md-6">
-      <div class="categories">
-        {{- range sort $shops | uniq }}
-        <button>{{ . }}</button>
-        {{- end }}
-      </div>  
-    </div>
-    <div class="col-md-6 mt-sm-1">
-      <div id="map" class="is-overlay">
-        {{ partialCached "load-btn.html" . -}}
-        <a href="https://www.openstreetmap.org/search?query={{ .Title }}" rel="nofollow noopener">OpenStreetMap ↗</a>
-        <a href="https://www.google.com/maps/dir//{{ .Title }}" rel="nofollow noopener">Google Maps ↗</a>
-        {{ partialCached "locate-btn.html" . -}}
+<div class="row">
+  <section id="infos" class="col-md-6">
+    <h2 class="visually-hidden">Kategorien</h2>
+    <div class="categories">
+      {{- $shops := slice }}
+      {{- range .RegularPages }}
+      {{- $shops = $shops | append .Params.shop }}
+      {{- end }}
+      {{- $sortedShops := sort $shops | uniq }}
+      <div class="filter filter-categories">
+        <input type="text" placeholder="Name filtern..." aria-label="Name filtern...">
+        <div><samp>{{ len $sortedShops }}</samp>Kategorien</div>
       </div>
+      {{- range $sortedShops }}
+      {{- $sortedShop := . }}
+      {{- range where ($.Site.GetPage "taxonomyTerm" "shops").Pages ".Title" . }}
+      <button>{{ $sortedShop }}<svg class="icon" role="img" aria-hidden="true"><use href={{ printf "%s%s" "/img/sprite.svg#" .Params.icon | relURL }}></use></svg></button>
+      {{- end }}
+      {{- end }}
+    </div>  
+  </section>
+  <section class="col-md-6 mt-sm-1">
+    <h2 class="visually-hidden">Karte</h2>
+    <div id="map" class="is-overlay">
+      {{ partialCached "load-btn.html" . -}}
+      <a href="https://www.openstreetmap.org/search?query={{ .Title }}" rel="nofollow noopener">OpenStreetMap ↗</a>
+      <a href="https://www.google.com/maps/dir//{{ .Title }}" rel="nofollow noopener">Google Maps ↗</a>
+      {{ partialCached "locate-btn.html" . -}}
     </div>
-  </div>
-</section>
-{{ partialCached "chat.html" . -}}
-<article id="description" class="mt-1">
-  {{ with .Content }}{{ . }}{{ else }}<aside><p>There is no text on the general purchasing situation in {{ .Title }} yet. You can enter a description <a href="https://github.com/{{ .Site.Params.org }}/{{ .Site.Params.repo }}/edit/master/content/{{ with .File }}{{ .Dir }}{{ end }}_index.md" rel="nofollow noopener">here ↗</a> 🙂</p></aside>{{ end }}
-</article>
+  </section>
+</div>
 <section id="entries">
-  <div class="filter">
+  <h2 class="visually-hidden">Entries</h2>
+  <div class="filter filter-entries">
     <input type="text" placeholder="Filter name..." aria-label="Filter name...">
-    <div><samp>{{ len .RegularPages }}</samp>entries</div>
+    <div><samp>{{ len .Pages }}</samp>entries</div>
   </div>
   <ul class="columns">
-    {{- range .RegularPages }}
-    {{- $location := index .Site.Data $main $city .File.BaseFileName }}
-    <li data-shop="{{ $location.shop }}" data-lat="{{ $location.latitude }}" data-lon="{{ $location.longitude }}"><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>
+    {{- range .Pages }}
+    {{- $dirs := split .File.Dir "/" }}
+    {{- $main := index $dirs 0 }}
+    {{- $city := index $dirs 1 }}
+    {{- $location := index .Site.Data "cities" $city .File.BaseFileName }}
+    <li data-shop="{{ .Params.shop }}" data-lat="{{ $location.latitude }}" data-lon="{{ $location.longitude }}"><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>
     {{- end }}
   </ul>
   <p>Missing an entry? Please add it to the free database at <a href="https://www.openstreetmap.org/" rel="nofollow noopener">OpenStreetMap ↗</a>!</p>
 </section>
+<article id="description" class="mt-1">
+  {{ with .Content }}{{ . }}{{ else }}<aside><p>There is no text on the general purchasing situation in {{ .Title }} yet. You can enter a description <a href="https://github.com/{{ .Site.Params.org }}/{{ .Site.Params.repo }}/edit/master/content/{{ with .File }}{{ .Dir }}{{ end }}_index.md" rel="nofollow noopener">here ↗</a> 🙂</p></aside>{{ end }}
+</article>
+{{ partialCached "chat.html" . -}}
 {{- end }}
 {{- define "back" }}
 <nav aria-label="Change to {{ .Site.Title }} or jump to top">

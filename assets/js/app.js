@@ -1,4 +1,5 @@
 // Globals
+let categories;
 let entries;
 let epsg4326;
 let projectTo;
@@ -36,11 +37,10 @@ function distance(lat1, lon1, lat2, lon2) {
 function rad2degr(rad) { return rad * 180 / Math.PI; }
 function degr2rad(degr) { return degr * Math.PI / 180; }
 
-function getLatLngCenter(entries) {
+function getLatLngCenter(entries, count) {
   let sumX = 0;
   let sumY = 0;
   let sumZ = 0;
-  const count = entries.length;
   for (let i = 0; i < count; i++) {
     const lat = entries[i].dataset.lat;
     const lon = entries[i].dataset.lon;
@@ -107,11 +107,11 @@ function geolocationAlert() {
   alert('Geolocation is not supported by your browser.');
 }
 
-function setCenter (entries) {
+function setCenter(entries) {
   const count = entries.length;
   if (count) {
     // Get center
-    const center = getLatLngCenter(entries);
+    const center = getLatLngCenter(entries, count);
     const centerLat = center[0];
     const centerLon = center[1];
 
@@ -129,11 +129,14 @@ function setCenter (entries) {
       }
     });
     // Determine zoom factor
-    const page = window.location.pathname.split('/').length; // 3, 4, 5
+    let page = window.location.pathname.split('/').length; // 3, 4, 5
+    if (document.querySelector('#map.w-100')) {
+      page = 3;
+    }
     let zoom;
     switch (page) {
       case 3:
-        // Region page
+        // Region/Category page
         if (maximumDistance > 128) {
           zoom = 6;
         }
@@ -191,13 +194,15 @@ function setCenter (entries) {
   }
 }
 // Filter input
-function updateGUI () {
-  updateMap();
-  updateCount();
+function updateCount(count, selector) {
+  const filterSamp = document.querySelector('.filter-' + selector + ' samp');
+  if (filterSamp) {
+    filterSamp.textContent = count;
+  }
 }
-function updateMap () {
+
+function updateMap() {
   if (vectorLayer) {
-    // Update map, too
     const matches = [];
     vectorLayer.features.forEach(function(feature) {
       const entry = feature.attributes.entry;
@@ -216,49 +221,69 @@ function updateMap () {
   }
 }
 
-function updateCount () {
-  const filterSamp = document.querySelector('.filter samp');
-  if (filterSamp) {
-    let count = 0;
-    entries.forEach(function(entry) {
-      if (entry.getClientRects().length !== 0) {
+function updateGUI(count, selector) {
+  updateMap();
+  updateCount(count, selector);
+}
+
+function countShownItems(items) {
+  let count = 0;
+    items.forEach(function(item) {
+      if (item.getClientRects().length !== 0) {
         count++;
       }
     });
-    filterSamp.textContent = count;
-  }
+    return count;
 }
 
-function startFilter() {
-  if (!entries) {
-    entries = Array.from(document.querySelectorAll('li[data-lat]'));
-  }
-  const regex = new RegExp(this.value, 'i');
-  entries.forEach(function(entry) {
-    if (regex.test(entry.textContent)) {
-      entry.classList.remove('d-none');
+function toggleItemDisplay(value, items) {
+  const regex = new RegExp(value, 'i');
+  items.forEach(function(item) {
+    if (regex.test(item.textContent)) {
+      item.classList.remove('d-none');
     }
     else {
-      entry.classList.add('d-none');
+      item.classList.add('d-none');
     }
   });
-  updateGUI();
 }
-const filterInput = document.querySelector('.filter input');
-if (filterInput) {
-  filterInput.addEventListener('keyup', startFilter);
-  filterInput.addEventListener('keypress', function(event) {
+
+function query(selector) {
+  return Array.from(document.querySelectorAll(selector));
+}
+
+function startEntriesFilter() {
+  if (!entries) {
+    entries = query('li[data-lat]');
+  }
+  toggleItemDisplay(this.value, entries);
+  updateGUI(countShownItems(entries), 'entries');
+}
+
+function startCategoriesFilter() {
+  if (!categories) {
+    categories = query('.categories button, .categories a');
+  }
+  toggleItemDisplay(this.value, categories);
+  updateCount(countShownItems(categories), 'categories');
+}
+
+const filterInputs = query('.filter > input');
+filterInputs.forEach(function(input) {
+  const startFilter = input.parentElement.classList.contains('filter-entries') ? startEntriesFilter : startCategoriesFilter;
+  input.addEventListener('keyup', startFilter);
+  input.addEventListener('keypress', function(event) {
     if (event.keyCode === 13) {
       event.preventDefault();
     }
   });
-}
+});
 // Category buttons
-const buttons = Array.from(document.querySelectorAll('.categories button'));
+const buttons = query('.categories button');
 buttons.forEach(function(button) {
   button.onclick = function () {
     if (!entries) {
-      entries = Array.from(document.querySelectorAll('li[data-lat]'));
+      entries = query('li[data-lat]');
     }
     let showAll = true;
     if (button.classList.contains('active')) {
@@ -292,7 +317,7 @@ buttons.forEach(function(button) {
       }
     });
     button.classList.toggle('active');
-    updateGUI();
+    updateGUI(countShownItems(entries), 'entries');
   }
 });
 // Map
@@ -316,7 +341,7 @@ function buildMap() {
   projectTo = map.getProjectionObject(); // The map projection (Spherical Mercator)
 
   if (!entries) {
-    entries = Array.from(document.querySelectorAll('li[data-lat]'));
+    entries = query('li[data-lat]');
   }
   entries.forEach(function(entry) {
     const lat = entry.dataset.lat;
@@ -334,8 +359,6 @@ function buildMap() {
       vectorLayer.addFeatures(feature);
     }
   });
-  setCenter(entries);
-
   // Add a selector control to the vectorLayer with popup functions
   const controls = {
     selector: new OpenLayers.Control.SelectFeature(vectorLayer, { onSelect: createPopup, onUnselect: destroyPopup })
@@ -418,7 +441,7 @@ function buildMap() {
       geolocationAlert();
     }
   }
-  updateGUI();
+  updateMap();
 }
 const mapButton = document.querySelector('#map button');
 if (mapButton) {

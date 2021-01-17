@@ -7,7 +7,9 @@
 {{- $city := index $dirs 1 }}
 {{- $location := index .Site.Data $main $city .File.BaseFileName }}
 {{- $nameSlice = $nameSlice | append .Title }}
-{{- $shopSlice = $shopSlice | append (printf "#%s" $location.shop) }}
+{{- if $location.shop }}
+  {{- $shopSlice = $shopSlice | append (printf "#%s" $location.shop) }}
+{{- end }}
 {{- end }}
 {{- $nameSlice = $nameSlice | append $shopSlice}}
 {{- jsonify (sort (uniq $nameSlice)) -}}

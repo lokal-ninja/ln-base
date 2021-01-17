@@ -1,39 +1,44 @@
 {{- define "title" -}}
-{{ .Title }} - {{ .Parent.Title }} - {{ .Site.Title }} | {{ .Site.Params.site }}
+{{ .Title }} ({{ .Params.shop }}) - {{ .Parent.Title }} - {{ .Site.Title }} | {{ .Site.Params.site }}
 {{- end }}
 {{- define "heading" -}}
-Einkaufen bei {{ .Title }}
+Einkaufen bei {{ .Title }} ({{ .Params.shop }})
 {{- end }}
 {{ define "main" }}
 {{- $dirs := split .File.Dir "/" }}
 {{- $main := index $dirs 0 }}
 {{- $city := index $dirs 1 }}
 {{- $location := index .Site.Data $main $city .File.BaseFileName }}
-<section id="infos" class="row">
-  <div class="col-md-6">
+<div class="row">
+  <section id="infos" class="col-md-6">
+    <h2 class="visually-hidden">Infos</h2>
     <aside>
+      {{- range where ($.Site.GetPage "taxonomyTerm" "shops").Pages ".Title" .Params.shop }}
+      <p><samp>{{ $.Params.shop }}<svg class="icon" role="img" aria-hidden="true"><use href={{ printf "%s%s" "/img/sprite.svg#" .Params.icon | relURL }}></use></svg></samp> in <a href="/{{ .Site.Params.repo }}/{{ $city }}/#{{ $.Params.shop }}">↶ {{ $.Parent.Title }}</a> oder <a href="/{{ .Site.Params.repo }}/{{ $.Params.shop | urlize }}/">↺ {{ .Site.Title }}</a></p>
+      {{- end }}
       <ul class="list-unstyled">
         <li>Adresse: {{ $location.street }} {{ $location.housenumber }} in {{ $location.postcode }} {{ $location.city }}</li>
-        {{ with $location.opening_hours }}<li>Öffnungszeiten: <span id="opening-hours">{{ . }}</span></li>{{ end }}
-        {{ with $location.phone }}<li>Telefon: <a href="tel:{{ urlize . }}">{{ . }}</a></li>{{ end }}
-        {{ with $location.website }}<li>Webseite: <a href="{{ . }}" rel="nofollow noopener">{{ . }}</a></li>{{ end }}
+        {{- with $location.opening_hours }}<li>Öffnungszeiten: <span id="opening-hours">{{ . }}</span></li>{{ end }}
+        {{- with $location.phone }}<li>Telefon: <a href="tel:{{ urlize . }}">{{ . }}</a></li>{{ end }}
+        {{- with $location.website }}<li>Webseite: <a href="{{ . }}" rel="nofollow noopener">{{ . }}</a></li>{{ end }}
         <li hidden data-lat="{{ $location.latitude }}" data-lon="{{ $location.longitude }}"><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>
       </ul>
     </aside>
-  </div>
-  <div class="col-md-6 mt-sm-1">
+  </section>
+  <section class="col-md-6 mt-sm-1">
+    <h2 class="visually-hidden">Karte</h2>
     <div id="map" class="is-overlay">
       {{ partialCached "load-btn.html" . -}}
       <a href="https://www.openstreetmap.org/{{ $location.type }}/{{ $location.id }}" rel="nofollow noopener">OpenStreetMap ↗</a>
       <a href="https://www.google.com/maps/dir//{{ replace $location.street " " "%20" }}%20{{ replace $location.housenumber " " "%20" }},{{ replace $location.postcode " " "%20" }}%20{{ replace $location.city " " "%20" }}" rel="nofollow noopener">Google Maps ↗</a>
       {{ partialCached "locate-btn.html" . -}}
     </div>
-  </div>
-</section>
-{{ partialCached "chat.html" . -}}
+  </section>
+</div>
 <article id="beschreibung" class="mt-1">
   {{ with .Content }}{{ . }}{{ else }}<aside><p>Es gibt noch keinen Text über {{ .Title }} in {{ .Parent.Title }}. Du kannst eine Beschreibung <a href="https://github.com/{{ .Site.Params.org }}/{{ .Site.Params.repo }}/edit/master/content/{{ with .File }}{{ .Dir }}{{ end }}{{ .File.BaseFileName }}.md" rel="nofollow noopener">hier ↗</a> eintragen 🙂</p></aside>{{ end }}
 </article>
+{{ partialCached "chat.html" . -}}
 {{- if (or .NextInSection .PrevInSection) }}
 <nav aria-label="Wechsle zu vorherigem oder nächsten Geschäft in {{ .Parent.Title }}">
   <ul>

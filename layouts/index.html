@@ -5,24 +5,30 @@
 Orte mit Geschäften in {{ .Site.Title }}
 {{- end }}
 {{ define "main" }}
-<section id="infos">
-  <div class="row">
-    <div class="col-md-6 content">
-      {{ .Content }}
+<div class="row">
+  <section id="infos" class="col-md-6 categories">
+    <h2 class="visually-hidden">Kategorien</h2>
+    <div class="filter filter-categories">
+      <input type="text" placeholder="Name filtern..." aria-label="Name filtern...">
+      <div><samp>{{ len (.Site.GetPage "taxonomyTerm" "shops").Pages }}</samp>Kategorien</div>
     </div>
-    <div class="col-md-6 mt-sm-1">
-      <div id="map" class="is-overlay">
-        {{ partialCached "load-btn.html" . -}}
-        <a href="https://www.openstreetmap.org/search?query={{ .Site.Title }}" rel="nofollow noopener">OpenStreetMap ↗</a>
-        <a href="https://www.google.com/maps/dir//{{ .Site.Title }}" rel="nofollow noopener">Google Maps ↗</a>
-        {{ partialCached "locate-btn.html" . -}}
-      </div>
+    {{- range (.Site.GetPage "taxonomyTerm" "shops").Pages }}
+    <a href="{{ .RelPermalink }}">{{ .Title }}<svg class="icon" role="img" aria-hidden="true"><use href={{ printf "%s%s" "/img/sprite.svg#" .Params.icon | relURL }}></use></svg></a>
+    {{- end }}
+  </section>
+  <section class="col-md-6 mt-sm-1">
+    <h2 class="visually-hidden">Karte</h2>
+    <div id="map" class="is-overlay">
+      {{ partialCached "load-btn.html" . -}}
+      <a href="https://www.openstreetmap.org/search?query={{ .Site.Title }}" rel="nofollow noopener">OpenStreetMap ↗</a>
+      <a href="https://www.google.com/maps/dir//{{ .Site.Title }}" rel="nofollow noopener">Google Maps ↗</a>
+      {{ partialCached "locate-btn.html" . -}}
     </div>
-  </div>
-</section>
-{{ partialCached "chat.html" . -}}
+  </section>
+</div>
 <section id="eintraege">
-  <div class="filter">
+  <h2 class="visually-hidden">Einträge</h2>
+  <div class="filter filter-entries">
     <input type="text" placeholder="Name filtern..." aria-label="Name filtern...">
     <div><samp>{{ len (.Site.GetPage "section" "cities").Sections }}</samp>Orte</div>
   </div>
@@ -32,6 +38,7 @@ Orte mit Geschäften in {{ .Site.Title }}
     {{- end }}
   </ul>
 </section>
+{{ partialCached "chat.html" . -}}
 {{- end }}
 {{- define "back" }}
 <nav aria-label="Wechsle zur Startseite oder springe nach oben">

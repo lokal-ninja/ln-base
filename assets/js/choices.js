@@ -1,4 +1,4 @@
-/*! choices.js v9.0.1 | © 2020 Josh Johnson | https://github.com/jshjohnson/Choices#readme */
+/*! choices.js v9.0.1 | © 2021 Josh Johnson | https://github.com/jshjohnson/Choices#readme */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
@@ -105,6 +105,7 @@ return /******/ (function(modules) { // webpackBootstrap
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.SCROLLING_SPEED = exports.SELECT_MULTIPLE_TYPE = exports.SELECT_ONE_TYPE = exports.TEXT_TYPE = exports.KEY_CODES = exports.ACTION_TYPES = exports.EVENTS = exports.DEFAULT_CONFIG = exports.DEFAULT_CLASSNAMES = void 0;
 
 var utils_1 = __webpack_require__(1);
 
@@ -239,6 +240,7 @@ exports.SCROLLING_SPEED = 4;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.diff = exports.cloneObject = exports.existsInArray = exports.dispatchEvent = exports.sortByScore = exports.sortByAlpha = exports.strToEl = exports.sanitise = exports.isScrolledIntoView = exports.getAdjacentEl = exports.wrap = exports.isType = exports.getType = exports.generateId = exports.generateChars = exports.getRandomNumber = void 0;
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 exports.getRandomNumber = function (min, max) {
@@ -598,7 +600,7 @@ function createStore(reducer, preloadedState, enhancer) {
     }
 
     if (isDispatching) {
-      throw new Error('You may not call store.subscribe() while the reducer is executing. ' + 'If you would like to be notified after the store has been updated, subscribe from a ' + 'component and invoke store.getState() in the callback to access the latest state. ' + 'See https://redux.js.org/api-reference/store#subscribe(listener) for more details.');
+      throw new Error('You may not call store.subscribe() while the reducer is executing. ' + 'If you would like to be notified after the store has been updated, subscribe from a ' + 'component and invoke store.getState() in the callback to access the latest state. ' + 'See https://redux.js.org/api-reference/store#subscribelistener for more details.');
     }
 
     var isSubscribed = true;
@@ -610,13 +612,14 @@ function createStore(reducer, preloadedState, enhancer) {
       }
 
       if (isDispatching) {
-        throw new Error('You may not unsubscribe from a store listener while the reducer is executing. ' + 'See https://redux.js.org/api-reference/store#subscribe(listener) for more details.');
+        throw new Error('You may not unsubscribe from a store listener while the reducer is executing. ' + 'See https://redux.js.org/api-reference/store#subscribelistener for more details.');
       }
 
       isSubscribed = false;
       ensureCanMutateNextListeners();
       var index = nextListeners.indexOf(listener);
       nextListeners.splice(index, 1);
+      currentListeners = null;
     };
   }
   /**
@@ -906,6 +909,7 @@ function combineReducers(reducers) {
       hasChanged = hasChanged || nextStateForKey !== previousStateForKey;
     }
 
+    hasChanged = hasChanged || finalReducerKeys.length !== Object.keys(state).length;
     return hasChanged ? nextState : state;
   };
 }
@@ -1115,6 +1119,7 @@ var __importDefault = this && this.__importDefault || function (mod) {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.defaultState = void 0;
 
 var redux_1 = __webpack_require__(3);
 
@@ -1191,14 +1196,14 @@ function () {
     get: function get() {
       return this.element.dataset.choice === 'active';
     },
-    enumerable: true,
+    enumerable: false,
     configurable: true
   });
   Object.defineProperty(WrappedElement.prototype, "dir", {
     get: function get() {
       return this.element.dir;
     },
-    enumerable: true,
+    enumerable: false,
     configurable: true
   });
   Object.defineProperty(WrappedElement.prototype, "value", {
@@ -1209,7 +1214,7 @@ function () {
       // you must define setter here otherwise it will be readonly property
       this.element.value = value;
     },
-    enumerable: true,
+    enumerable: false,
     configurable: true
   });
 
@@ -1539,7 +1544,7 @@ function () {
 
       });
     },
-    enumerable: true,
+    enumerable: false,
     configurable: true
   });
 
@@ -2220,9 +2225,11 @@ function () {
         normalChoices = _b.normalChoices; // If sorting is enabled or the user is searching, filter choices
 
 
-    if (this.config.shouldSort) {
-      normalChoices.sort(filter);
-    }
+    if (this._isSearching
+    /*this.config.shouldSort*/
+    ) {
+        normalChoices.sort(filter);
+      }
 
     var choiceLimit = rendererableChoices.length; // Prepend placeholeder
 
@@ -2591,8 +2598,8 @@ function () {
 
     var count = 0;
 
-    for (var i = 0, j = haystack.length; i < j; i++) {
-      var entry = haystack[i];
+    for (var i_1 = 0, j = haystack.length; i_1 < j; i_1++) {
+      var entry = haystack[i_1];
 
       if (kmpSearch(needle, entry.value.toLowerCase()) != -1) {
         //const choice: Choice = entry;
@@ -2604,6 +2611,28 @@ function () {
           break;
         }
       }
+    } // Sort
+
+
+    results.sort(function (a, b) {
+      var aIndex = a.item.value.toLowerCase().indexOf(needle);
+      var bIndex = b.item.value.toLowerCase().indexOf(needle);
+
+      if (aIndex < bIndex) {
+        return -1;
+      }
+
+      if (aIndex > bIndex) {
+        return 1;
+      }
+
+      return 0;
+    }); // Give score
+
+    var score = 0;
+
+    for (var i = 0; i < results.length; i++) {
+      results[i].item.score = ++score;
     }
     /*
     const keys = [...this.config.searchFields];
@@ -3728,17 +3757,19 @@ function getKeys(target) {
 	return Object.keys(target).concat(getEnumerableOwnPropertySymbols(target))
 }
 
-// Protects from prototype poisoning and unexpected merging up the prototype chain.
-function propertyIsUnsafe(target, key) {
+function propertyIsOnObject(object, property) {
 	try {
-		return (key in target) // Properties are safe to merge if they don't exist in the target yet,
-			&& !(Object.hasOwnProperty.call(target, key) // unsafe if they exist up the prototype chain,
-				&& Object.propertyIsEnumerable.call(target, key)) // and also unsafe if they're nonenumerable.
-	} catch (unused) {
-		// Counterintuitively, it's safe to merge any property on a target that causes the `in` operator to throw.
-		// This happens when trying to copy an object in the source over a plain string in the target.
+		return property in object
+	} catch(_) {
 		return false
 	}
+}
+
+// Protects from prototype poisoning and unexpected merging up the prototype chain.
+function propertyIsUnsafe(target, key) {
+	return propertyIsOnObject(target, key) // Properties are safe to merge if they don't exist in the target yet,
+		&& !(Object.hasOwnProperty.call(target, key) // unsafe if they exist up the prototype chain,
+			&& Object.propertyIsEnumerable.call(target, key)) // and also unsafe if they're nonenumerable.
 }
 
 function mergeObject(target, source, options) {
@@ -3753,10 +3784,10 @@ function mergeObject(target, source, options) {
 			return
 		}
 
-		if (!options.isMergeableObject(source[key]) || !target[key]) {
-			destination[key] = cloneUnlessOtherwiseSpecified(source[key], options);
-		} else {
+		if (propertyIsOnObject(target, key) && options.isMergeableObject(source[key])) {
 			destination[key] = getMergeFunction(key, options)(target[key], source[key], options);
+		} else {
+			destination[key] = cloneUnlessOtherwiseSpecified(source[key], options);
 		}
 	});
 	return destination
@@ -3864,7 +3895,7 @@ function () {
     get: function get() {
       return this._store.getState();
     },
-    enumerable: true,
+    enumerable: false,
     configurable: true
   });
   Object.defineProperty(Store.prototype, "items", {
@@ -3874,7 +3905,7 @@ function () {
     get: function get() {
       return this.state.items;
     },
-    enumerable: true,
+    enumerable: false,
     configurable: true
   });
   Object.defineProperty(Store.prototype, "activeItems", {
@@ -3886,7 +3917,7 @@ function () {
         return item.active === true;
       });
     },
-    enumerable: true,
+    enumerable: false,
     configurable: true
   });
   Object.defineProperty(Store.prototype, "highlightedActiveItems", {
@@ -3898,7 +3929,7 @@ function () {
         return item.active && item.highlighted;
       });
     },
-    enumerable: true,
+    enumerable: false,
     configurable: true
   });
   Object.defineProperty(Store.prototype, "choices", {
@@ -3908,7 +3939,7 @@ function () {
     get: function get() {
       return this.state.choices;
     },
-    enumerable: true,
+    enumerable: false,
     configurable: true
   });
   Object.defineProperty(Store.prototype, "activeChoices", {
@@ -3920,7 +3951,7 @@ function () {
         return choice.active === true;
       });
     },
-    enumerable: true,
+    enumerable: false,
     configurable: true
   });
   Object.defineProperty(Store.prototype, "selectableChoices", {
@@ -3932,7 +3963,7 @@ function () {
         return choice.disabled !== true;
       });
     },
-    enumerable: true,
+    enumerable: false,
     configurable: true
   });
   Object.defineProperty(Store.prototype, "searchableChoices", {
@@ -3944,7 +3975,7 @@ function () {
         return choice.placeholder !== true;
       });
     },
-    enumerable: true,
+    enumerable: false,
     configurable: true
   });
   Object.defineProperty(Store.prototype, "placeholderChoice", {
@@ -3956,7 +3987,7 @@ function () {
         return choice.placeholder === true;
       });
     },
-    enumerable: true,
+    enumerable: false,
     configurable: true
   });
   Object.defineProperty(Store.prototype, "groups", {
@@ -3966,7 +3997,7 @@ function () {
     get: function get() {
       return this.state.groups;
     },
-    enumerable: true,
+    enumerable: false,
     configurable: true
   });
   Object.defineProperty(Store.prototype, "activeGroups", {
@@ -3986,7 +4017,7 @@ function () {
         return isActive && hasActiveOptions;
       }, []);
     },
-    enumerable: true,
+    enumerable: false,
     configurable: true
   });
   /**
@@ -4102,6 +4133,7 @@ var __spreadArrays = this && this.__spreadArrays || function () {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.defaultState = void 0;
 exports.defaultState = [];
 
 function items(state, action) {
@@ -4195,6 +4227,7 @@ var __spreadArrays = this && this.__spreadArrays || function () {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.defaultState = void 0;
 exports.defaultState = [];
 
 function groups(state, action) {
@@ -4252,6 +4285,7 @@ var __spreadArrays = this && this.__spreadArrays || function () {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.defaultState = void 0;
 exports.defaultState = [];
 
 function choices(state, action) {
@@ -4333,11 +4367,12 @@ function choices(state, action) {
           // within filtered results
 
           choice.active = filterChoicesAction_1.results.some(function (_a) {
-            var item = _a.item,
-                score = _a.score;
+            var item = _a.item
+            /*, score*/
+            ;
 
             if (item.id === choice.id) {
-              choice.score = score;
+              //choice.score = score;
               return true;
             }
 
@@ -4381,6 +4416,7 @@ exports.default = choices;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.defaultState = void 0;
 exports.defaultState = false;
 
 var general = function general(state, action) {
@@ -4419,6 +4455,7 @@ var __importDefault = this && this.__importDefault || function (mod) {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.WrappedSelect = exports.WrappedInput = exports.List = exports.Input = exports.Container = exports.Dropdown = void 0;
 
 var dropdown_1 = __importDefault(__webpack_require__(18));
 
@@ -4475,7 +4512,7 @@ function () {
     get: function get() {
       return this.element.getBoundingClientRect().bottom;
     },
-    enumerable: true,
+    enumerable: false,
     configurable: true
   });
 
@@ -4723,7 +4760,7 @@ function () {
     set: function set(placeholder) {
       this.element.placeholder = placeholder;
     },
-    enumerable: true,
+    enumerable: false,
     configurable: true
   });
   Object.defineProperty(Input.prototype, "value", {
@@ -4733,7 +4770,7 @@ function () {
     set: function set(value) {
       this.element.value = value;
     },
-    enumerable: true,
+    enumerable: false,
     configurable: true
   });
 
@@ -5023,7 +5060,7 @@ function (_super) {
       this.element.setAttribute('value', value);
       this.element.value = value;
     },
-    enumerable: true,
+    enumerable: false,
     configurable: true
   });
   return WrappedInput;
@@ -5100,14 +5137,14 @@ function (_super) {
       return this.element.querySelector('option[value=""]') || // Backward compatibility layer for the non-standard placeholder attribute supported in older versions.
       this.element.querySelector('option[placeholder]');
     },
-    enumerable: true,
+    enumerable: false,
     configurable: true
   });
   Object.defineProperty(WrappedSelect.prototype, "optionGroups", {
     get: function get() {
       return Array.from(this.element.getElementsByTagName('OPTGROUP'));
     },
-    enumerable: true,
+    enumerable: false,
     configurable: true
   });
   Object.defineProperty(WrappedSelect.prototype, "options", {
@@ -5133,7 +5170,7 @@ function (_super) {
       });
       this.appendDocFragment(fragment);
     },
-    enumerable: true,
+    enumerable: false,
     configurable: true
   });
 
@@ -5433,6 +5470,7 @@ exports.default = templates;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.clearChoices = exports.activateChoices = exports.filterChoices = exports.addChoice = void 0;
 
 var constants_1 = __webpack_require__(0);
 
@@ -5494,6 +5532,7 @@ exports.clearChoices = function () {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.highlightItem = exports.removeItem = exports.addItem = void 0;
 
 var constants_1 = __webpack_require__(0);
 
@@ -5545,6 +5584,7 @@ exports.highlightItem = function (id, highlighted) {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.addGroup = void 0;
 
 var constants_1 = __webpack_require__(0);
 
@@ -5572,6 +5612,7 @@ exports.addGroup = function (_a) {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.setIsLoading = exports.resetTo = exports.clearAll = void 0;
 
 var constants_1 = __webpack_require__(0);
 

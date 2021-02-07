@@ -35,9 +35,12 @@ Einkaufen bei {{ .Title }} ({{ .Params.shop }})
     </div>
   </section>
 </div>
-<article id="beschreibung" class="mt-1">
-  {{ with .Content }}{{ . }}{{ else }}<aside><p>Es gibt noch keinen Text über {{ .Title }} in {{ .Parent.Title }}. Du kannst eine Beschreibung <a href="https://github.com/{{ .Site.Params.org }}/{{ .Site.Params.repo }}/edit/master/content/{{ with .File }}{{ .Dir }}{{ end }}{{ .File.BaseFileName }}.md" rel="nofollow noopener">hier ↗</a> eintragen 🙂</p></aside>{{ end }}
-</article>
+<div class="description-box mt-1">
+  <article id="beschreibung">
+    {{ with .Content }}{{ . }}{{ else }}<aside><p>Es gibt noch keinen Text über {{ .Title }} in {{ .Parent.Title }}. Du kannst eine Beschreibung <a href="https://github.com/{{ .Site.Params.org }}/{{ .Site.Params.repo }}/edit/master/content/{{ with .File }}{{ .Dir }}{{ end }}{{ .File.BaseFileName }}.md" rel="nofollow noopener">hier ↗</a> eintragen 🙂</p></aside>{{ end }}
+  </article>
+  <img loading="lazy" class="mt-sm-1" src={{ printf "https://wttr.in/%.2f,%.2f_0pQ_transparency=200_lang=%s.png" $location.latitude $location.longitude .Site.LanguageCode }}>
+</div>
 {{ partialCached "chat.html" . -}}
 {{- if (or .NextInSection .PrevInSection) }}
 <nav aria-label="Wechsle zu vorherigem oder nächsten Geschäft in {{ .Parent.Title }}">

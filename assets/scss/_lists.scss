@@ -28,4 +28,29 @@
     .hide {
         display: none;
     }
+
+    details {
+        color: var(--color);
+        font-weight: bold;
+
+        li > a {
+            font-weight: normal;
+        }
+
+        > summary {
+            list-style: none;
+        }
+    }
+    
+    summary::-webkit-details-marker {
+        display: none;
+    }
+    
+    summary::after {
+        content: ' ►';
+    }
+    
+    details[open] summary:after {
+        content: " ▼";
+    }
 }

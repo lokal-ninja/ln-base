@@ -1,7 +1,7 @@
 #map {
   height: 312px;
   max-width: 100%;
-  border: 1px solid $black;
+  border: 1px solid var(--color-text);
   position: relative;
 
   &.is-overlay {
@@ -20,13 +20,13 @@
 
   > a,
   > button {
-    background-color: $white;
-    border-color: $white;
-    color: $black;
+    background-color: var(--color-bg);
+    border-color: var(--color-bg);
+    color: var(--color-text);
   }
 
   > a {
-    border-radius: $border-radius;
+    border-radius: var(--border-radius);
     margin: 1.5rem 0 .5rem;
     padding: 0.75rem 1.5rem;
   }

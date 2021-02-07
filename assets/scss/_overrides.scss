@@ -22,3 +22,10 @@
 .choices__list--dropdown .choices__item--selectable {
     padding-right: 25px;
 }
+
+@media (prefers-color-scheme: dark) {
+    .choices__list--dropdown .choices__item,
+    .choices__placeholder {
+        color: var(--color-bg);
+    }
+}

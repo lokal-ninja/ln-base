@@ -4,7 +4,7 @@
 }
 
 #chatbox > li:nth-child(odd) {
-    background: $color-bg-secondary;
+    background: var(--color-bg-secondary);
 }
 
 #chat-btn {

@@ -81,18 +81,6 @@
       <hr>
       {{ partialCached "footer.html" . }}
     </div>
-    <script>
-    if (!'fetch' in window) {
-      // Remove features for unupported browsers
-      var features = ['suche', 'map'];
-      for (var i = 0; i < features.length; i++) {
-        var feature = features[i];
-        if (feature) {
-          feature.parentElement.removeChild(feature);
-        }
-      }
-    }
-    </script>
     {{- $openinghours := resources.Get "/js/simple-opening-hours.js" }}
     {{- $choices := resources.Get "/js/choices.js" }}
     {{- $slugo := resources.Get "/js/slugo.js" }}

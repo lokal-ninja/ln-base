@@ -43,12 +43,33 @@ Shops in {{ .Title }}
     <div><samp>{{ len .Pages }}</samp>entries</div>
   </div>
   <ul class="columns">
+  {{- $entries := slice }}
     {{- range .Pages }}
     {{- $dirs := split .File.Dir "/" }}
     {{- $main := index $dirs 0 }}
     {{- $city := index $dirs 1 }}
     {{- $location := index .Site.Data "cities" $city .File.BaseFileName }}
-    <li data-shop="{{ .Params.shop }}" data-lat="{{ $location.latitude }}" data-lon="{{ $location.longitude }}"><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>
+    {{- $entry := dict "shop" .Params.shop "lat" $location.latitude "lon" $location.longitude "link" .RelPermalink "title" .Title "street" $location.street }}
+    {{- $entries = $entries | append $entry }}
+    {{- end }}
+    {{- $doneEntries := slice }}
+    {{- range $entries }}
+    {{- $titleEntries := where $entries "title" .title }}
+    {{- if (gt (len $titleEntries) 1) }}
+    {{- if not (in $doneEntries .title) }}
+    {{- $doneEntries = $doneEntries | append .title }}
+    <details>
+      <summary data-shop="{{ .shop }}">{{ .title }}</summary>
+      <ul class="list-unstyled">
+        {{- range $titleEntries }}
+        <li data-lat="{{ .lat }}" data-lon="{{ .lon }}"><a href="{{ .link }}">> {{ .street }}</a></li>
+        {{- end }}
+      </ul>
+    </details>
+    {{- end }}
+    {{- else }}
+    <li data-shop="{{ .shop }}" data-lat="{{ .lat }}" data-lon="{{ .lon }}"><a href="{{ .link }}">{{ .title }}</a></li>
+    {{- end }}
     {{- end }}
   </ul>
   <p>Missing an entry? Please add it to the free database at <a href="https://www.openstreetmap.org/" rel="nofollow noopener">OpenStreetMap ↗</a>!</p>

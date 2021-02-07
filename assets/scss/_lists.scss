@@ -16,14 +16,16 @@
         columns: 5 183px;
     }
 
-    > li {
+    summary,
+    li {
         word-break: break-word;
     }
 
-    > li.show {
+    .show {
         display: list-item;
     }
-    > li.hide {
+    
+    .hide {
         display: none;
     }
 }

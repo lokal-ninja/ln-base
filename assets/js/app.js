@@ -253,9 +253,7 @@ function query(selector) {
 }
 
 function startEntriesFilter() {
-  if (!entries) {
-    entries = query('li[data-lat]');
-  }
+  entries = query('li[data-lat]:not(.columns details li), .columns summary');
   toggleItemDisplay(this.value, entries);
   updateGUI(countShownItems(entries), 'entries');
 }
@@ -282,9 +280,7 @@ filterInputs.forEach(function(input) {
 const buttons = query('.categories button');
 buttons.forEach(function(button) {
   button.onclick = function () {
-    if (!entries) {
-      entries = query('li[data-lat]');
-    }
+    entries = query('li[data-lat]:not(.columns details li), .columns summary');
     let showAll = true;
     if (button.classList.contains('active')) {
       // Check sibling buttons if there is any other active
@@ -340,9 +336,7 @@ function buildMap() {
   epsg4326 = new OpenLayers.Projection('EPSG:4326'); // WGS 1984 projection
   projectTo = map.getProjectionObject(); // The map projection (Spherical Mercator)
 
-  if (!entries) {
-    entries = query('li[data-lat]');
-  }
+  entries = query('li[data-lat]');
   entries.forEach(function(entry) {
     const lat = entry.dataset.lat;
     const lon = entry.dataset.lon;

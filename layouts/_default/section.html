@@ -49,7 +49,11 @@ Shops in {{ .Title }}
     {{- $main := index $dirs 0 }}
     {{- $city := index $dirs 1 }}
     {{- $location := index .Site.Data "cities" $city .File.BaseFileName }}
-    {{- $entry := dict "shop" .Params.shop "lat" $location.latitude "lon" $location.longitude "link" .RelPermalink "title" .Title "street" $location.street }}
+    {{- $street := $location.street }}
+    {{- if not $street }}
+    {{- $street = "(ohne Straße)" }}
+    {{- end }}
+    {{- $entry := dict "shop" .Params.shop "lat" $location.latitude "lon" $location.longitude "link" .RelPermalink "title" .Title "street" $street }}
     {{- $entries = $entries | append $entry }}
     {{- end }}
     {{- $doneEntries := slice }}
@@ -62,7 +66,7 @@ Shops in {{ .Title }}
       <summary data-shop="{{ .shop }}">{{ .title }}</summary>
       <ul class="list-unstyled">
         {{- range $titleEntries }}
-        <li data-lat="{{ .lat }}" data-lon="{{ .lon }}"><a href="{{ .link }}">> {{ .street }}</a></li>
+        <li data-lat="{{ .lat }}" data-lon="{{ .lon }}"><a href="{{ .link }}">- {{ .street }}</a></li>
         {{- end }}
       </ul>
     </details>

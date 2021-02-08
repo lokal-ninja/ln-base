@@ -82,7 +82,11 @@ Shops in {{ .Title }}
   <article id="description">
     {{ with .Content }}{{ . }}{{ else }}<aside><p>There is no text on the general purchasing situation in {{ .Title }} yet. You can enter a description <a href="https://github.com/{{ .Site.Params.org }}/{{ .Site.Params.repo }}/edit/master/content/{{ with .File }}{{ .Dir }}{{ end }}_index.md" rel="nofollow noopener">here ↗</a> 🙂</p></aside>{{ end }}
   </article>
-  <img loading="lazy" class="mt-sm-1" src={{ printf "https://wttr.in/%.2f,%.2f_0pQ_transparency=200_lang=%s.png" .Params.latitude .Params.longitude .Site.LanguageCode }}>
+  {{- $coordsLocation := .Title }}
+  {{- if .Params.latitude }}
+  {{- $coordsLocation = printf "%.2f,%.2f" .Params.latitude .Params.longitude }}
+  {{- end }}
+  <img loading="lazy" class="mt-sm-1" src={{ printf "https://wttr.in/%s_0pQ_transparency=200_lang=%s.png" $coordsLocation .Site.LanguageCode }}>
 </div>
 {{ partialCached "chat.html" . -}}
 {{- end }}

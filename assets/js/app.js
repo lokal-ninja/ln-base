@@ -276,6 +276,16 @@ filterInputs.forEach(function(input) {
     }
   });
 });
+
+const detailsElements = query('.columns details');
+detailsElements.forEach(function(element) {
+  element.onclick = function () {
+    window.setTimeout(function () {
+      updateMap();
+    },
+    100);
+  }
+});
 // Category buttons
 const buttons = query('.categories button');
 buttons.forEach(function(button) {

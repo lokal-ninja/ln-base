@@ -2,11 +2,11 @@
 {{ .Title }} - {{ .Site.Title }} | {{ .Site.Params.site }}
 {{- end }}
 {{- define "heading" -}}
-{{ .Title }} Geschäfte in {{ .Site.Title }}
+{{ .Title }} shops in {{ .Site.Title }}
 {{- end }}
 {{ define "main" }}
 <section>
-  <h2 class="visually-hidden">Karte</h2>
+  <h2 class="visually-hidden">Map</h2>
   <div id="map" class="is-overlay w-100">
     {{ partialCached "load-btn.html" . -}}
     <a href="https://www.openstreetmap.org/search?query={{ .Title }}" rel="nofollow noopener">OpenStreetMap ↗</a>
@@ -14,11 +14,11 @@
     {{ partialCached "locate-btn.html" . -}}
   </div>
 </section>
-<section id="eintraege">
-  <h2 class="visually-hidden">Einträge</h2>
+<section id="entries">
+  <h2 class="visually-hidden">Entries</h2>
   <div class="filter filter-entries">
-    <input type="text" placeholder="Name filtern..." aria-label="Name filtern...">
-    <div><samp>{{ len (where .Site.Pages "Params.shop" .Title) }}</samp>Einträge</div>
+    <input type="text" placeholder="Filter name..." aria-label="Filter name...">
+    <div><samp>{{ len (where .Site.Pages "Params.shop" .Title) }}</samp>entries</div>
   </div>
   <ul class="columns">
     {{- range where .Site.Pages "Params.shop" .Title }}
@@ -29,18 +29,18 @@
     <li data-shop="{{ .Params.shop }}" data-lat="{{ $location.latitude }}" data-lon="{{ $location.longitude }}"><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>
     {{- end }}
   </ul>
-  <p>Fehlt ein Eintrag? Trage ihn bitte in die freie Datenbank der <a href="https://www.openstreetmap.org/" rel="nofollow noopener">OpenStreetMap ↗</a> ein!</p>
+  <p>Missing an entry? Please add it to the free database at <a href="https://www.openstreetmap.org/" rel="nofollow noopener">OpenStreetMap ↗</a>!</p>
 </section>
-<article id="beschreibung" class="mt-1">
-  {{ with .Content }}{{ . }}{{ else }}<aside><p>Es gibt noch keinen Text zur Kategorie {{ .Title }} in {{ .Site.Title }}. Du kannst eine Beschreibung <a href="https://github.com/{{ .Site.Params.org }}/{{ .Site.Params.repo }}/edit/master/content/{{ with .File }}{{ .Dir }}{{ end }}_index.md" rel="nofollow noopener">hier ↗</a> eintragen 🙂</p></aside>{{ end }}
+<article id="description" class="mt-1">
+  {{ with .Content }}{{ . }}{{ else }}<aside><p>There is no text on category {{ .Title }} in {{ .Site.Title }} yet. You can enter a description <a href="https://github.com/{{ .Site.Params.org }}/{{ .Site.Params.repo }}/edit/master/content/{{ with .File }}{{ .Dir }}{{ end }}_index.md" rel="nofollow noopener">here ↗</a> 🙂</p></aside>{{ end }}
 </article>
 {{ partialCached "chat.html" . -}}
 {{- end }}
 {{- define "back" }}
-<nav aria-label="Wechsle zu {{ .Site.Title }} oder springe nach oben">
+<nav aria-label="Change to {{ .Site.Title }} or jump to top">
   <ul>
-    <li><a href="/{{ .Site.Params.repo }}/">↶ zurück zu {{ .Site.Title }}</a></li>
-    <li><a href="#top">nach oben ↑</a></li>
+    <li><a href="/{{ .Site.Params.repo }}/">↶ back to {{ .Site.Title }}</a></li>
+    <li><a href="#top">to top ↑</a></li>
   </ul>
 </nav>
 {{- end }}

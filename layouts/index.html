@@ -7,17 +7,17 @@ Places with shops in {{ .Site.Title }}
 {{ define "main" }}
 <div class="row">
   <section id="infos" class="col-md-6 categories">
-    <h2 class="visually-hidden">Kategorien</h2>
+    <h2 class="visually-hidden">Categories</h2>
     <div class="filter filter-categories">
-      <input type="text" placeholder="Name filtern..." aria-label="Name filtern...">
-      <div><samp>{{ len (.Site.GetPage "taxonomyTerm" "shops").Pages }}</samp>Kategorien</div>
+      <input type="text" placeholder="Filter name..." aria-label="Filter name...">
+      <div><samp>{{ len (.Site.GetPage "taxonomyTerm" "shops").Pages }}</samp>categories</div>
     </div>
     {{- range (.Site.GetPage "taxonomyTerm" "shops").Pages }}
     <a href="{{ .RelPermalink }}">{{ .Title }}<svg class="icon" role="img" aria-hidden="true"><use href={{ printf "%s%s" "/img/sprite.svg#" .Params.icon | relURL }}></use></svg></a>
     {{- end }}
   </section>
   <section class="col-md-6 mt-sm-1">
-    <h2 class="visually-hidden">Karte</h2>
+    <h2 class="visually-hidden">Map</h2>
     <div id="map" class="is-overlay">
       {{ partialCached "load-btn.html" . -}}
       <a href="https://www.openstreetmap.org/search?query={{ .Site.Title }}" rel="nofollow noopener">OpenStreetMap ↗</a>

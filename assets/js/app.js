@@ -10,6 +10,9 @@ let shopsChoices;
 // Constants
 const SUBDOMAIN = window.location.hostname.split(".")[0];
 
+// Language
+let LANG;
+
 // Helpers
 // adopted from https://github.com/gabmontes/fast-haversine
 const R = 6378;
@@ -85,26 +88,26 @@ function loadScript(file) {
 }
 
 function geolocationError(error) {
-  let message = 'Standortabfrage nicht erfolgreich.';
+  let message = LANG.geolocationError.message;
   switch(error.code) {
     case error.PERMISSION_DENIED:
-      message = 'Nutzer verweigerte die Geolocationanfrage.';
+      message = LANG.geolocationError.permissionDenied;
       break;
     case error.POSITION_UNAVAILABLE:
-      message = 'Standortinformation nicht verfügbar.';
+      message = LANG.geolocationError.positionUnavailable;
       break;
     case error.TIMEOUT:
-      message = 'Zeitüberschreiung bei der Anfrage des Nutzerstandorts.';
+      message = LANG.geolocationError.timeout;
       break;
     case error.UNKNOWN_ERROR:
-      message = 'Ein unbekannter Fehler trat auf.';
+      message = LANG.geolocationError.unknownError;
       break;
   }
   alert(message);
 }
 
 function geolocationAlert() {
-  alert('Geolocation wird von deinem Browser nicht unterstützt.');
+  alert(LANG.geolocationAlert);
 }
 
 function setCenter(entries) {
@@ -266,66 +269,70 @@ function startCategoriesFilter() {
   updateCount(countShownItems(categories), 'categories');
 }
 
-const filterInputs = query('.filter > input');
-filterInputs.forEach(function(input) {
-  const startFilter = input.parentElement.classList.contains('filter-entries') ? startEntriesFilter : startCategoriesFilter;
-  input.addEventListener('keyup', startFilter);
-  input.addEventListener('keypress', function(event) {
-    if (event.keyCode === 13) {
-      event.preventDefault();
-    }
-  });
-});
-
-const detailsElements = query('.columns details');
-detailsElements.forEach(function(element) {
-  element.onclick = function () {
-    window.setTimeout(function () {
-      updateMap();
-    },
-    100);
-  }
-});
-// Category buttons
-const buttons = query('.categories button');
-buttons.forEach(function(button) {
-  button.onclick = function () {
-    entries = query('li[data-lat]:not(.columns details li), .columns summary');
-    let showAll = true;
-    if (button.classList.contains('active')) {
-      // Check sibling buttons if there is any other active
-      let count = 0;
-      for (let i = 0; i < buttons.length; i++) {
-        if (buttons[i].classList.contains('active') && ++count === 2) {
-          // We found at least one other active button
-          showAll = false;
-          break
-        }
-      }
-    }
-    entries.forEach(function(entry) {
-      if (button.classList.contains('active')) {
-        if (showAll) {
-          entry.classList.remove('show');
-          entry.classList.remove('hide');
-        }
-        else if (entry.dataset.shop === button.textContent) {
-          entry.classList.remove('show');
-          entry.classList.add('hide');
-        }
-      }
-      else if (entry.dataset.shop === button.textContent) {
-        entry.classList.remove('hide')
-        entry.classList.add('show');
-      }
-      else if (!entry.classList.contains('show')) {
-        entry.classList.add('hide')
+function setupFilters() {
+  const filterInputs = query('.filter > input');
+  filterInputs.forEach(function(input) {
+    const startFilter = input.parentElement.classList.contains('filter-entries') ? startEntriesFilter : startCategoriesFilter;
+    input.addEventListener('keyup', startFilter);
+    input.addEventListener('keypress', function(event) {
+      if (event.keyCode === 13) {
+        event.preventDefault();
       }
     });
-    button.classList.toggle('active');
-    updateGUI(countShownItems(entries), 'entries');
-  }
-});
+  });
+
+  const detailsElements = query('.columns details');
+  detailsElements.forEach(function(element) {
+    element.onclick = function () {
+      window.setTimeout(function () {
+        updateMap();
+      },
+      100);
+    }
+  });
+}
+// Category buttons
+function setupButtons() {
+  const buttons = query('.categories button');
+  buttons.forEach(function(button) {
+    button.onclick = function () {
+      entries = query('li[data-lat]:not(.columns details li), .columns summary');
+      let showAll = true;
+      if (button.classList.contains('active')) {
+        // Check sibling buttons if there is any other active
+        let count = 0;
+        for (let i = 0; i < buttons.length; i++) {
+          if (buttons[i].classList.contains('active') && ++count === 2) {
+            // We found at least one other active button
+            showAll = false;
+            break
+          }
+        }
+      }
+      entries.forEach(function(entry) {
+        if (button.classList.contains('active')) {
+          if (showAll) {
+            entry.classList.remove('show');
+            entry.classList.remove('hide');
+          }
+          else if (entry.dataset.shop === button.textContent) {
+            entry.classList.remove('show');
+            entry.classList.add('hide');
+          }
+        }
+        else if (entry.dataset.shop === button.textContent) {
+          entry.classList.remove('hide')
+          entry.classList.add('show');
+        }
+        else if (!entry.classList.contains('show')) {
+          entry.classList.add('hide')
+        }
+      });
+      button.classList.toggle('active');
+      updateGUI(countShownItems(entries), 'entries');
+    }
+  });
+}
 // Map
 // multiple markers with clickable popups
 // via http://harrywood.co.uk/maps/examples/openlayers/marker-popups.view.html
@@ -401,7 +408,7 @@ function buildMap() {
       userFeature = new OpenLayers.Feature.Vector(
         createGeometryPoint(longitude, latitude),
         {
-          link: 'Mein Standort'
+          link: LANG.myLocation
         },
         {
           externalGraphic: '/js/img/marker.png',
@@ -423,7 +430,7 @@ function buildMap() {
     }
     // Set button
     locateButton.classList.add('tracking');
-    locateButton.textContent = 'Tracken beenden';
+    locateButton.textContent = LANG.stopTracking;
   }
   let userFeature;
   let first = true;
@@ -437,7 +444,7 @@ function buildMap() {
       else {
         navigator.geolocation.clearWatch(watchID);
         this.classList.remove('tracking');
-        this.textContent = 'Standort tracken';
+        this.textContent = LANG.trackLocation;
         centering = true;
       }
     }
@@ -447,24 +454,27 @@ function buildMap() {
   }
   updateMap();
 }
-const mapButton = document.querySelector('#map button');
-if (mapButton) {
-  mapButton.onclick = function () {
-    // Hide buttons and overlay
-    const parent = mapButton.parentNode;
-    for (let i = 0; i < 3; i++) {
-      parent.children[i].style.display = 'none';
-    }
-    parent.classList.remove('is-overlay');
 
-    // Dont forget to show locate button
-    document.getElementById('locate-btn').style.display = 'inline-block';
+function setupMap() {
+  const mapButton = document.querySelector('#map button');
+  if (mapButton) {
+    mapButton.onclick = function () {
+      // Hide buttons and overlay
+      const parent = mapButton.parentNode;
+      for (let i = 0; i < 3; i++) {
+        parent.children[i].style.display = 'none';
+      }
+      parent.classList.remove('is-overlay');
 
-    loadScript('OpenLayers.js')
-    .then(function() {
-      buildMap();
-    });
-  };
+      // Dont forget to show locate button
+      document.getElementById('locate-btn').style.display = 'inline-block';
+
+      loadScript('OpenLayers.js')
+      .then(function() {
+        buildMap();
+      });
+    };
+  }
 }
 // Select to category
 function clickScrollCategory (category) {
@@ -478,12 +488,15 @@ function clickScrollCategory (category) {
     }
   }
 }
-window.addEventListener('DOMContentLoaded', function() {
-  const hash = window.location.hash;
-  if (hash) {
-    clickScrollCategory(decodeURIComponent(hash));
-  }
-});
+
+function setupClickScroll() {
+  window.addEventListener('DOMContentLoaded', function() {
+    const hash = window.location.hash;
+    if (hash) {
+      clickScrollCategory(decodeURIComponent(hash));
+    }
+  });
+}
 // Search
 async function fetchRegions() {
   const response = await fetch('/' + SUBDOMAIN + '.json');
@@ -513,111 +526,113 @@ async function fetchRegion (region) {
   });
 }
 
-const cities = document.getElementById('cities');
-if (cities) {
-  citiesChoices = new Choices(cities, {
-    placeholderValue: 'Ort auswählen',
-    searchFields: ['value'],
-    searchPlaceholderValue: 'Suchen...',
-    loadingText: 'Lädt...',
-    noResultsText: 'Keine Ergebnisse gefunden',
-    itemSelectText: '+',
-    noChoicesText: 'mit wenigstens drei Buchstaben',
-    renderChoiceLimit : 0,
-    searchResultLimit: 100,
-    shouldSort: false,
-    position: 'bottom'
-  })
-  .setChoices(function() {
-    return new Promise(function (resolve) {
-      resolve();
-    });
-  })
-  .then(function(instance) {
-    instance.containerOuter.element.addEventListener('click', function() {
-      // Load data after user input
-      instance.setChoices(async function() {     
-        return fetchRegions()
-        .then(async function(regions) {
-          const promises = regions.map(function(region) {
-            return fetchRegion(region);
-          });
-          return Promise.all(promises)
-          .then(function(result) {
-            let citiesArray = [];
-            result.forEach(function(array) {
-              if (array) {
-                citiesArray = citiesArray.concat(array);
-              }
-            });
-            return citiesArray;
-          })
-          .catch(function(error) {
-            console.error(error);
-          })
-        })
-      })
-      .then(function() {
-        // We have to re-set focus on input again
-        instance.input.element.focus();
+function setupSearch() {
+  const cities = document.getElementById('cities');
+  if (cities) {
+    citiesChoices = new Choices(cities, {
+      placeholderValue: LANG.choosePlace,
+      searchFields: ['value'],
+      searchPlaceholderValue: LANG.search,
+      loadingText: LANG.loading,
+      noResultsText: LANG.noResultsFound,
+      itemSelectText: '+',
+      noChoicesText: LANG.withAtLeastThreeLetters,
+      renderChoiceLimit : 0,
+      searchResultLimit: 100,
+      shouldSort: false,
+      position: 'bottom'
+    })
+    .setChoices(function() {
+      return new Promise(function (resolve) {
+        resolve();
       });
-    }, { once: true });
-    instance.passedElement.element.addEventListener('change', function(e) {
-      searchButton.disabled = false;
-      shopsChoices.clearStore();
-      shopsChoices.setChoices(async function() {
-        const city = instance.getValue();
-        return fetch('/' + city.customProperties.region + '/' + slugo(e.detail.value) + '/index.json')
-        .then(function(response) {
-          return response.json();
+    })
+    .then(function(instance) {
+      instance.containerOuter.element.addEventListener('click', function() {
+        // Load data after user input
+        instance.setChoices(async function() {
+          return fetchRegions()
+          .then(async function(regions) {
+            const promises = regions.map(function(region) {
+              return fetchRegion(region);
+            });
+            return Promise.all(promises)
+            .then(function(result) {
+              let citiesArray = [];
+              result.forEach(function(array) {
+                if (array) {
+                  citiesArray = citiesArray.concat(array);
+                }
+              });
+              return citiesArray;
+            })
+            .catch(function(error) {
+              console.error(error);
+            })
+          })
         })
-        .then(function(data) {
-          return data.map(function(item) {
-            return {
-              value: item,
-              label: item
-            };
+        .then(function() {
+          // We have to re-set focus on input again
+          instance.input.element.focus();
+        });
+      }, { once: true });
+      instance.passedElement.element.addEventListener('change', function(e) {
+        searchButton.disabled = false;
+        shopsChoices.clearStore();
+        shopsChoices.setChoices(async function() {
+          const city = instance.getValue();
+          return fetch('/' + city.customProperties.region + '/' + slugo(e.detail.value) + '/index.json')
+          .then(function(response) {
+            return response.json();
+          })
+          .then(function(data) {
+            return data.map(function(item) {
+              return {
+                value: item,
+                label: item
+              };
+            });
           });
         });
+        shopsChoices.enable();
       });
-      shopsChoices.enable();
-    });
-    const searchButton = document.getElementById('search-btn');
-    if (searchButton) {
-      searchButton.onclick = function () {
-        const city = instance.getValue();
-        const shop = shopsChoices.getValue(true);
-        const pathname = '/' + city.customProperties.region + '/' + slugo(city.value) + '/';
-        const isCategory = shop ? shop[0] === '#' : false;
-        if (window.location.pathname === pathname) {
-          if (isCategory) {
-            // We're on the right page already, only scroll to category
-            clickScrollCategory(shop);
+      const searchButton = document.getElementById('search-btn');
+      if (searchButton) {
+        searchButton.onclick = function () {
+          const city = instance.getValue();
+          const shop = shopsChoices.getValue(true);
+          const pathname = '/' + city.customProperties.region + '/' + slugo(city.value) + '/';
+          const isCategory = shop ? shop[0] === '#' : false;
+          if (window.location.pathname === pathname) {
+            if (isCategory) {
+              // We're on the right page already, only scroll to category
+              clickScrollCategory(shop);
+            }
           }
-        }
-        else {
-          // Relocate to new location
-          window.location =  pathname + (shop ? isCategory ? shop : slugo(shop) + '/' : '');
-        }
-      };
-    }
-  })
-}
+          else {
+            // Relocate to new location
+            window.location =  pathname + (shop ? isCategory ? shop : slugo(shop) + '/' : '');
+          }
+        };
+      }
+    })
+  }
 
-const shops = document.getElementById('shops');
-if (shops) {
-  shopsChoices = new Choices(shops, {
-    placeholderValue: '#Kategorie oder Geschäft auswählen',
-    searchFields: ['value'],
-    searchPlaceholderValue: 'Filtern...',
-    loadingText: 'Lädt...',
-    noResultsText: 'Keine Ergebnisse gefunden',
-    itemSelectText: '+',
-    shouldSort: false,
-    //renderChoiceLimit : -1,
-    searchResultLimit: 100,
-    position: 'bottom'
-  }).disable();
+  const shops = document.getElementById('shops');
+  if (shops) {
+    shopsChoices = new Choices(shops, {
+      placeholderValue: LANG.chooseCategoryOrShop,
+      searchFields: ['value'],
+      searchPlaceholderValue: LANG.filter,
+      loadingText: LANG.loading,
+      noResultsText: LANG.noResultsFound,
+      itemSelectText: '+',
+      shouldSort: false,
+      //renderChoiceLimit : -1,
+      searchResultLimit: 100,
+      position: 'bottom'
+    }).disable();
+  }
 }
 // Chat
 function removeTags (string) {
@@ -676,86 +691,113 @@ function createMessage (content) {
   return item;
 }
 
-function appendToList (child) {
-  chatbox.appendChild(child);
-  chatbox.scrollTop = chatbox.scrollHeight;
-}
-
-function sendMessage (message) {
-  appendToList(createMessage(message));
-  ws.send(message);
-}
-
-function sendTextMessage () {
-  if (chatInput.value) {
-    sendMessage(removeTags(chatInput.value));
-    chatInput.value = '';
-    updateNumberMessages(1);
+function setupChat() {
+  function appendToList (child) {
+    chatbox.appendChild(child);
+    chatbox.scrollTop = chatbox.scrollHeight;
   }
-}
-
-function updateNumberMessages(length) {
-  numberMessages += length;
-  chatSamp.textContent = numberMessages;
-}
-
-const chatbox = document.getElementById('chatbox'),
-  chatInput = document.getElementById('chat-input'),
-  chatSamp = document.getElementById('chat-samp');
-
-let incomingMessages = [],
-  scheduled,
-  prefix = '',
-  numberMessages = 0;
-if (SUBDOMAIN !== 'localhost') {
-  prefix = SUBDOMAIN + '_';
-}
-const protocol = prefix + window.location.pathname.replace(/\//g, '_');
-const ws = new WebSocket('wss://chat.shoogle.net/',  protocol);
-
-ws.onmessage = function(message) {
-  incomingMessages.push(createMessage(message.data));
-
-  if (!scheduled) {
-    scheduled = true;
-    window.requestAnimationFrame(function() {
-      const frag = document.createDocumentFragment();
-      for (let i = 0, len = incomingMessages.length; i < len; i++) {
-        frag.appendChild(incomingMessages[i]);
-      }
-      appendToList(frag);
-      updateNumberMessages(incomingMessages.length);
-      incomingMessages.length = 0;
-      scheduled = false;
-    })
+  
+  function sendMessage (message) {
+    appendToList(createMessage(message));
+    ws.send(message);
   }
-}
-
-document.getElementById('chat-btn').onclick = function() {
-  sendTextMessage()
-};
-
-document.getElementById('chat-form').onkeypress = function(event) {
-  if (event.keyCode === 13) {
-    event.preventDefault();
-    sendTextMessage();
+  
+  function sendTextMessage () {
+    if (chatInput.value) {
+      sendMessage(removeTags(chatInput.value));
+      chatInput.value = '';
+      updateNumberMessages(1);
+    }
   }
-};
+  
+  function updateNumberMessages(length) {
+    numberMessages += length;
+    chatSamp.textContent = numberMessages;
+  }
+  const chatbox = document.getElementById('chatbox'),
+    chatInput = document.getElementById('chat-input'),
+    chatSamp = document.getElementById('chat-samp');
+
+  let incomingMessages = [],
+    scheduled,
+    prefix = '',
+    numberMessages = 0;
+  if (SUBDOMAIN !== 'localhost') {
+    prefix = SUBDOMAIN + '_';
+  }
+  const protocol = prefix + window.location.pathname.replace(/\//g, '_');
+  const ws = new WebSocket('wss://chat.shoogle.net/',  protocol);
+
+  ws.onmessage = function(message) {
+    incomingMessages.push(createMessage(message.data));
+
+    if (!scheduled) {
+      scheduled = true;
+      window.requestAnimationFrame(function() {
+        const frag = document.createDocumentFragment();
+        for (let i = 0, len = incomingMessages.length; i < len; i++) {
+          frag.appendChild(incomingMessages[i]);
+        }
+        appendToList(frag);
+        updateNumberMessages(incomingMessages.length);
+        incomingMessages.length = 0;
+        scheduled = false;
+      })
+    }
+  }
+
+  document.getElementById('chat-btn').onclick = function() {
+    sendTextMessage()
+  };
+
+  document.getElementById('chat-form').onkeypress = function(event) {
+    if (event.keyCode === 13) {
+      event.preventDefault();
+      sendTextMessage();
+    }
+  };
+}
 // Shop open
-const openingHours = document.getElementById('opening-hours');
-if (openingHours) {
-  const opening = new SimpleOpeningHours(openingHours.textContent);
-  // Translate
-  openingHours.textContent = openingHours.textContent.replace('Tu', 'Di')
-                                                     .replace('We', 'Mi')
-                                                     .replace('Th', 'Do')
-                                                     .replace('Su', 'So')
-                                                     .replace('PH', 'Feiertage')
-                                                     .replace('off', 'geschlossen');
-  if (opening.isOpen()) {
-    // Append banner
-    const openSamp = document.createElement('samp');
-    openSamp.textContent = 'jetzt geöffnet!';
-    openingHours.appendChild(openSamp);
+function setupOpening() {
+  const openingHours = document.getElementById('opening-hours');
+  if (openingHours) {
+    const opening = new SimpleOpeningHours(openingHours.textContent);
+    // Translate
+    openingHours.textContent = openingHours.textContent.replace('Mo', LANG.weekdays.Mo)
+                                                       .replace('Tu', LANG.weekdays.Tu)
+                                                       .replace('We', LANG.weekdays.We)
+                                                       .replace('Th', LANG.weekdays.Th)
+                                                       .replace('Fr', LANG.weekdays.Fr)
+                                                       .replace('Sa', LANG.weekdays.Sa)
+                                                       .replace('Su', LANG.weekdays.Su)
+                                                       .replace('PH', LANG.weekdays.PH)
+                                                       .replace('off', LANG.weekdays.off);
+    if (opening.isOpen()) {
+      // Append banner
+      const openSamp = document.createElement('samp');
+      openSamp.textContent = 'jetzt geöffnet!';
+      openingHours.appendChild(openSamp);
+    }
   }
 }
+// Kickstart
+// by loading language file
+async function fetchLanguage() {
+  const response = await fetch('/lang.json');
+  LANG = await response.json();
+}
+
+function setup() {
+  setupFilters();
+  setupButtons();
+  setupMap();
+  setupClickScroll();
+  setupSearch();
+  setupChat();
+  setupOpening();
+}
+
+fetchLanguage()
+.then(function() {
+  setup();
+});

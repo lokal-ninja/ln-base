@@ -1,0 +1,31 @@
+{
+  "geolocationError": {
+    "message": "Standortabfrage nicht erfolgreich.",
+    "permissionDenied": "Nutzer verweigerte die Geolocationanfrage.",
+    "positionUnavailable": "Standortinformation nicht verfügbar.",
+    "timeout": "Zeitüberschreiung bei der Anfrage des Nutzerstandorts.",
+    "unknownError": "Ein unbekannter Fehler trat auf."
+  },
+  "geolocationAlert": "Geolocation wird von deinem Browser nicht unterstützt.",
+  "myLocation": "Mein Standort",
+  "stopTracking": "Tracken beenden",
+  "trackLocation": "Standort tracken",
+  "choosePlace": "Ort auswählen",
+  "search": "Suchen...",
+  "loading": "Lädt...",
+  "noResultsFound": "Keine Ergebnisse gefunden",
+  "withAtLeastThreeLetters": "mit wenigstens drei Buchstaben",
+  "chooseCategoryOrShop": "#Kategorie oder Geschäft auswählen",
+  "filter": "Filtern...",
+  "weekdays": {
+    "Mo": "Mo",
+    "Tu": "Di",
+    "We": "Mi",
+    "Th": "Do",
+    "Fr": "Fr",
+    "Sa": "Sa",
+    "Su": "So",
+    "PH": "Feiertage",
+    "off": "geschlossen"
+  }
+}

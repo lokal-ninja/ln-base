@@ -51,7 +51,7 @@ Les affaires dans {{ .Title }}
     {{- $location := index .Site.Data "cities" $city .File.BaseFileName }}
     {{- $street := $location.street }}
     {{- if not $street }}
-    {{- $street = "(ohne Straße)" }}
+    {{- $street = "(sans chauffeur)" }}
     {{- end }}
     {{- $entry := dict "shop" .Params.shop "lat" $location.latitude "lon" $location.longitude "link" .RelPermalink "title" .Title "street" $street }}
     {{- $entries = $entries | append $entry }}

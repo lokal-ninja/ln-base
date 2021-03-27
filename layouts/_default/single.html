@@ -2,7 +2,7 @@
 {{ .Title }} ({{ .Params.shop }}) - {{ .Parent.Title }} - {{ .Site.Title }} | {{ .Site.Params.site }}
 {{- end }}
 {{- define "heading" -}}
-Einkaufen bei {{ .Title }} ({{ .Params.shop }})
+Shopping chez {{ .Title }} ({{ .Params.shop }})
 {{- end }}
 {{ define "main" }}
 {{- $dirs := split .File.Dir "/" }}
@@ -11,22 +11,22 @@ Einkaufen bei {{ .Title }} ({{ .Params.shop }})
 {{- $location := index .Site.Data $main $city .File.BaseFileName }}
 <div class="row">
   <section id="infos" class="col-md-6">
-    <h2 class="visually-hidden">Infos</h2>
+    <h2 class="visually-hidden">Info</h2>
     <aside>
       {{- range where ($.Site.GetPage "taxonomyTerm" "shops").Pages ".Title" .Params.shop }}
-      <p><samp>{{ $.Params.shop }}<svg class="icon" role="img" aria-hidden="true"><use href={{ printf "%s%s" "/img/sprite.svg#" .Params.icon | relURL }}></use></svg></samp> in <a href="/{{ .Site.Params.repo }}/{{ $city }}/#{{ $.Params.shop }}">↶ {{ $.Parent.Title }}</a> oder <a href="/{{ .Site.Params.repo }}{{ .Params.url }}">↺ {{ .Site.Title }}</a></p>
+      <p><samp>{{ $.Params.shop }}<svg class="icon" role="img" aria-hidden="true"><use href={{ printf "%s%s" "/img/sprite.svg#" .Params.icon | relURL }}></use></svg></samp> sur <a href="/{{ .Site.Params.repo }}/{{ $city }}/#{{ $.Params.shop }}">↶ {{ $.Parent.Title }}</a> ou <a href="/{{ .Site.Params.repo }}{{ .Params.url }}">↺ {{ .Site.Title }}</a></p>
       {{- end }}
       <ul class="list-unstyled">
-        <li>Adresse: {{ $location.street }} {{ $location.housenumber }} in {{ $location.postcode }} {{ $location.city }}</li>
-        {{- with $location.opening_hours }}<li>Öffnungszeiten: <span id="opening-hours">{{ . }}</span></li>{{ end }}
-        {{- with $location.phone }}<li>Telefon: <a href="tel:{{ urlize . }}">{{ . }}</a></li>{{ end }}
-        {{- with $location.website }}<li>Webseite: <a href="{{ . }}" rel="nofollow noopener">{{ . }}</a></li>{{ end }}
+        <li>Adresse: {{ $location.street }} {{ $location.housenumber }} sur {{ $location.postcode }} {{ $location.city }}</li>
+        {{- with $location.opening_hours }}<li>Heures d'ouverture: <span id="opening-hours">{{ . }}</span></li>{{ end }}
+        {{- with $location.phone }}<li>Téléphone: <a href="tel:{{ urlize . }}">{{ . }}</a></li>{{ end }}
+        {{- with $location.website }}<li>Site web: <a href="{{ . }}" rel="nofollow noopener">{{ . }}</a></li>{{ end }}
         <li hidden data-lat="{{ $location.latitude }}" data-lon="{{ $location.longitude }}"><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>
       </ul>
     </aside>
   </section>
   <section class="col-md-6 mt-sm-1">
-    <h2 class="visually-hidden">Karte</h2>
+    <h2 class="visually-hidden">Carte</h2>
     <div id="map" class="is-overlay">
       {{ partialCached "load-btn.html" . -}}
       <a href="https://www.openstreetmap.org/{{ $location.type }}/{{ $location.id }}" rel="nofollow noopener">OpenStreetMap ↗</a>
@@ -36,14 +36,14 @@ Einkaufen bei {{ .Title }} ({{ .Params.shop }})
   </section>
 </div>
 <div class="description-box mt-1">
-  <article id="beschreibung">
-    {{ with .Content }}{{ . }}{{ else }}<aside><p>Es gibt noch keinen Text über {{ .Title }} in {{ .Parent.Title }}. Du kannst eine Beschreibung <a href="https://github.com/{{ .Site.Params.org }}/{{ .Site.Params.repo }}/edit/master/content/{{ with .File }}{{ .Dir }}{{ end }}{{ .File.BaseFileName }}.md" rel="nofollow noopener">hier ↗</a> eintragen 🙂</p></aside>{{ end }}
+  <article id="description">
+    {{ with .Content }}{{ . }}{{ else }}<aside><p>Il n'y a pas encore de texte sur {{ .Title }} dans {{ .Parent.Title }}. Vous pouvez saisir une description <a href="https://github.com/{{ .Site.Params.org }}/{{ .Site.Params.repo }}/edit/master/content/{{ with .File }}{{ .Dir }}{{ end }}{{ .File.BaseFileName }}.md" rel="nofollow noopener">ici ↗</a> 🙂</p></aside>{{ end }}
   </article>
   <img loading="lazy" class="mt-sm-1" src={{ printf "https://wttr.in/%.2f,%.2f_0pQ_transparency=200_lang=%s.png" $location.latitude $location.longitude .Site.LanguageCode }}>
 </div>
 {{ partialCached "chat.html" . -}}
 {{- if (or .NextInSection .PrevInSection) }}
-<nav aria-label="Wechsle zu vorherigem oder nächsten Geschäft in {{ .Parent.Title }}">
+<nav aria-label="Passer à l'activité précédente ou suivante dans {{ .Parent.Title }}">
   <ul>
     {{- with .NextInSection }}
     <li><a href="{{ .RelPermalink }}">← {{ .Title }}</a></li>
@@ -58,10 +58,10 @@ Einkaufen bei {{ .Title }} ({{ .Params.shop }})
 {{- define "back" }}
 {{- $dirs := split .File.Dir "/" }}
 {{- $city := index $dirs 1 }}
-<nav aria-label="Wechsle zu {{ .Parent.Title }} oder springe nach oben">
+<nav aria-label="Passer à {{ .Parent.Title }} ou sauter au sommet">
   <ul>
-    <li><a href="/{{ .Site.Params.repo }}/{{ $city }}/">↶ zurück zu {{ .Parent.Title }}</a></li>
-    <li><a href="#top">nach oben ↑</a></li>
+    <li><a href="/{{ .Site.Params.repo }}/{{ $city }}/">↶ retour à {{ .Parent.Title }}</a></li>
+    <li><a href="#top">vers le haut ↑</a></li>
   </ul>
 </nav>
 {{- end }}

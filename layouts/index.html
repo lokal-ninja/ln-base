@@ -2,22 +2,22 @@
 {{ .Site.Title }} | {{ .Site.Params.Site }}
 {{- end }}
 {{- define "heading" -}}
-Orte mit Geschäften in {{ .Site.Title }}
+Lieux avec des magasins en {{ .Site.Title }}
 {{- end }}
 {{ define "main" }}
 <div class="row">
   <section id="infos" class="col-md-6 categories">
-    <h2 class="visually-hidden">Kategorien</h2>
+    <h2 class="visually-hidden">Catégories</h2>
     <div class="filter filter-categories">
-      <input type="text" placeholder="Name filtern..." aria-label="Name filtern...">
-      <div><samp>{{ len (.Site.GetPage "taxonomyTerm" "shops").Pages }}</samp>Kategorien</div>
+      <input type="text" placeholder="Nom du filtre..." aria-label="Nom du filtre...">
+      <div><samp>{{ len (.Site.GetPage "taxonomyTerm" "shops").Pages }}</samp>Catégories</div>
     </div>
     {{- range (.Site.GetPage "taxonomyTerm" "shops").Pages }}
     <a href="{{ .RelPermalink }}">{{ .Title }}<svg class="icon" role="img" aria-hidden="true"><use href={{ printf "%s%s" "/img/sprite.svg#" .Params.icon | relURL }}></use></svg></a>
     {{- end }}
   </section>
   <section class="col-md-6 mt-sm-1">
-    <h2 class="visually-hidden">Karte</h2>
+    <h2 class="visually-hidden">Carte</h2>
     <div id="map" class="is-overlay">
       {{ partialCached "load-btn.html" . -}}
       <a href="https://www.openstreetmap.org/search?query={{ .Site.Title }}" rel="nofollow noopener">OpenStreetMap ↗</a>
@@ -26,11 +26,11 @@ Orte mit Geschäften in {{ .Site.Title }}
     </div>
   </section>
 </div>
-<section id="eintraege">
-  <h2 class="visually-hidden">Einträge</h2>
+<section id="entrees">
+  <h2 class="visually-hidden">Entrées</h2>
   <div class="filter filter-entries">
-    <input type="text" placeholder="Name filtern..." aria-label="Name filtern...">
-    <div><samp>{{ len (.Site.GetPage "section" "cities").Sections }}</samp>Orte</div>
+    <input type="text" placeholder="Nom du filtre..." aria-label="Nom du filtre...">
+    <div><samp>{{ len (.Site.GetPage "section" "cities").Sections }}</samp>Sites</div>
   </div>
   <ul class="columns">
     {{- range (.Site.GetPage "section" "cities").Sections }}
@@ -41,10 +41,10 @@ Orte mit Geschäften in {{ .Site.Title }}
 {{ partialCached "chat.html" . -}}
 {{- end }}
 {{- define "back" }}
-<nav aria-label="Wechsle zur Startseite oder springe nach oben">
+<nav aria-label="Aller à la page d'accueil ou sauter en haut de la page">
   <ul>
-    <li><a href="/">↶ zurück zur Startseite</a></li>
-    <li><a href="#top">nach oben ↑</a></li>
+    <li><a href="/">↶ retour à la page d'accueil</a></li>
+    <li><a href="#top">vers le haut ↑</a></li>
   </ul>
 </nav>
 {{- end }}

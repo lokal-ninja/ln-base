@@ -4,18 +4,18 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>{{ block "title" . }}{{ .Title }} | {{ .Site.Params.site }}{{ end }}</title>
-    {{- $description := printf "Entdecke alle Einkaufsmöglichkeiten in %s" .Site.Title }}
+    {{- $description := printf "Découvrez toutes les possibilités de shopping dans %s" .Site.Title }}
     {{- if eq .Kind "section" }}
-      {{- $description = printf "Entdecke alle Einkaufsmöglichkeiten in %s" .Title }}
+      {{- $description = printf "Découvrez toutes les possibilités de shopping dans %s" .Title }}
     {{- else if .IsPage }}
       {{- $dirs := split .File.Dir "/" }}
       {{- $main := index $dirs 0 }}
       {{- $city := index $dirs 1 }}
       {{- $entry := index .Site.Data $main $city .File.BaseFileName }}
       {{- $name := $entry.city }}
-      {{- $opening_hours := "" }}{{ if $entry.opening_hours }}{{ $opening_hours = ", Öffnungszeiten" }}{{ end }}
-      {{- $phone := "" }}{{ if $entry.phone }}{{ $phone = ", Telefonnummer" }}{{ end }}
-      {{- $website := "" }}{{ if $entry.website }}{{ $website = " und Link zur Webseite" }}{{ end }}
+      {{- $opening_hours := "" }}{{ if $entry.opening_hours }}{{ $opening_hours = ", Heures d'ouverture" }}{{ end }}
+      {{- $phone := "" }}{{ if $entry.phone }}{{ $phone = ", Numéro de téléphone" }}{{ end }}
+      {{- $website := "" }}{{ if $entry.website }}{{ $website = " et lien vers le site web" }}{{ end }}
       {{- $description = printf "Adresse%s%s%s von %s in %s" $opening_hours $phone $website .Title $name }}
     {{- end }}
     <meta name="description" content="{{ $description }}">
@@ -29,7 +29,7 @@
     <meta property="og:image" content="{{ "/img/logo-1200x1200.png" | absURL }}">
     <meta property="og:image:width " content="1200">
     <meta property="og:image:height" content="1200">
-    <meta property="og:image:alt" content="Einkaufswagen">
+    <meta property="og:image:alt" content="Panier d'achat">
     <meta property="og:description" content="{{ $description }}">
     <meta property="og:locale" content="{{ replace .Site.LanguageCode "-" "_" }}">
     <link rel="canonical" href="{{ .Permalink }}">
@@ -51,19 +51,19 @@
   <body>
     <div class="container">
       <header id="top">
-        <h1><a href="/" aria-label="Zur Startseite navigieren">🛒</a> {{ block "heading" . }}{{ .Title }}{{ end }}</h1>
-        <section id="suche" class="row mt-1" aria-hidden="true">
+        <h1><a href="/" aria-label="Naviguer vers la page d'accueil">🛒</a> {{ block "heading" . }}{{ .Title }}{{ end }}</h1>
+        <section id="recherche" class="row mt-1" aria-hidden="true">
           <div class="col-md-6 col-lg-5">
-            <label for="cities">Ort</label>
+            <label for="cities">Localisation</label>
             <select data-type="select-one" class="form-control" name="cities" id="cities"></select>
           </div>
           <div class="col-md-6 col-lg-5 mt-sm-1">
-            <label for="shops">Kategorie / Geschäft</label>
+            <label for="shops">Catégorie / Affaires</label>
             <select data-type="select-one" class="form-control" name="shops" id="shops"></select>
           </div>
           <div class="col-lg-2 mt-md-1">
-            <label for="search-btn">Fertig</label>
-            <button disabled id="search-btn" name="finish">Los 🚀</button>
+            <label for="search-btn">Prêt</label>
+            <button disabled id="search-btn" name="finish">Allez 🚀</button>
           </div>
         </section>
       </header>
@@ -72,9 +72,9 @@
         {{- block "main" . }}{{ end }}
       </main>
       {{- block "back" . }}
-      <nav aria-label="Springe nach oben">
+      <nav aria-label="Sauter en haut">
         <ul>
-          <li><a href="#top">nach oben ↑</a></li>
+          <li><a href="#top">en même temps ↑</a></li>
         </ul>
       </nav>
       {{ end }}

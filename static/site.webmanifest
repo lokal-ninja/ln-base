@@ -1,8 +1,8 @@
 {
     "name": "Shoogle",
-    "lang": "de",
+    "lang": "fr",
     "short_name": "Shoogle",
-    "description": "Entdecke alle Einkaufsmöglichkeiten in deiner Stadt",
+    "description": "Découvrez toutes les possibilités de shopping dans votre ville",
     "icons": [
         {
           "src": "/img/logo-192x192.png",

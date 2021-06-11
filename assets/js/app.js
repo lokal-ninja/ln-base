@@ -790,13 +790,14 @@ async function fetchLanguage() {
 
 function setup() {
   setupFilters();
-  setupButtons();
   setupMap();
-  setupClickScroll();
   setupSearch();
   setupChat();
   setupOpening();
 }
+
+setupButtons();
+setupClickScroll();
 
 fetchLanguage()
 .then(function() {

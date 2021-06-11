@@ -1,0 +1,32 @@
+{
+  "geolocationError": {
+    "message": "Location query not successful.",
+    "permissionDenied": "User refused the geolocation request.",
+    "positionUnavailable": "Location information not available.",
+    "timeout": "Timeout for user location request.",
+    "unknownError": "An unknown error occurred."
+  },
+  "geolocationAlert": "Geolocation is not supported by your browser.",
+  "myLocation": "My location",
+  "stopTracking": "Stop tracking",
+  "trackLocation": "Track location",
+  "choosePlace": "Choose place",
+  "search": "Search...",
+  "loading": "Loading...",
+  "noResultsFound": "No results found",
+  "withAtLeastThreeLetters": "with at least three letters",
+  "chooseCategoryOrShop": "Choose #category or shop",
+  "filter": "Filter...",
+  "weekdays": {
+    "Mo": "Mo",
+    "Tu": "Tu",
+    "We": "We",
+    "Th": "Th",
+    "Fr": "Fr",
+    "Sa": "Sa",
+    "Su": "Su",
+    "PH": "PH",
+    "off": "off"
+  },
+  "nowOpen": "open now!"
+}

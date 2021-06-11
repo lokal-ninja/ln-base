@@ -776,7 +776,7 @@ function setupOpening() {
     if (opening.isOpen()) {
       // Append banner
       const openSamp = document.createElement('samp');
-      openSamp.textContent = 'jetzt geöffnet!';
+      openSamp.textContent = LANG.nowOpen;
       openingHours.appendChild(openSamp);
     }
   }

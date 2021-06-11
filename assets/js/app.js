@@ -6,6 +6,7 @@ let projectTo;
 let vectorLayer;
 let citiesChoices;
 let shopsChoices;
+let categoryButtons;
 
 // Constants
 const SUBDOMAIN = window.location.hostname.split(".")[0];
@@ -293,16 +294,16 @@ function setupFilters() {
 }
 // Category buttons
 function setupButtons() {
-  const buttons = query('.categories button');
-  buttons.forEach(function(button) {
+  categoryButtons = query('.categories button');
+  categoryButtons.forEach(function(button) {
     button.onclick = function () {
       entries = query('li[data-lat]:not(.columns details li), .columns summary');
       let showAll = true;
       if (button.classList.contains('active')) {
         // Check sibling buttons if there is any other active
         let count = 0;
-        for (let i = 0; i < buttons.length; i++) {
-          if (buttons[i].classList.contains('active') && ++count === 2) {
+        for (let i = 0; i < categoryButtons.length; i++) {
+          if (categoryButtons[i].classList.contains('active') && ++count === 2) {
             // We found at least one other active button
             showAll = false;
             break
@@ -479,8 +480,8 @@ function setupMap() {
 // Select to category
 function clickScrollCategory (category) {
   const name = category.replace('#', '').toLowerCase();
-  for (let i = 0; i < buttons.length; i++) {
-    const button = buttons[i];
+  for (let i = 0; i < categoryButtons.length; i++) {
+    const button = categoryButtons[i];
     if (button.textContent.toLowerCase() === name) {
       button.click();
       button.scrollIntoView();

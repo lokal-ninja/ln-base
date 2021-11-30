@@ -254,17 +254,26 @@ function query(selector) {
   return Array.from(document.querySelectorAll(selector));
 }
 
-function startEntriesFilter() {
+function debounce(fn, duration) {
+  let timer;
+
+  return function () {
+    clearTimeout(timer);
+    timer = setTimeout(fn, duration);
+  }
+}
+
+function startEntriesFilter(value) {
   entries = query('li[data-lat]:not(.columns details li), .columns summary');
-  toggleItemDisplay(this.value, entries);
+  toggleItemDisplay(value, entries);
   updateGUI(countShownItems(entries), 'entries');
 }
 
-function startCategoriesFilter() {
+function startCategoriesFilter(value) {
   if (!categories) {
     categories = query('.categories button, .categories a');
   }
-  toggleItemDisplay(this.value, categories);
+  toggleItemDisplay(value, categories);
   updateCount(countShownItems(categories), 'categories');
 }
 
@@ -272,7 +281,9 @@ function setupFilters() {
   const filterInputs = query('.filter > input');
   filterInputs.forEach(function(input) {
     const startFilter = input.parentElement.classList.contains('filter-entries') ? startEntriesFilter : startCategoriesFilter;
-    input.addEventListener('keyup', startFilter);
+    input.addEventListener('input', debounce(function () {
+      startFilter(input.value);
+    }, 500));
     input.addEventListener('keypress', function(event) {
       if (event.keyCode === 13) {
         event.preventDefault();

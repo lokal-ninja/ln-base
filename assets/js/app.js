@@ -111,90 +111,88 @@ function geolocationAlert() {
   alert(LANG.geolocationAlert);
 }
 
+function calcMaxDistance(entries, count, center, stop) {
+  let maximumDistance = 0;
+
+  for (let i = 0; i < count; i++) {
+    const entry = entries[i];
+    const result = distance(
+      center[0],
+      center[1],
+      parseFloat(entry.dataset.lat),
+      parseFloat(entry.dataset.lon)
+    );
+    if (result > maximumDistance) {
+      maximumDistance = result;
+      if (maximumDistance > stop) {
+        break;
+      }
+    }
+  }
+  
+  return maximumDistance;
+}
+
+function determineZoom(entries, count, center) {
+  const page = window.location.pathname.split('/').length; // 3, 4, 5
+  if (page === 3 || document.querySelector('#map.w-100')) {
+    // Region/Category page
+    const maximumDistance = calcMaxDistance(entries, count, center, 128);
+    if (maximumDistance > 128) {
+      return 6;
+    }
+    else if (count > 1250 || maximumDistance > 64) {
+      return 7;
+    }
+    else if (count > 250 || maximumDistance > 32) {
+      return 8;
+    }
+    else if (count > 50 || maximumDistance > 16) {
+      return 9;
+    }
+    else if (count > 10 || maximumDistance > 8) {
+      return 10;
+    }
+    else if (count > 1 || maximumDistance > 4) {
+      return 11;
+    }
+    // Default value for this page type
+    return 12;
+  }
+  else if (page === 4) {
+    // City page
+    if (count > 2500) {
+      return 10;
+    }
+    const maximumDistance = calcMaxDistance(entries, count, center, 8);
+    if (maximumDistance > 8) {
+      return 10;
+    }
+    else if (count > 500 || maximumDistance > 4) {
+      return 11;
+    }
+    else if (count > 100 || maximumDistance > 2) {
+      return 12;
+    }
+    else if (count > 20 || maximumDistance > 1) {
+      return 13;
+    }
+    else if (count > 4 || maximumDistance > 0.5) {
+      return 14;
+    }
+    else if (count > 1 || maximumDistance > 0.25) {
+      return 15;
+    }
+  }
+  // Entry page or no other city match
+  return 16;
+}
+
 function setCenter(entries) {
   const count = entries.length;
   if (count) {
-    // Get center
     const center = getLatLngCenter(entries, count);
-    const centerLat = center[0];
-    const centerLon = center[1];
-
-    // Calculate maximum distance to center point
-    let maximumDistance = 0;
-    entries.forEach(function(entry) {
-      const result = distance(
-        centerLat,
-        centerLon,
-        parseFloat(entry.dataset.lat),
-        parseFloat(entry.dataset.lon)
-      );
-      if (result > maximumDistance) {
-        maximumDistance = result;
-      }
-    });
-    // Determine zoom factor
-    let page = window.location.pathname.split('/').length; // 3, 4, 5
-    if (document.querySelector('#map.w-100')) {
-      page = 3;
-    }
-    let zoom;
-    switch (page) {
-      case 3:
-        // Region/Category page
-        if (maximumDistance > 128) {
-          zoom = 6;
-        }
-        else if (count > 1250 || maximumDistance > 64) {
-          zoom = 7;
-        }
-        else if (count > 250 || maximumDistance > 32) {
-          zoom = 8;
-        }
-        else if (count > 50 || maximumDistance > 16) {
-          zoom = 9;
-        }
-        else if (count > 10 || maximumDistance > 8) {
-          zoom = 10;
-        }
-        else if (count > 1 || maximumDistance > 4) {
-          zoom = 11;
-        }
-        else {
-          zoom = 12;
-        }
-        break;
-      case 4:
-        // City page
-        if (count > 2500 || maximumDistance > 8) {
-          zoom = 10;
-        }
-        else if (count > 500 || maximumDistance > 4) {
-          zoom = 11;
-        }
-        else if (count > 100 || maximumDistance > 2) {
-          zoom = 12;
-        }
-        else if (count > 20 || maximumDistance > 1) {
-          zoom = 13;
-        }
-        else if (count > 4 || maximumDistance > 0.5) {
-          zoom = 14;
-        }
-        else if (count > 1 || maximumDistance > 0.25) {
-          zoom = 15;
-        }
-        else {
-          zoom = 16;
-        }
-        break;
-      case 5:
-        // Entry page
-        zoom = 16;
-        break;
-      default:
-        console.error('Unknown page for map.')
-    }
-    vectorLayer.map.setCenter(createLonLat(centerLon, centerLat), zoom);
+    vectorLayer.map.setCenter(createLonLat(center[1], center[0]), determineZoom(entries, count, center));
   }
 }
 // Filter input

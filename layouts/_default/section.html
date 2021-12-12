@@ -62,14 +62,9 @@ Shops in {{ .Title }}
     {{- if (gt (len $titleEntries) 1) }}
     {{- if not (in $doneEntries .title) }}
     {{- $doneEntries = $doneEntries | append .title }}
-    <details>
-      <summary data-shop="{{ .shop }}">{{ .title }}</summary>
-      <ul class="list-unstyled">
-        {{- range $titleEntries }}
-        <li data-lat="{{ .lat }}" data-lon="{{ .lon }}"><a href="{{ .link }}">- {{ .street }}</a></li>
-        {{- end }}
-      </ul>
-    </details>
+    {{- range $titleEntries }}
+    <li data-shop="{{ .shop }}" data-lat="{{ .lat }}" data-lon="{{ .lon }}"><a href="{{ .link }}">{{ .title }} - {{ .street }}</a></li>
+    {{- end }}
     {{- end }}
     {{- else }}
     <li data-shop="{{ .shop }}" data-lat="{{ .lat }}" data-lon="{{ .lon }}"><a href="{{ .link }}">{{ .title }}</a></li>

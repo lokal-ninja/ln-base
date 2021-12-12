@@ -224,8 +224,8 @@ function updateMap() {
 }
 
 function updateGUI(count, selector) {
-  updateMap();
   updateCount(count, selector);
+  window.requestIdleCallback(updateMap);
 }
 
 function countShownItems(items) {
@@ -264,7 +264,9 @@ function debounce(fn, duration) {
 }
 
 function startEntriesFilter(value) {
-  entries = query('li[data-lat]:not(.columns details li), .columns summary');
+  if (!entries) {
+    entries = query('li[data-lat]');
+  }
   toggleItemDisplay(value, entries);
   updateGUI(countShownItems(entries), 'entries');
 }
@@ -290,23 +292,15 @@ function setupFilters() {
       }
     });
   });
-
-  const detailsElements = query('.columns details');
-  detailsElements.forEach(function(element) {
-    element.onclick = function () {
-      window.setTimeout(function () {
-        updateMap();
-      },
-      100);
-    }
-  });
 }
 // Category buttons
 function setupButtons() {
   categoryButtons = query('.categories button');
   categoryButtons.forEach(function(button) {
     button.onclick = function () {
-      entries = query('li[data-lat]:not(.columns details li), .columns summary');
+      if (!entries) {
+        entries = query('li[data-lat]');
+      }
       let showAll = true;
       if (button.classList.contains('active')) {
         // Check sibling buttons if there is any other active
@@ -363,7 +357,9 @@ function buildMap() {
   epsg4326 = new OpenLayers.Projection('EPSG:4326'); // WGS 1984 projection
   projectTo = map.getProjectionObject(); // The map projection (Spherical Mercator)
 
-  entries = query('li[data-lat]');
+  if (!entries) {
+    entries = query('li[data-lat]');
+  }
   entries.forEach(function(entry) {
     const lat = entry.dataset.lat;
     const lon = entry.dataset.lon;
@@ -462,7 +458,7 @@ function buildMap() {
       geolocationAlert();
     }
   }
-  updateMap();
+  window.requestIdleCallback(updateMap);
 }
 
 function setupMap() {

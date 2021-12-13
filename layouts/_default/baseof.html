@@ -81,6 +81,9 @@
       <hr>
       {{ partialCached "footer.html" . }}
     </div>
+    <script nomodule src="/js/es6-promise.auto.js"></script>
+    <script nomodule src="/js/fetch.umd.js"></script>
+    <script nomodule src="/js/polyfills.js"></script>
     {{- $openinghours := resources.Get "/js/simple-opening-hours.js" }}
     {{- $choices := resources.Get "/js/choices.js" }}
     {{- $slugo := resources.Get "/js/slugo.js" }}

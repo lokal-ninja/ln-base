@@ -465,6 +465,14 @@ function setupMap() {
   const mapButton = document.querySelector('#map button');
   if (mapButton) {
     mapButton.onclick = function () {
+      // Preconnect to OSM early
+      const tiles = ['a', 'b', 'c'];
+      tiles.forEach(function(tile) {
+        const link = document.createElement('link');
+        link.rel = 'preconnect';
+        link.href = 'https://' + tile + '.tile.openstreetmap.org';
+        document.head.appendChild(link);
+      });
       // Hide buttons and overlay
       const parent = mapButton.parentNode;
       for (let i = 0; i < 3; i++) {
@@ -475,6 +483,7 @@ function setupMap() {
       // Dont forget to show locate button
       document.getElementById('locate-btn').style.display = 'inline-block';
 
+      // Finally load OSM map library
       loadScript('OpenLayers.js')
       .then(function() {
         buildMap();

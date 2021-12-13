@@ -204,38 +204,45 @@ function updateCount(count, selector) {
 }
 
 function updateMap() {
-  if (vectorLayer) {
-    const matches = [];
-    vectorLayer.features.forEach(function(feature) {
-      const entry = feature.attributes.entry;
-      if (entry) {
-        if (entry.getClientRects().length !== 0 || entry.hidden) {
-          feature.style = null;
-          matches.push(entry);
-        }
-        else {
-          feature.style = { display: 'none' };
-        }
+  const matches = [];
+  vectorLayer.features.forEach(function(feature) {
+    const entry = feature.attributes.entry;
+    if (entry) {
+      if (entry.getClientRects().length !== 0 || entry.hidden) {
+        feature.style = null;
+        matches.push(entry);
       }
-    });
-    setCenter(matches);
-    vectorLayer.redraw();
-  }
+      else {
+        feature.style = { display: 'none' };
+      }
+    }
+  });
+  setCenter(matches);
+  vectorLayer.redraw();
+
+  return matches.length;
 }
 
-function updateGUI(count, selector) {
-  updateCount(count, selector);
-  updateMap();
+function updateGUI() {
+  let count = 0;
+  if (vectorLayer) {
+    count = updateMap();
+  }
+  else {
+    count = countShownItems(entries);
+  }
+  updateCount(count, 'entries');
 }
 
 function countShownItems(items) {
   let count = 0;
-    items.forEach(function(item) {
-      if (item.getClientRects().length !== 0) {
-        count++;
-      }
-    });
-    return count;
+  items.forEach(function(item) {
+    if (item.getClientRects().length !== 0) {
+      count++;
+    }
+  });
+
+  return count;
 }
 
 function toggleItemDisplay(value, items) {
@@ -268,7 +275,7 @@ function startEntriesFilter(value) {
     entries = query('li[data-lat]');
   }
   toggleItemDisplay(value, entries);
-  updateGUI(countShownItems(entries), 'entries');
+  updateGUI();
 }
 
 function startCategoriesFilter(value) {
@@ -333,7 +340,7 @@ function setupButtons() {
         }
       });
       button.classList.toggle('active');
-      updateGUI(countShownItems(entries), 'entries');
+      updateGUI();
     }
   });
 }

@@ -225,7 +225,7 @@ function updateMap() {
 
 function updateGUI(count, selector) {
   updateCount(count, selector);
-  window.requestIdleCallback(updateMap);
+  updateMap();
 }
 
 function countShownItems(items) {
@@ -457,7 +457,7 @@ function buildMap() {
       geolocationAlert();
     }
   }
-  window.requestIdleCallback(updateMap);
+  updateMap();
 }
 
 function setupMap() {

@@ -451,7 +451,6 @@ function buildMap() {
         navigator.geolocation.clearWatch(watchID);
         this.classList.remove('tracking');
         this.textContent = LANG.trackLocation;
-        centering = true;
       }
     }
     else {

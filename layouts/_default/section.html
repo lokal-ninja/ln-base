@@ -73,17 +73,30 @@ Shops in {{ .Title }}
   </ul>
   <p>Missing an entry? Please add it to the free database at <a href="https://www.openstreetmap.org/" rel="nofollow noopener">OpenStreetMap ↗</a>!</p>
 </section>
-<div class="description-box">
-  <article id="description">
-    {{ with .Content }}{{ . }}{{ else }}<aside><p>There is no text on the general purchasing situation in {{ .Title }} yet. You can enter a description <a href="https://github.com/{{ .Site.Params.org }}/{{ .Site.Params.repo }}/edit/master/content/{{ with .File }}{{ .Dir }}{{ end }}_index.md" rel="nofollow noopener">here ↗</a> 🙂</p></aside>{{ end }}
-  </article>
-  {{- $coordsLocation := .Title }}
-  {{- if .Params.latitude }}
-  {{- $coordsLocation = printf "%.2f,%.2f" .Params.latitude .Params.longitude }}
-  {{- end }}
-  <img loading="lazy" class="mt-sm-1" src={{ printf "https://wttr.in/%s_0pQ_transparency=200_lang=%s.png" $coordsLocation .Site.LanguageCode }}>
+<div class="row mt-1">
+  <div class="col-lg-7">
+    <article id="description">
+      <aside>
+        <div class="row">
+          <div class="col-sm-6">
+            <p>{{ with .Content }}{{ . }}{{ else }}There is no text on the general purchasing situation in {{ .Title }} yet. You can enter a description <a href="https://github.com/{{ .Site.Params.org }}/{{ .Site.Params.repo }}/edit/master/content/{{ with .File }}{{ .Dir }}{{ end }}_index.md" rel="nofollow noopener">here ↗</a> 🙂{{ end }}</p>
+          </div>
+          <div class="col-sm-6">
+            <p class="float-right-md"><strong>Weather in {{ .Title }}</strong></p>
+            {{- $coordsLocation := .Title }}
+            {{- if .Params.latitude }}
+            {{- $coordsLocation = printf "%.2f,%.2f" .Params.latitude .Params.longitude }}
+            {{- end }}
+            <img loading="lazy" class="img-fluid float-right-md" src="{{ printf "https://wttr.in/%s_0pQ_I_background=faebdc_lang=%s.png" $coordsLocation .Site.LanguageCode }}" alt="Current weather in {{ .Title }}">
+          </div>
+        </div>
+      </aside>
+    </article>
+  </div>
+  <div class="col-lg-5">
+    {{ partialCached "chat.html" . -}}
+  </div>
 </div>
-{{ partialCached "chat.html" . -}}
 {{- end }}
 {{- define "back" }}
 <nav aria-label="Change to {{ .Site.Title }} or jump to top">

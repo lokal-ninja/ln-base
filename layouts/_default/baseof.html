@@ -51,8 +51,8 @@
   <body>
     <div class="container">
       <header id="top">
-        <h1><a href="/" aria-label="Navigate to home page">🛒</a> {{ block "heading" . }}{{ .Title }}{{ end }}</h1>
-        <section id="search" class="row mt-1" aria-hidden="true">
+        <h1 class="m-0"><a href="/" aria-label="Navigate to home page">🛒</a> {{ block "heading" . }}{{ .Title }}{{ end }}</h1>
+        <section id="suche" class="row mt-1" aria-hidden="true">
           <div class="col-md-6 col-lg-5">
             <label for="cities">Place</label>
             <select data-type="select-one" class="form-control" name="cities" id="cities"></select>
@@ -63,7 +63,7 @@
           </div>
           <div class="col-lg-2 mt-md-1">
             <label for="search-btn">Finish</label>
-            <button disabled id="search-btn" name="finish">Go 🚀</button>
+            <button disabled id="search-btn" class="d-block m-0" name="finish">Go 🚀</button>
           </div>
         </section>
       </header>

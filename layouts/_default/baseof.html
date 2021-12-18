@@ -51,7 +51,7 @@
   <body>
     <div class="container">
       <header id="top">
-        <h1><a href="/" aria-label="Zur Startseite navigieren">🛒</a> {{ block "heading" . }}{{ .Title }}{{ end }}</h1>
+        <h1 class="m-0"><a href="/" aria-label="Zur Startseite navigieren">🛒</a> {{ block "heading" . }}{{ .Title }}{{ end }}</h1>
         <section id="suche" class="row mt-1" aria-hidden="true">
           <div class="col-md-6 col-lg-5">
             <label for="cities">Ort</label>
@@ -63,7 +63,7 @@
           </div>
           <div class="col-lg-2 mt-md-1">
             <label for="search-btn">Fertig</label>
-            <button disabled id="search-btn" name="finish">Los 🚀</button>
+            <button disabled id="search-btn" class="d-block m-0" name="finish">Los 🚀</button>
           </div>
         </section>
       </header>

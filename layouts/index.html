@@ -38,7 +38,26 @@ Orte mit Geschäften in {{ .Site.Title }}
     {{- end }}
   </ul>
 </section>
-{{ partialCached "chat.html" . -}}
+<div class="row mt-1">
+  <div class="col-lg-7">
+    <article id="beschreibung">
+      <aside>
+        <div class="row">
+          <div class="col-sm-6">
+            <p>{{ with .Content }}{{ . }}{{ else }}Es gibt noch keinen Text zur Region {{ .Site.Title }}. Du kannst eine Beschreibung <a href="https://github.com/{{ .Site.Params.org }}/{{ .Site.Params.repo }}/edit/master/content/_index.md" rel="nofollow noopener">hier ↗</a> eintragen 🙂{{ end }}</p>
+          </div>
+          <div class="col-sm-6">
+            <p class="float-right-md"><strong>Wetter in {{ .Site.Title }}</strong></p>
+            <img loading="lazy" class="img-fluid float-right-md" src="{{ printf "https://wttr.in/%s_0pQ_I_background=faebdc_lang=%s.png" .Site.Title .Site.LanguageCode }}" alt="Das aktuelle Wetter in {{ .Site.Title }}">
+          </div>
+        </div>
+      </aside>
+    </article>
+  </div>
+  <div class="col-lg-5">
+    {{ partialCached "chat.html" . -}}
+  </div>
+</div>
 {{- end }}
 {{- define "back" }}
 <nav aria-label="Wechsle zur Startseite oder springe nach oben">

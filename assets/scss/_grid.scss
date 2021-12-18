@@ -24,6 +24,13 @@
     }
 }
 
+@media (min-width: 576px) {
+    .col-sm-6 {
+        flex: 0 0 auto;
+        width: 50%;
+    }
+}
+
 @media (min-width: 768px) {
     .col-md-6 {
         flex: 0 0 auto;
@@ -34,11 +41,16 @@
 @media (min-width: 992px) {
     .col-lg-2 {
         flex: 0 0 auto;
-        width: 16.666667%;
+        width: 16.66666667%;
     }
 
     .col-lg-5 {
         flex: 0 0 auto;
-        width: 41.666667%;
+        width: 41.66666667%
+    }
+
+    .col-lg-7 {
+        flex: 0 0 auto;
+        width: 58.33333333%;
     }
 }

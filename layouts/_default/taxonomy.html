@@ -31,10 +31,26 @@ Les {{ .Title }} affaires dans {{ .Site.Title }}
   </ul>
   <p>Une entrée est manquante ? Veuillez le saisir dans la base de données gratuite d'<a href="https://www.openstreetmap.org/" rel="nofollow noopener">OpenStreetMap ↗</a>!</p>
 </section>
-<article id="description" class="mt-1">
-  {{ with .Content }}{{ . }}{{ else }}<aside><p>Il n'y a pas encore de texte pour la catégorie {{ .Title }} dans {{ .Site.Title }}. Vous pouvez saisir une description <a href="https://github.com/{{ .Site.Params.org }}/{{ .Site.Params.repo }}/edit/master/content/{{ with .File }}{{ .Dir }}{{ end }}_index.md" rel="nofollow noopener">ici ↗</a> 🙂</p></aside>{{ end }}
-</article>
-{{ partialCached "chat.html" . -}}
+<div class="row mt-1">
+  <div class="col-lg-7">
+    <article id="description">
+      <aside>
+        <div class="row">
+          <div class="col-sm-6">
+            <p>{{ with .Content }}{{ . }}{{ else }}Il n'y a pas encore de texte pour la catégorie {{ .Title }} dans {{ .Site.Title }}. Vous pouvez saisir une description <a href="https://github.com/{{ .Site.Params.org }}/{{ .Site.Params.repo }}/edit/master/content/{{ with .File }}{{ .Dir }}{{ end }}_index.md" rel="nofollow noopener">ici ↗</a> 🙂{{ end }}</p>
+          </div>
+          <div class="col-sm-6">
+            <p class="float-right-md"><strong>Météo à {{ .Site.Title }}</strong></p>
+            <img loading="lazy" class="img-fluid float-right-md" src="{{ printf "https://wttr.in/%s_0pQ_I_background=faebdc_lang=%s.png" .Site.Title .Site.LanguageCode }}" alt="Météo actuelle à {{ .Site.Title }}">
+          </div>
+        </div>
+      </aside>
+    </article>
+  </div>
+  <div class="col-lg-5">
+    {{ partialCached "chat.html" . -}}
+  </div>
+</div>
 {{- end }}
 {{- define "back" }}
 <nav aria-label="Passer à {{ .Site.Title }} ou sauter en haut de la page">

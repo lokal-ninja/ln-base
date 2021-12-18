@@ -3,11 +3,35 @@
 }
 
 .d-block {
-  display: block;
+  display: block !important;
 }
 
 .d-none {
   display: none !important;
+}
+
+.float-right {
+  float: right !important;
+}
+
+@media (min-width: 992px) {
+  .float-right-lg {
+    float: right !important;
+  }
+}
+
+@media (min-width: 768px) {
+  .float-right-md {
+    float: right !important;
+  }
+}
+
+.m-0 {
+  margin: 0;
+}
+
+.mt-0 {
+  margin-top: 0;
 }
 
 .mt-1 {
@@ -17,6 +41,12 @@
 .list-unstyled {
   padding-left: 0;
   list-style: none;
+}
+
+.text-truncate{
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap
 }
 
 .visually-hidden {

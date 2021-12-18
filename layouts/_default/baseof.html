@@ -40,11 +40,7 @@
     {{- $app := resources.Get "scss/app.scss" | toCSS }}
     {{- $style := slice $choices $app | resources.Concat "css/main.css" }}
     {{- if hugo.IsProduction }}
-      {{- if eq (len (findRE "/" .Site.BaseURL)) 3 }}
-      {{- $style = slice $choices $app | resources.Concat "../css/main.css" | minify | fingerprint }}
-      {{- else }}
       {{- $style = slice $choices $app | resources.Concat "css/main.css" | minify | fingerprint }}
-      {{- end }}
     {{- end }}
     <link rel="stylesheet" href="{{ $style.RelPermalink }}">
   </head>
@@ -91,11 +87,7 @@
     {{- $app := resources.Get "/js/app.js" }}
     {{- $js := slice $openinghours $choices $slugo $app | resources.Concat "js/main.js" }}
     {{- if hugo.IsProduction }}
-      {{- if eq (len (findRE "/" .Site.BaseURL)) 3 }}
-      {{- $js = slice $openinghours $choices $slugo $app | resources.Concat "../js/main.js" | minify | fingerprint }}
-      {{- else }}
       {{- $js = slice $openinghours $choices $slugo $app | resources.Concat "js/main.js" | minify | fingerprint }}
-      {{- end }}
     {{- end }}
     <script defer src="{{ $js.RelPermalink }}"></script>
   </body>

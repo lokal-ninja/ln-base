@@ -10,12 +10,11 @@
   "myLocation": "Mon emplacement",
   "stopTracking": "Arrêter le suivi",
   "trackLocation": "Emplacement de la piste",
-  "choosePlace": "Sélectionnez l'emplacement",
+  "choose": "choisissez",
   "search": "Recherche...",
   "loading": "Chargement...",
   "noResultsFound": "Aucun résultat trouvé",
   "withAtLeastThreeLetters": "au moins trois lettres",
-  "chooseCategoryOrShop": "Sélectionnez une #catégorie ou un magasin",
   "filter": "Filtre...",
   "weekdays": {
     "Mo": "Lu",

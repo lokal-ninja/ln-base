@@ -5,22 +5,13 @@
 Les {{ .Title }} affaires dans {{ .Site.Title }}
 {{- end }}
 {{ define "main" }}
-<section>
-  <h2 class="visually-hidden">Carte</h2>
-  <div id="map" class="is-overlay w-100">
-    {{ partialCached "load-btn.html" . -}}
-    <a href="https://www.openstreetmap.org/search?query={{ .Title }}" rel="nofollow noopener">OpenStreetMap ↗</a>
-    <a href="https://www.google.com/maps/dir//{{ .Title }}" rel="nofollow noopener">Google Maps ↗</a>
-    {{ partialCached "locate-btn.html" . -}}
-  </div>
-</section>
-<section id="entrees">
+<section id="eintraege">
   <h2 class="visually-hidden">Entrées</h2>
   <div class="filter filter-entries">
-    <input type="text" placeholder="Nom du filtre..." aria-label="Nom du filtre...">
+    <input type="text" placeholder="Filtrer les entrées..." aria-label="Filtrer les entrées...">
     <div><samp>{{ len (where .Site.Pages "Params.shop" .Title) }}</samp>Entrées</div>
   </div>
-  <ul class="columns">
+  <ul class="columns m-0">
     {{- range where .Site.Pages "Params.shop" .Title }}
     {{- $dirs := split .File.Dir "/" }}
     {{- $main := index $dirs 0 }}
@@ -30,6 +21,15 @@ Les {{ .Title }} affaires dans {{ .Site.Title }}
     {{- end }}
   </ul>
   <p>Une entrée est manquante ? Veuillez le saisir dans la base de données gratuite d'<a href="https://www.openstreetmap.org/" rel="nofollow noopener">OpenStreetMap ↗</a>!</p>
+</section>
+<section>
+  <h2 class="visually-hidden">Karte</h2>
+  <div id="map" class="is-overlay w-100">
+    {{ partialCached "load-btn.html" . -}}
+    <a href="https://www.openstreetmap.org/search?query={{ .Title }}" rel="nofollow noopener">OpenStreetMap ↗</a>
+    <a href="https://www.google.com/maps/dir//{{ .Title }}" rel="nofollow noopener">Google Maps ↗</a>
+    {{ partialCached "locate-btn.html" . -}}
+  </div>
 </section>
 <div class="row mt-1">
   <div class="col-lg-7">

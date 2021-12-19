@@ -551,7 +551,7 @@ function setupSearch() {
   const cities = document.getElementById('cities');
   if (cities) {
     citiesChoices = new Choices(cities, {
-      placeholderValue: LANG.choosePlace,
+      placeholderValue: LANG.choose,
       searchFields: ['value'],
       searchPlaceholderValue: LANG.search,
       loadingText: LANG.loading,
@@ -642,7 +642,7 @@ function setupSearch() {
   const shops = document.getElementById('shops');
   if (shops) {
     shopsChoices = new Choices(shops, {
-      placeholderValue: LANG.chooseCategoryOrShop,
+      placeholderValue: LANG.choose,
       searchFields: ['value'],
       searchPlaceholderValue: LANG.filter,
       loadingText: LANG.loading,

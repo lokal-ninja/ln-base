@@ -25,7 +25,25 @@
 }
 
 .mt-1 {
-  margin-top: 1rem;
+  margin-top: 0.75rem;
+}
+
+@media (min-width: 576px) {
+  .mt-sm-0 {
+    margin-top: 0;
+  }
+}
+
+@media (min-width: 768px) {
+  .mt-md-0 {
+      margin-top: 0;
+  }
+}
+
+@media (min-width: 992px) {
+  .mt-lg-0 {
+    margin-top: 0;
+  }
 }
 
 .list-unstyled {

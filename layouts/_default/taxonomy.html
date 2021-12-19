@@ -5,22 +5,13 @@
 {{ .Title }} shops in {{ .Site.Title }}
 {{- end }}
 {{ define "main" }}
-<section>
-  <h2 class="visually-hidden">Map</h2>
-  <div id="map" class="is-overlay w-100">
-    {{ partialCached "load-btn.html" . -}}
-    <a href="https://www.openstreetmap.org/search?query={{ .Title }}" rel="nofollow noopener">OpenStreetMap ↗</a>
-    <a href="https://www.google.com/maps/dir//{{ .Title }}" rel="nofollow noopener">Google Maps ↗</a>
-    {{ partialCached "locate-btn.html" . -}}
-  </div>
-</section>
-<section id="entries">
+<section id="eintraege">
   <h2 class="visually-hidden">Entries</h2>
   <div class="filter filter-entries">
     <input type="text" placeholder="Filter name..." aria-label="Filter name...">
     <div><samp>{{ len (where .Site.Pages "Params.shop" .Title) }}</samp>entries</div>
   </div>
-  <ul class="columns">
+  <ul class="columns m-0">
     {{- range where .Site.Pages "Params.shop" .Title }}
     {{- $dirs := split .File.Dir "/" }}
     {{- $main := index $dirs 0 }}
@@ -30,6 +21,15 @@
     {{- end }}
   </ul>
   <p>Missing an entry? Please add it to the free database at <a href="https://www.openstreetmap.org/" rel="nofollow noopener">OpenStreetMap ↗</a>!</p>
+</section>
+<section>
+  <h2 class="visually-hidden">Karte</h2>
+  <div id="map" class="is-overlay w-100">
+    {{ partialCached "load-btn.html" . -}}
+    <a href="https://www.openstreetmap.org/search?query={{ .Title }}" rel="nofollow noopener">OpenStreetMap ↗</a>
+    <a href="https://www.google.com/maps/dir//{{ .Title }}" rel="nofollow noopener">Google Maps ↗</a>
+    {{ partialCached "locate-btn.html" . -}}
+  </div>
 </section>
 <div class="row mt-1">
   <div class="col-lg-7">

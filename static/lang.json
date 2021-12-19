@@ -10,12 +10,11 @@
   "myLocation": "My location",
   "stopTracking": "Stop tracking",
   "trackLocation": "Track location",
-  "choosePlace": "Choose place",
+  "choose": "choose",
   "search": "Search...",
   "loading": "Loading...",
   "noResultsFound": "No results found",
   "withAtLeastThreeLetters": "with at least three letters",
-  "chooseCategoryOrShop": "Choose #category or shop",
   "filter": "Filter...",
   "weekdays": {
     "Mo": "Mo",

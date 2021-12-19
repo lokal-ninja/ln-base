@@ -10,12 +10,11 @@
   "myLocation": "Mein Standort",
   "stopTracking": "Tracken beenden",
   "trackLocation": "Standort tracken",
-  "choosePlace": "Ort auswählen",
+  "choose": "wählen",
   "search": "Suchen...",
   "loading": "Lädt...",
   "noResultsFound": "Keine Ergebnisse gefunden",
   "withAtLeastThreeLetters": "mit wenigstens drei Buchstaben",
-  "chooseCategoryOrShop": "#Kategorie oder Geschäft auswählen",
   "filter": "Filtern...",
   "weekdays": {
     "Mo": "Mo",

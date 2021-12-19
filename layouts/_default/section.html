@@ -5,44 +5,13 @@
 Geschäfte in {{ .Title }}
 {{- end }}
 {{ define "main" }}
-<div class="row">
-  <section id="infos" class="col-md-6">
-    <h2 class="visually-hidden">Kategorien</h2>
-    <div class="categories">
-      {{- $shops := slice }}
-      {{- range .RegularPages }}
-      {{- $shops = $shops | append .Params.shop }}
-      {{- end }}
-      {{- $sortedShops := sort $shops | uniq }}
-      <div class="filter filter-categories">
-        <input type="text" placeholder="Name filtern..." aria-label="Name filtern...">
-        <div><samp>{{ len $sortedShops }}</samp>Kategorien</div>
-      </div>
-      {{- range $sortedShops }}
-      {{- $sortedShop := . }}
-      {{- range where ($.Site.GetPage "taxonomyTerm" "shops").Pages ".Title" . }}
-      <button>{{ $sortedShop }}<svg class="icon" role="img" aria-hidden="true"><use href={{ printf "%s%s" "/img/sprite.svg#" .Params.icon | relURL }}></use></svg></button>
-      {{- end }}
-      {{- end }}
-    </div>  
-  </section>
-  <section class="col-md-6 mt-sm-1">
-    <h2 class="visually-hidden">Karte</h2>
-    <div id="map" class="is-overlay">
-      {{ partialCached "load-btn.html" . -}}
-      <a href="https://www.openstreetmap.org/search?query={{ .Title }}" rel="nofollow noopener">OpenStreetMap ↗</a>
-      <a href="https://www.google.com/maps/dir//{{ .Title }}" rel="nofollow noopener">Google Maps ↗</a>
-      {{ partialCached "locate-btn.html" . -}}
-    </div>
-  </section>
-</div>
 <section id="eintraege">
   <h2 class="visually-hidden">Einträge</h2>
   <div class="filter filter-entries">
     <input type="text" placeholder="Name filtern..." aria-label="Name filtern...">
     <div><samp>{{ len .Pages }}</samp>Einträge</div>
   </div>
-  <ul class="columns">
+  <ul class="columns m-0">
   {{- $entries := slice }}
     {{- range .Pages }}
     {{- $dirs := split .File.Dir "/" }}
@@ -73,6 +42,37 @@ Geschäfte in {{ .Title }}
   </ul>
   <p>Fehlt ein Eintrag? Trage ihn bitte in die freie Datenbank der <a href="https://www.openstreetmap.org/" rel="nofollow noopener">OpenStreetMap ↗</a> ein!</p>
 </section>
+<div class="row">
+  <section id="infos" class="col-md-6">
+    <h2 class="visually-hidden">Kategorien</h2>
+    <div class="categories">
+      {{- $shops := slice }}
+      {{- range .RegularPages }}
+      {{- $shops = $shops | append .Params.shop }}
+      {{- end }}
+      {{- $sortedShops := sort $shops | uniq }}
+      <div class="filter filter-categories">
+        <input type="text" placeholder="Name filtern..." aria-label="Name filtern...">
+        <div><samp>{{ len $sortedShops }}</samp>Kategorien</div>
+      </div>
+      {{- range $sortedShops }}
+      {{- $sortedShop := . }}
+      {{- range where ($.Site.GetPage "taxonomyTerm" "shops").Pages ".Title" . }}
+      <button>{{ $sortedShop }}<svg class="icon" role="img" aria-hidden="true"><use href={{ printf "%s%s" "/img/sprite.svg#" .Params.icon | relURL }}></use></svg></button>
+      {{- end }}
+      {{- end }}
+    </div>  
+  </section>
+  <section class="col-md-6 mt-1 mt-md-0">
+    <h2 class="visually-hidden">Karte</h2>
+    <div id="map" class="is-overlay">
+      {{ partialCached "load-btn.html" . -}}
+      <a href="https://www.openstreetmap.org/search?query={{ .Title }}" rel="nofollow noopener">OpenStreetMap ↗</a>
+      <a href="https://www.google.com/maps/dir//{{ .Title }}" rel="nofollow noopener">Google Maps ↗</a>
+      {{ partialCached "locate-btn.html" . -}}
+    </div>
+  </section>
+</div>
 <div class="row mt-1">
   <div class="col-lg-7">
     <article id="beschreibung">

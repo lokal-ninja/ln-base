@@ -5,22 +5,13 @@
 {{ .Title }} Geschäfte in {{ .Site.Title }}
 {{- end }}
 {{ define "main" }}
-<section>
-  <h2 class="visually-hidden">Karte</h2>
-  <div id="map" class="is-overlay w-100">
-    {{ partialCached "load-btn.html" . -}}
-    <a href="https://www.openstreetmap.org/search?query={{ .Title }}" rel="nofollow noopener">OpenStreetMap ↗</a>
-    <a href="https://www.google.com/maps/dir//{{ .Title }}" rel="nofollow noopener">Google Maps ↗</a>
-    {{ partialCached "locate-btn.html" . -}}
-  </div>
-</section>
 <section id="eintraege">
   <h2 class="visually-hidden">Einträge</h2>
   <div class="filter filter-entries">
     <input type="text" placeholder="Name filtern..." aria-label="Name filtern...">
     <div><samp>{{ len (where .Site.Pages "Params.shop" .Title) }}</samp>Einträge</div>
   </div>
-  <ul class="columns">
+  <ul class="columns m-0">
     {{- range where .Site.Pages "Params.shop" .Title }}
     {{- $dirs := split .File.Dir "/" }}
     {{- $main := index $dirs 0 }}
@@ -30,6 +21,15 @@
     {{- end }}
   </ul>
   <p>Fehlt ein Eintrag? Trage ihn bitte in die freie Datenbank der <a href="https://www.openstreetmap.org/" rel="nofollow noopener">OpenStreetMap ↗</a> ein!</p>
+</section>
+<section>
+  <h2 class="visually-hidden">Karte</h2>
+  <div id="map" class="is-overlay w-100">
+    {{ partialCached "load-btn.html" . -}}
+    <a href="https://www.openstreetmap.org/search?query={{ .Title }}" rel="nofollow noopener">OpenStreetMap ↗</a>
+    <a href="https://www.google.com/maps/dir//{{ .Title }}" rel="nofollow noopener">Google Maps ↗</a>
+    {{ partialCached "locate-btn.html" . -}}
+  </div>
 </section>
 <div class="row mt-1">
   <div class="col-lg-7">

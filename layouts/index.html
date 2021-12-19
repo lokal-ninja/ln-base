@@ -5,6 +5,18 @@
 Orte mit Geschäften in {{ .Site.Title }}
 {{- end }}
 {{ define "main" }}
+<section id="eintraege">
+  <h2 class="visually-hidden">Einträge</h2>
+  <div class="filter filter-entries">
+    <input type="text" placeholder="Name filtern..." aria-label="Name filtern...">
+    <div><samp>{{ len (.Site.GetPage "section" "cities").Sections }}</samp>Orte</div>
+  </div>
+  <ul class="columns m-0">
+    {{- range (.Site.GetPage "section" "cities").Sections }}
+    <li data-lat="{{ .Params.latitude }}" data-lon="{{ .Params.longitude }}"><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>
+    {{- end }}
+  </ul>
+</section>
 <div class="row">
   <section id="infos" class="col-md-6 categories">
     <h2 class="visually-hidden">Kategorien</h2>
@@ -16,7 +28,7 @@ Orte mit Geschäften in {{ .Site.Title }}
     <a href="{{ .RelPermalink }}">{{ .Title }}<svg class="icon" role="img" aria-hidden="true"><use href={{ printf "%s%s" "/img/sprite.svg#" .Params.icon | relURL }}></use></svg></a>
     {{- end }}
   </section>
-  <section class="col-md-6 mt-sm-1">
+  <section class="col-md-6 mt-1 mt-md-0">
     <h2 class="visually-hidden">Karte</h2>
     <div id="map" class="is-overlay">
       {{ partialCached "load-btn.html" . -}}
@@ -26,18 +38,6 @@ Orte mit Geschäften in {{ .Site.Title }}
     </div>
   </section>
 </div>
-<section id="eintraege">
-  <h2 class="visually-hidden">Einträge</h2>
-  <div class="filter filter-entries">
-    <input type="text" placeholder="Name filtern..." aria-label="Name filtern...">
-    <div><samp>{{ len (.Site.GetPage "section" "cities").Sections }}</samp>Orte</div>
-  </div>
-  <ul class="columns">
-    {{- range (.Site.GetPage "section" "cities").Sections }}
-    <li data-lat="{{ .Params.latitude }}" data-lon="{{ .Params.longitude }}"><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>
-    {{- end }}
-  </ul>
-</section>
 <div class="row mt-1">
   <div class="col-lg-7">
     <article id="beschreibung">

@@ -1,4 +1,4 @@
-/*! choices.js v9.0.1 | © 2021 Josh Johnson | https://github.com/jshjohnson/Choices#readme */
+/*! choices.js v9.1.0 | © 2021 Josh Johnson | https://github.com/jshjohnson/Choices#readme */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
@@ -13,7 +13,7 @@ return /******/ (function() { // webpackBootstrap
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 614:
+/***/ 282:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
@@ -23,9 +23,9 @@ Object.defineProperty(exports, "__esModule", ({
 }));
 exports.clearChoices = exports.activateChoices = exports.filterChoices = exports.addChoice = void 0;
 
-var constants_1 = __webpack_require__(514);
+var constants_1 = __webpack_require__(883);
 
-exports.addChoice = function (_a) {
+var addChoice = function (_a) {
   var value = _a.value,
       label = _a.label,
       id = _a.id,
@@ -49,14 +49,18 @@ exports.addChoice = function (_a) {
   };
 };
 
-exports.filterChoices = function (results) {
+exports.addChoice = addChoice;
+
+var filterChoices = function (results) {
   return {
     type: constants_1.ACTION_TYPES.FILTER_CHOICES,
     results: results
   };
 };
 
-exports.activateChoices = function (active) {
+exports.filterChoices = filterChoices;
+
+var activateChoices = function (active) {
   if (active === void 0) {
     active = true;
   }
@@ -67,15 +71,19 @@ exports.activateChoices = function (active) {
   };
 };
 
-exports.clearChoices = function () {
+exports.activateChoices = activateChoices;
+
+var clearChoices = function () {
   return {
     type: constants_1.ACTION_TYPES.CLEAR_CHOICES
   };
 };
 
+exports.clearChoices = clearChoices;
+
 /***/ }),
 
-/***/ 18:
+/***/ 783:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
@@ -85,9 +93,9 @@ Object.defineProperty(exports, "__esModule", ({
 }));
 exports.addGroup = void 0;
 
-var constants_1 = __webpack_require__(514);
+var constants_1 = __webpack_require__(883);
 
-exports.addGroup = function (_a) {
+var addGroup = function (_a) {
   var value = _a.value,
       id = _a.id,
       active = _a.active,
@@ -101,9 +109,11 @@ exports.addGroup = function (_a) {
   };
 };
 
+exports.addGroup = addGroup;
+
 /***/ }),
 
-/***/ 801:
+/***/ 464:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
@@ -113,9 +123,9 @@ Object.defineProperty(exports, "__esModule", ({
 }));
 exports.highlightItem = exports.removeItem = exports.addItem = void 0;
 
-var constants_1 = __webpack_require__(514);
+var constants_1 = __webpack_require__(883);
 
-exports.addItem = function (_a) {
+var addItem = function (_a) {
   var value = _a.value,
       label = _a.label,
       id = _a.id,
@@ -137,7 +147,9 @@ exports.addItem = function (_a) {
   };
 };
 
-exports.removeItem = function (id, choiceId) {
+exports.addItem = addItem;
+
+var removeItem = function (id, choiceId) {
   return {
     type: constants_1.ACTION_TYPES.REMOVE_ITEM,
     id: id,
@@ -145,7 +157,9 @@ exports.removeItem = function (id, choiceId) {
   };
 };
 
-exports.highlightItem = function (id, highlighted) {
+exports.removeItem = removeItem;
+
+var highlightItem = function (id, highlighted) {
   return {
     type: constants_1.ACTION_TYPES.HIGHLIGHT_ITEM,
     id: id,
@@ -153,9 +167,11 @@ exports.highlightItem = function (id, highlighted) {
   };
 };
 
+exports.highlightItem = highlightItem;
+
 /***/ }),
 
-/***/ 284:
+/***/ 137:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
@@ -165,41 +181,49 @@ Object.defineProperty(exports, "__esModule", ({
 }));
 exports.setIsLoading = exports.resetTo = exports.clearAll = void 0;
 
-var constants_1 = __webpack_require__(514);
+var constants_1 = __webpack_require__(883);
 
-exports.clearAll = function () {
+var clearAll = function () {
   return {
     type: constants_1.ACTION_TYPES.CLEAR_ALL
   };
 };
 
-exports.resetTo = function (state) {
+exports.clearAll = clearAll;
+
+var resetTo = function (state) {
   return {
     type: constants_1.ACTION_TYPES.RESET_TO,
     state: state
   };
 };
 
-exports.setIsLoading = function (isLoading) {
+exports.resetTo = resetTo;
+
+var setIsLoading = function (isLoading) {
   return {
     type: constants_1.ACTION_TYPES.SET_IS_LOADING,
     isLoading: isLoading
   };
 };
 
+exports.setIsLoading = setIsLoading;
+
 /***/ }),
 
-/***/ 510:
+/***/ 373:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
 
-var __spreadArrays = this && this.__spreadArrays || function () {
-  for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
-
-  for (var r = Array(s), k = 0, i = 0; i < il; i++) for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++) r[k] = a[j];
-
-  return r;
+var __spreadArray = this && this.__spreadArray || function (to, from, pack) {
+  if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+    if (ar || !(i in from)) {
+      if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+      ar[i] = from[i];
+    }
+  }
+  return to.concat(ar || Array.prototype.slice.call(from));
 };
 
 var __importDefault = this && this.__importDefault || function (mod) {
@@ -211,29 +235,32 @@ var __importDefault = this && this.__importDefault || function (mod) {
 Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
-/* eslint-disable @typescript-eslint/no-explicit-any */
 
 var deepmerge_1 = __importDefault(__webpack_require__(996));
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
-var store_1 = __importDefault(__webpack_require__(127));
 
-var components_1 = __webpack_require__(278);
+var choices_1 = __webpack_require__(282);
 
-var constants_1 = __webpack_require__(514);
+var groups_1 = __webpack_require__(783);
 
-var templates_1 = __importDefault(__webpack_require__(68));
+var items_1 = __webpack_require__(464);
 
-var choices_1 = __webpack_require__(614);
+var misc_1 = __webpack_require__(137);
 
-var items_1 = __webpack_require__(801);
+var components_1 = __webpack_require__(520);
 
-var groups_1 = __webpack_require__(18);
+var constants_1 = __webpack_require__(883);
 
-var misc_1 = __webpack_require__(284);
+var defaults_1 = __webpack_require__(789);
 
-var utils_1 = __webpack_require__(26);
+var utils_1 = __webpack_require__(799);
 
-var reducers_1 = __webpack_require__(694);
+var reducers_1 = __webpack_require__(655);
+
+var store_1 = __importDefault(__webpack_require__(744));
+
+var templates_1 = __importDefault(__webpack_require__(686));
 /** @see {@link http://browserhacks.com/#hack-acea075d0ac6954f275a70023906050c} */
 
 
@@ -258,14 +285,14 @@ function () {
       userConfig = {};
     }
 
-    this.config = deepmerge_1.default.all([constants_1.DEFAULT_CONFIG, Choices.defaults.options, userConfig], // When merging array configs, replace with a copy of the userConfig array,
+    this.config = deepmerge_1.default.all([defaults_1.DEFAULT_CONFIG, Choices.defaults.options, userConfig], // When merging array configs, replace with a copy of the userConfig array,
     // instead of concatenating with the default array
     {
       arrayMerge: function (_, sourceArray) {
-        return __spreadArrays(sourceArray);
+        return __spreadArray([], sourceArray, true);
       }
     });
-    var invalidConfigOptions = utils_1.diff(this.config, constants_1.DEFAULT_CONFIG);
+    var invalidConfigOptions = (0, utils_1.diff)(this.config, defaults_1.DEFAULT_CONFIG);
 
     if (invalidConfigOptions.length) {
       console.warn('Unknown config option(s) passed', invalidConfigOptions.join(', '));
@@ -283,7 +310,7 @@ function () {
     this._isSelectElement = this._isSelectOneElement || this._isSelectMultipleElement;
     this.config.searchEnabled = this._isSelectMultipleElement || this.config.searchEnabled;
 
-    if (!['auto', 'always'].includes("" + this.config.renderSelectedChoices)) {
+    if (!['auto', 'always'].includes("".concat(this.config.renderSelectedChoices))) {
       this.config.renderSelectedChoices = 'auto';
     }
 
@@ -319,7 +346,7 @@ function () {
     this._highlightPosition = 0;
     this._wasTap = true;
     this._placeholderValue = this._generatePlaceholderValue();
-    this._baseId = utils_1.generateId(this.passedElement.element, 'choices-');
+    this._baseId = (0, utils_1.generateId)(this.passedElement.element, 'choices-');
     /**
      * setting direction in cases where it's explicitly set on passedElement
      * or when calculated direction is different from the document
@@ -518,7 +545,7 @@ function () {
         label = _c === void 0 ? '' : _c;
     var group = groupId >= 0 ? this._store.getGroupById(groupId) : null;
 
-    this._store.dispatch(items_1.highlightItem(id, true));
+    this._store.dispatch((0, items_1.highlightItem)(id, true));
 
     if (runEvent) {
       this.passedElement.triggerEvent(constants_1.EVENTS.highlightItem, {
@@ -546,7 +573,7 @@ function () {
         label = _c === void 0 ? '' : _c;
     var group = groupId >= 0 ? this._store.getGroupById(groupId) : null;
 
-    this._store.dispatch(items_1.highlightItem(id, false));
+    this._store.dispatch((0, items_1.highlightItem)(id, false));
 
     this.passedElement.triggerEvent(constants_1.EVENTS.highlightItem, {
       id: id,
@@ -815,11 +842,10 @@ function () {
 
       if (typeof Promise === 'function' && fetcher_1 instanceof Promise) {
         // that's a promise
-        // eslint-disable-next-line compat/compat
+        // eslint-disable-next-line no-promise-executor-return
         return new Promise(function (resolve) {
           return requestAnimationFrame(resolve);
-        }) // eslint-disable-line compat/compat
-        .then(function () {
+        }).then(function () {
           return _this._handleLoadingState(true);
         }).then(function () {
           return fetcher_1;
@@ -838,7 +864,7 @@ function () {
 
 
       if (!Array.isArray(fetcher_1)) {
-        throw new TypeError(".setChoices first argument function must return either array of choices or Promise, got: " + typeof fetcher_1);
+        throw new TypeError(".setChoices first argument function must return either array of choices or Promise, got: ".concat(typeof fetcher_1));
       } // recursion with results, it's sync and choices were cleared already
 
 
@@ -856,7 +882,7 @@ function () {
     choicesArrayOrFetcher.forEach(function (groupOrChoice) {
       if (groupOrChoice.choices) {
         _this._addGroup({
-          id: groupOrChoice.id ? parseInt("" + groupOrChoice.id, 10) : null,
+          id: groupOrChoice.id ? parseInt("".concat(groupOrChoice.id), 10) : null,
           group: groupOrChoice,
           valueKey: value,
           labelKey: label
@@ -881,13 +907,13 @@ function () {
   };
 
   Choices.prototype.clearChoices = function () {
-    this._store.dispatch(choices_1.clearChoices());
+    this._store.dispatch((0, choices_1.clearChoices)());
 
     return this;
   };
 
   Choices.prototype.clearStore = function () {
-    this._store.dispatch(misc_1.clearAll());
+    this._store.dispatch((0, misc_1.clearAll)());
 
     return this;
   };
@@ -899,7 +925,7 @@ function () {
     if (!this._isTextElement && this._canSearch) {
       this._isSearching = false;
 
-      this._store.dispatch(choices_1.activateChoices(true));
+      this._store.dispatch((0, choices_1.activateChoices)(true));
     }
 
     return this;
@@ -1105,7 +1131,7 @@ function () {
 
     var choiceLimit = rendererableChoices.length; // Prepend placeholeder
 
-    var sortedChoices = this._isSelectOneElement ? __spreadArrays(placeholderChoices, normalChoices) : normalChoices;
+    var sortedChoices = this._isSelectOneElement ? __spreadArray(__spreadArray([], placeholderChoices, true), normalChoices, true) : normalChoices;
 
     if (this._isSearching) {
       choiceLimit = searchResultLimit;
@@ -1226,7 +1252,7 @@ function () {
     // unless shift is being pressed
 
     activeItems.forEach(function (item) {
-      if (item.id === parseInt("" + passedId, 10) && !item.highlighted) {
+      if (item.id === parseInt("".concat(passedId), 10) && !item.highlighted) {
         _this.highlightItem(item);
       } else if (!hasShiftKey && item.highlighted) {
         _this.unhighlightItem(item);
@@ -1314,11 +1340,11 @@ function () {
   };
 
   Choices.prototype._startLoading = function () {
-    this._store.dispatch(misc_1.setIsLoading(true));
+    this._store.dispatch((0, misc_1.setIsLoading)(true));
   };
 
   Choices.prototype._stopLoading = function () {
-    this._store.dispatch(misc_1.setIsLoading(false));
+    this._store.dispatch((0, misc_1.setIsLoading)(false));
   };
 
   Choices.prototype._handleLoadingState = function (setLoading) {
@@ -1326,7 +1352,7 @@ function () {
       setLoading = true;
     }
 
-    var placeholderItem = this.itemList.getChild("." + this.config.classNames.placeholder);
+    var placeholderItem = this.itemList.getChild(".".concat(this.config.classNames.placeholder));
 
     if (setLoading) {
       this.disable();
@@ -1383,7 +1409,7 @@ function () {
       // Otherwise reset choices to active
       this._isSearching = false;
 
-      this._store.dispatch(choices_1.activateChoices(true));
+      this._store.dispatch((0, choices_1.activateChoices)(true));
     }
   };
 
@@ -1392,7 +1418,7 @@ function () {
     var notice = typeof this.config.addItemText === 'function' ? this.config.addItemText(value) : this.config.addItemText;
 
     if (!this._isSelectOneElement) {
-      var isDuplicateValue = utils_1.existsInArray(activeItems, value);
+      var isDuplicateValue = (0, utils_1.existsInArray)(activeItems, value);
 
       if (this.config.maxItemCount > 0 && this.config.maxItemCount <= activeItems.length) {
         // If there is a max entry limit and we have reached that limit
@@ -1422,7 +1448,7 @@ function () {
     var newValue = typeof value === 'string' ? value.trim() : value;
     var currentValue = typeof this._currentValue === 'string' ? this._currentValue.trim() : this._currentValue;
 
-    if (newValue.length < 3 || newValue === currentValue + " ") {
+    if (newValue.length < 3 || newValue === "".concat(currentValue, " ")) {
       return 0;
     } // If new value matches the desired length and is not the same as the current value with a space
 
@@ -1507,7 +1533,7 @@ function () {
     this._highlightPosition = 0;
     this._isSearching = true;
 
-    this._store.dispatch(choices_1.filterChoices(results));
+    this._store.dispatch((0, choices_1.filterChoices)(results));
 
     return results.length;
   };
@@ -1669,7 +1695,7 @@ function () {
       if (userHasRemovedValue && canReactivateChoices) {
         this._isSearching = false;
 
-        this._store.dispatch(choices_1.activateChoices(true));
+        this._store.dispatch((0, choices_1.activateChoices)(true));
       } else if (canSearch) {
         this._handleSearch(this.input.value);
       }
@@ -1723,7 +1749,7 @@ function () {
     }
 
     if (hasActiveDropdown) {
-      var highlightedChoice = this.dropdown.getChild("." + this.config.classNames.highlightedState);
+      var highlightedChoice = this.dropdown.getChild(".".concat(this.config.classNames.highlightedState));
 
       if (highlightedChoice) {
         // add enter keyCode value
@@ -1765,15 +1791,15 @@ function () {
 
       if (skipKey) {
         if (directionInt > 0) {
-          nextEl = this.dropdown.element.querySelector(selectableChoiceIdentifier + ":last-of-type");
+          nextEl = this.dropdown.element.querySelector("".concat(selectableChoiceIdentifier, ":last-of-type"));
         } else {
           nextEl = this.dropdown.element.querySelector(selectableChoiceIdentifier);
         }
       } else {
-        var currentEl = this.dropdown.element.querySelector("." + this.config.classNames.highlightedState);
+        var currentEl = this.dropdown.element.querySelector(".".concat(this.config.classNames.highlightedState));
 
         if (currentEl) {
-          nextEl = utils_1.getAdjacentEl(currentEl, selectableChoiceIdentifier, directionInt);
+          nextEl = (0, utils_1.getAdjacentEl)(currentEl, selectableChoiceIdentifier, directionInt);
         } else {
           nextEl = this.dropdown.element.querySelector(selectableChoiceIdentifier);
         }
@@ -1782,7 +1808,7 @@ function () {
       if (nextEl) {
         // We prevent default to stop the cursor moving
         // when pressing the arrow
-        if (!utils_1.isScrolledIntoView(nextEl, this.choiceList.element, directionInt)) {
+        if (!(0, utils_1.isScrolledIntoView)(nextEl, this.choiceList.element, directionInt)) {
           this.choiceList.scrollToChildElement(nextEl, directionInt);
         }
 
@@ -1906,12 +1932,10 @@ function () {
         this.hideDropdown();
       }
     } else {
-      var hasHighlightedItems = this._store.highlightedActiveItems.length > 0;
-
-      if (hasHighlightedItems) {
+      /*const hasHighlightedItems = this._store.highlightedActiveItems.length > 0;
+             if (hasHighlightedItems) {
         this.unhighlightAll();
-      }
-
+      }*/
       this.containerOuter.removeFocusState();
       this.hideDropdown(true);
     }
@@ -1960,17 +1984,15 @@ function () {
     var blurWasWithinContainer = target && this.containerOuter.element.contains(target);
 
     if (blurWasWithinContainer && !this._isScrollingOnIe) {
-      var activeItems = this._store.activeItems;
-      var hasHighlightedItems_1 = activeItems.some(function (item) {
-        return item.highlighted;
-      });
+      /*const { activeItems } = this._store;
+      const hasHighlightedItems = activeItems.some((item) => item.highlighted);*/
       var blurActions = (_b = {}, _b[constants_1.TEXT_TYPE] = function () {
         if (target === _this.input.element) {
           _this.containerOuter.removeFocusState();
+          /*if (hasHighlightedItems) {
+            this.unhighlightAll();
+          }*/
 
-          if (hasHighlightedItems_1) {
-            _this.unhighlightAll();
-          }
 
           _this.hideDropdown(true);
         }
@@ -1985,10 +2007,10 @@ function () {
           _this.containerOuter.removeFocusState();
 
           _this.hideDropdown(true);
+          /*if (hasHighlightedItems) {
+            this.unhighlightAll();
+          }*/
 
-          if (hasHighlightedItems_1) {
-            _this.unhighlightAll();
-          }
         }
       }, _b);
       blurActions[this.passedElement.element.type]();
@@ -2002,7 +2024,7 @@ function () {
   };
 
   Choices.prototype._onFormReset = function () {
-    this._store.dispatch(misc_1.resetTo(this._initialState));
+    this._store.dispatch((0, misc_1.resetTo)(this._initialState));
   };
 
   Choices.prototype._highlightChoice = function (el) {
@@ -2019,7 +2041,7 @@ function () {
     }
 
     var passedEl = el;
-    var highlightedChoices = Array.from(this.dropdown.element.querySelectorAll("." + this.config.classNames.highlightedState)); // Remove any highlighted choices
+    var highlightedChoices = Array.from(this.dropdown.element.querySelectorAll(".".concat(this.config.classNames.highlightedState))); // Remove any highlighted choices
 
     highlightedChoices.forEach(function (choice) {
       choice.classList.remove(_this.config.classNames.highlightedState);
@@ -2087,7 +2109,7 @@ function () {
       passedValue += this.config.appendValue.toString();
     }
 
-    this._store.dispatch(items_1.addItem({
+    this._store.dispatch((0, items_1.addItem)({
       value: passedValue,
       label: passedLabel,
       id: id,
@@ -2126,7 +2148,7 @@ function () {
       return;
     }
 
-    this._store.dispatch(items_1.removeItem(id, choiceId));
+    this._store.dispatch((0, items_1.removeItem)(id, choiceId));
 
     this.passedElement.triggerEvent(constants_1.EVENTS.removeItem, {
       id: id,
@@ -2162,9 +2184,9 @@ function () {
     var choices = this._store.choices;
     var choiceLabel = label || value;
     var choiceId = choices ? choices.length + 1 : 1;
-    var choiceElementId = this._baseId + "-" + this._idNames.itemChoice + "-" + choiceId;
+    var choiceElementId = "".concat(this._baseId, "-").concat(this._idNames.itemChoice, "-").concat(choiceId);
 
-    this._store.dispatch(choices_1.addChoice({
+    this._store.dispatch((0, choices_1.addChoice)({
       id: choiceId,
       groupId: groupId,
       elementId: choiceElementId,
@@ -2197,12 +2219,12 @@ function () {
         valueKey = _b === void 0 ? 'value' : _b,
         _c = _a.labelKey,
         labelKey = _c === void 0 ? 'label' : _c;
-    var groupChoices = utils_1.isType('Object', group) ? group.choices : Array.from(group.getElementsByTagName('OPTION'));
+    var groupChoices = (0, utils_1.isType)('Object', group) ? group.choices : Array.from(group.getElementsByTagName('OPTION'));
     var groupId = id || Math.floor(new Date().valueOf() * Math.random());
     var isDisabled = group.disabled ? group.disabled : false;
 
     if (groupChoices) {
-      this._store.dispatch(groups_1.addGroup({
+      this._store.dispatch((0, groups_1.addGroup)({
         value: group.label,
         id: groupId,
         active: true,
@@ -2214,7 +2236,7 @@ function () {
 
         _this._addChoice({
           value: choice[valueKey],
-          label: utils_1.isType('Object', choice) ? choice[labelKey] : choice.innerHTML,
+          label: (0, utils_1.isType)('Object', choice) ? choice[labelKey] : choice.innerHTML,
           isSelected: choice.selected,
           isDisabled: isOptDisabled,
           groupId: groupId,
@@ -2225,7 +2247,7 @@ function () {
 
       groupChoices.forEach(addGroupChoices);
     } else {
-      this._store.dispatch(groups_1.addGroup({
+      this._store.dispatch((0, groups_1.addGroup)({
         value: group.label,
         id: group.id,
         active: false,
@@ -2244,7 +2266,7 @@ function () {
     }
 
     var classNames = this.config.classNames;
-    return (_a = this._templates[template]).call.apply(_a, __spreadArrays([this, classNames], args));
+    return (_a = this._templates[template]).call.apply(_a, __spreadArray([this, classNames], args, false));
   };
 
   Choices.prototype._createTemplates = function () {
@@ -2255,7 +2277,7 @@ function () {
       userTemplates = callbackOnCreateTemplates.call(this, utils_1.strToEl);
     }
 
-    this._templates = deepmerge_1.default(templates_1.default, userTemplates);
+    this._templates = (0, deepmerge_1.default)(templates_1.default, userTemplates);
   };
 
   Choices.prototype._createElements = function () {
@@ -2401,7 +2423,6 @@ function () {
           var shouldPreselect = _this._isSelectOneElement && !hasSelectedChoice && index === firstEnabledChoiceIndex;
           var isSelected = shouldPreselect ? true : choice.selected;
           var isDisabled = choice.disabled;
-          console.log(isDisabled, choice);
 
           _this._addChoice({
             value: value,
@@ -2450,7 +2471,7 @@ function () {
   Choices.prototype._setChoiceOrItem = function (item) {
     var _this = this;
 
-    var itemType = utils_1.getType(item).toLowerCase();
+    var itemType = (0, utils_1.getType)(item).toLowerCase();
     var handleType = {
       object: function () {
         if (!item.value) {
@@ -2549,7 +2570,7 @@ exports["default"] = Choices;
 
 /***/ }),
 
-/***/ 101:
+/***/ 613:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
@@ -2558,9 +2579,9 @@ Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
 
-var utils_1 = __webpack_require__(26);
+var utils_1 = __webpack_require__(799);
 
-var constants_1 = __webpack_require__(514);
+var constants_1 = __webpack_require__(883);
 
 var Container =
 /** @class */
@@ -2608,7 +2629,7 @@ function () {
     var shouldFlip = false;
 
     if (this.position === 'auto') {
-      shouldFlip = !window.matchMedia("(min-height: " + (dropdownPos + 1) + "px)").matches;
+      shouldFlip = !window.matchMedia("(min-height: ".concat(dropdownPos + 1, "px)")).matches;
     } else if (this.position === 'top') {
       shouldFlip = true;
     }
@@ -2684,7 +2705,7 @@ function () {
   };
 
   Container.prototype.wrap = function (element) {
-    utils_1.wrap(element, this.element);
+    (0, utils_1.wrap)(element, this.element);
   };
 
   Container.prototype.unwrap = function (element) {
@@ -2723,7 +2744,7 @@ exports["default"] = Container;
 
 /***/ }),
 
-/***/ 169:
+/***/ 217:
 /***/ (function(__unused_webpack_module, exports) {
 
 
@@ -2789,7 +2810,7 @@ exports["default"] = Dropdown;
 
 /***/ }),
 
-/***/ 278:
+/***/ 520:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
@@ -2805,33 +2826,33 @@ Object.defineProperty(exports, "__esModule", ({
 }));
 exports.WrappedSelect = exports.WrappedInput = exports.List = exports.Input = exports.Container = exports.Dropdown = void 0;
 
-var dropdown_1 = __importDefault(__webpack_require__(169));
+var dropdown_1 = __importDefault(__webpack_require__(217));
 
 exports.Dropdown = dropdown_1.default;
 
-var container_1 = __importDefault(__webpack_require__(101));
+var container_1 = __importDefault(__webpack_require__(613));
 
 exports.Container = container_1.default;
 
-var input_1 = __importDefault(__webpack_require__(980));
+var input_1 = __importDefault(__webpack_require__(11));
 
 exports.Input = input_1.default;
 
-var list_1 = __importDefault(__webpack_require__(803));
+var list_1 = __importDefault(__webpack_require__(624));
 
 exports.List = list_1.default;
 
-var wrapped_input_1 = __importDefault(__webpack_require__(537));
+var wrapped_input_1 = __importDefault(__webpack_require__(541));
 
 exports.WrappedInput = wrapped_input_1.default;
 
-var wrapped_select_1 = __importDefault(__webpack_require__(333));
+var wrapped_select_1 = __importDefault(__webpack_require__(982));
 
 exports.WrappedSelect = wrapped_select_1.default;
 
 /***/ }),
 
-/***/ 980:
+/***/ 11:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
@@ -2840,9 +2861,9 @@ Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
 
-var utils_1 = __webpack_require__(26);
+var utils_1 = __webpack_require__(799);
 
-var constants_1 = __webpack_require__(514);
+var constants_1 = __webpack_require__(883);
 
 var Input =
 /** @class */
@@ -2873,7 +2894,7 @@ function () {
   });
   Object.defineProperty(Input.prototype, "value", {
     get: function () {
-      return utils_1.sanitise(this.element.value);
+      return (0, utils_1.sanitise)(this.element.value);
     },
     set: function (value) {
       this.element.value = value;
@@ -2951,8 +2972,8 @@ function () {
         style = _a.style,
         value = _a.value,
         placeholder = _a.placeholder;
-    style.minWidth = placeholder.length + 1 + "ch";
-    style.width = value.length + 1 + "ch";
+    style.minWidth = "".concat(placeholder.length + 1, "ch");
+    style.width = "".concat(value.length + 1, "ch");
   };
 
   Input.prototype.setActiveDescendant = function (activeDescendantID) {
@@ -2990,7 +3011,7 @@ exports["default"] = Input;
 
 /***/ }),
 
-/***/ 803:
+/***/ 624:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
@@ -2999,7 +3020,7 @@ Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
 
-var constants_1 = __webpack_require__(514);
+var constants_1 = __webpack_require__(883);
 
 var List =
 /** @class */
@@ -3098,7 +3119,7 @@ exports["default"] = List;
 
 /***/ }),
 
-/***/ 740:
+/***/ 730:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
@@ -3107,7 +3128,7 @@ Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
 
-var utils_1 = __webpack_require__(26);
+var utils_1 = __webpack_require__(799);
 
 var WrappedElement =
 /** @class */
@@ -3201,7 +3222,7 @@ function () {
   };
 
   WrappedElement.prototype.triggerEvent = function (eventType, data) {
-    utils_1.dispatchEvent(this.element, eventType, data);
+    (0, utils_1.dispatchEvent)(this.element, eventType, data);
   };
 
   return WrappedElement;
@@ -3211,7 +3232,7 @@ exports["default"] = WrappedElement;
 
 /***/ }),
 
-/***/ 537:
+/***/ 541:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
@@ -3223,13 +3244,14 @@ var __extends = this && this.__extends || function () {
     } instanceof Array && function (d, b) {
       d.__proto__ = b;
     } || function (d, b) {
-      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+      for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p];
     };
 
     return extendStatics(d, b);
   };
 
   return function (d, b) {
+    if (typeof b !== "function" && b !== null) throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
     extendStatics(d, b);
 
     function __() {
@@ -3250,7 +3272,7 @@ Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
 
-var wrapped_element_1 = __importDefault(__webpack_require__(740));
+var wrapped_element_1 = __importDefault(__webpack_require__(730));
 
 var WrappedInput =
 /** @class */
@@ -3289,7 +3311,7 @@ exports["default"] = WrappedInput;
 
 /***/ }),
 
-/***/ 333:
+/***/ 982:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
@@ -3301,13 +3323,14 @@ var __extends = this && this.__extends || function () {
     } instanceof Array && function (d, b) {
       d.__proto__ = b;
     } || function (d, b) {
-      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+      for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p];
     };
 
     return extendStatics(d, b);
   };
 
   return function (d, b) {
+    if (typeof b !== "function" && b !== null) throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
     extendStatics(d, b);
 
     function __() {
@@ -3328,7 +3351,7 @@ Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
 
-var wrapped_element_1 = __importDefault(__webpack_require__(740));
+var wrapped_element_1 = __importDefault(__webpack_require__(730));
 
 var WrappedSelect =
 /** @class */
@@ -3403,7 +3426,59 @@ exports["default"] = WrappedSelect;
 
 /***/ }),
 
-/***/ 514:
+/***/ 883:
+/***/ (function(__unused_webpack_module, exports) {
+
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.SCROLLING_SPEED = exports.SELECT_MULTIPLE_TYPE = exports.SELECT_ONE_TYPE = exports.TEXT_TYPE = exports.KEY_CODES = exports.ACTION_TYPES = exports.EVENTS = void 0;
+exports.EVENTS = {
+  showDropdown: 'showDropdown',
+  hideDropdown: 'hideDropdown',
+  change: 'change',
+  choice: 'choice',
+  search: 'search',
+  addItem: 'addItem',
+  removeItem: 'removeItem',
+  highlightItem: 'highlightItem',
+  highlightChoice: 'highlightChoice',
+  unhighlightItem: 'unhighlightItem'
+};
+exports.ACTION_TYPES = {
+  ADD_CHOICE: 'ADD_CHOICE',
+  FILTER_CHOICES: 'FILTER_CHOICES',
+  ACTIVATE_CHOICES: 'ACTIVATE_CHOICES',
+  CLEAR_CHOICES: 'CLEAR_CHOICES',
+  ADD_GROUP: 'ADD_GROUP',
+  ADD_ITEM: 'ADD_ITEM',
+  REMOVE_ITEM: 'REMOVE_ITEM',
+  HIGHLIGHT_ITEM: 'HIGHLIGHT_ITEM',
+  CLEAR_ALL: 'CLEAR_ALL',
+  RESET_TO: 'RESET_TO',
+  SET_IS_LOADING: 'SET_IS_LOADING'
+};
+exports.KEY_CODES = {
+  BACK_KEY: 46,
+  DELETE_KEY: 8,
+  ENTER_KEY: 13,
+  A_KEY: 65,
+  ESC_KEY: 27,
+  UP_KEY: 38,
+  DOWN_KEY: 40,
+  PAGE_UP_KEY: 33,
+  PAGE_DOWN_KEY: 34
+};
+exports.TEXT_TYPE = 'text';
+exports.SELECT_ONE_TYPE = 'select-one';
+exports.SELECT_MULTIPLE_TYPE = 'select-multiple';
+exports.SCROLLING_SPEED = 4;
+
+/***/ }),
+
+/***/ 789:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
@@ -3411,9 +3486,9 @@ exports["default"] = WrappedSelect;
 Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
-exports.SCROLLING_SPEED = exports.SELECT_MULTIPLE_TYPE = exports.SELECT_ONE_TYPE = exports.TEXT_TYPE = exports.KEY_CODES = exports.ACTION_TYPES = exports.EVENTS = exports.DEFAULT_CONFIG = exports.DEFAULT_CLASSNAMES = void 0;
+exports.DEFAULT_CONFIG = exports.DEFAULT_CLASSNAMES = void 0;
 
-var utils_1 = __webpack_require__(26);
+var utils_1 = __webpack_require__(799);
 
 exports.DEFAULT_CLASSNAMES = {
   containerOuter: 'choices',
@@ -3480,10 +3555,10 @@ exports.DEFAULT_CONFIG = {
   uniqueItemText: 'Only unique values can be added',
   customAddItemText: 'Only values matching specific conditions can be added',
   addItemText: function (value) {
-    return "Press Enter to add <b>\"" + utils_1.sanitise(value) + "\"</b>";
+    return "Press Enter to add <b>\"".concat((0, utils_1.sanitise)(value), "\"</b>");
   },
   maxItemText: function (maxItemCount) {
-    return "Only " + maxItemCount + " values can be added";
+    return "Only ".concat(maxItemCount, " values can be added");
   },
   valueComparer: function (value1, value2) {
     return value1 === value2;
@@ -3492,107 +3567,81 @@ exports.DEFAULT_CONFIG = {
   callbackOnCreateTemplates: null,
   classNames: exports.DEFAULT_CLASSNAMES
 };
-exports.EVENTS = {
-  showDropdown: 'showDropdown',
-  hideDropdown: 'hideDropdown',
-  change: 'change',
-  choice: 'choice',
-  search: 'search',
-  addItem: 'addItem',
-  removeItem: 'removeItem',
-  highlightItem: 'highlightItem',
-  highlightChoice: 'highlightChoice',
-  unhighlightItem: 'unhighlightItem'
-};
-exports.ACTION_TYPES = {
-  ADD_CHOICE: 'ADD_CHOICE',
-  FILTER_CHOICES: 'FILTER_CHOICES',
-  ACTIVATE_CHOICES: 'ACTIVATE_CHOICES',
-  CLEAR_CHOICES: 'CLEAR_CHOICES',
-  ADD_GROUP: 'ADD_GROUP',
-  ADD_ITEM: 'ADD_ITEM',
-  REMOVE_ITEM: 'REMOVE_ITEM',
-  HIGHLIGHT_ITEM: 'HIGHLIGHT_ITEM',
-  CLEAR_ALL: 'CLEAR_ALL',
-  RESET_TO: 'RESET_TO',
-  SET_IS_LOADING: 'SET_IS_LOADING'
-};
-exports.KEY_CODES = {
-  BACK_KEY: 46,
-  DELETE_KEY: 8,
-  ENTER_KEY: 13,
-  A_KEY: 65,
-  ESC_KEY: 27,
-  UP_KEY: 38,
-  DOWN_KEY: 40,
-  PAGE_UP_KEY: 33,
-  PAGE_DOWN_KEY: 34
-};
-exports.TEXT_TYPE = 'text';
-exports.SELECT_ONE_TYPE = 'select-one';
-exports.SELECT_MULTIPLE_TYPE = 'select-multiple';
-exports.SCROLLING_SPEED = 4;
 
 /***/ }),
 
-/***/ 26:
+/***/ 799:
 /***/ (function(__unused_webpack_module, exports) {
 
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
 exports.diff = exports.cloneObject = exports.existsInArray = exports.dispatchEvent = exports.sortByScore = exports.sortByAlpha = exports.strToEl = exports.sanitise = exports.isScrolledIntoView = exports.getAdjacentEl = exports.wrap = exports.isType = exports.getType = exports.generateId = exports.generateChars = exports.getRandomNumber = void 0;
-/* eslint-disable @typescript-eslint/no-explicit-any */
 
-exports.getRandomNumber = function (min, max) {
+var getRandomNumber = function (min, max) {
   return Math.floor(Math.random() * (max - min) + min);
 };
 
-exports.generateChars = function (length) {
+exports.getRandomNumber = getRandomNumber;
+
+var generateChars = function (length) {
   return Array.from({
     length: length
   }, function () {
-    return exports.getRandomNumber(0, 36).toString(36);
+    return (0, exports.getRandomNumber)(0, 36).toString(36);
   }).join('');
 };
 
-exports.generateId = function (element, prefix) {
-  var id = element.id || element.name && element.name + "-" + exports.generateChars(2) || exports.generateChars(4);
+exports.generateChars = generateChars;
+
+var generateId = function (element, prefix) {
+  var id = element.id || element.name && "".concat(element.name, "-").concat((0, exports.generateChars)(2)) || (0, exports.generateChars)(4);
   id = id.replace(/(:|\.|\[|\]|,)/g, '');
-  id = prefix + "-" + id;
+  id = "".concat(prefix, "-").concat(id);
   return id;
 };
 
-exports.getType = function (obj) {
+exports.generateId = generateId;
+
+var getType = function (obj) {
   return Object.prototype.toString.call(obj).slice(8, -1);
 };
 
-exports.isType = function (type, obj) {
-  return obj !== undefined && obj !== null && exports.getType(obj) === type;
+exports.getType = getType;
+
+var isType = function (type, obj) {
+  return obj !== undefined && obj !== null && (0, exports.getType)(obj) === type;
 };
 
-exports.wrap = function (element, wrapper) {
+exports.isType = isType;
+
+var wrap = function (element, wrapper) {
   if (wrapper === void 0) {
     wrapper = document.createElement('div');
   }
 
-  if (element.nextSibling) {
-    element.parentNode && element.parentNode.insertBefore(wrapper, element.nextSibling);
-  } else {
-    element.parentNode && element.parentNode.appendChild(wrapper);
+  if (element.parentNode) {
+    if (element.nextSibling) {
+      element.parentNode.insertBefore(wrapper, element.nextSibling);
+    } else {
+      element.parentNode.appendChild(wrapper);
+    }
   }
 
   return wrapper.appendChild(element);
 };
 
-exports.getAdjacentEl = function (startEl, selector, direction) {
+exports.wrap = wrap;
+
+var getAdjacentEl = function (startEl, selector, direction) {
   if (direction === void 0) {
     direction = 1;
   }
 
-  var prop = (direction > 0 ? 'next' : 'previous') + "ElementSibling";
+  var prop = "".concat(direction > 0 ? 'next' : 'previous', "ElementSibling");
   var sibling = startEl[prop];
 
   while (sibling) {
@@ -3606,7 +3655,9 @@ exports.getAdjacentEl = function (startEl, selector, direction) {
   return sibling;
 };
 
-exports.isScrolledIntoView = function (element, parent, direction) {
+exports.getAdjacentEl = getAdjacentEl;
+
+var isScrolledIntoView = function (element, parent, direction) {
   if (direction === void 0) {
     direction = 1;
   }
@@ -3628,13 +3679,17 @@ exports.isScrolledIntoView = function (element, parent, direction) {
   return isVisible;
 };
 
-exports.sanitise = function (value) {
+exports.isScrolledIntoView = isScrolledIntoView;
+
+var sanitise = function (value) {
   if (typeof value !== 'string') {
     return value;
   }
 
   return value.replace(/&/g, '&amp;').replace(/>/g, '&rt;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
 };
+
+exports.sanitise = sanitise;
 
 exports.strToEl = function () {
   var tmpEl = document.createElement('div');
@@ -3651,7 +3706,7 @@ exports.strToEl = function () {
   };
 }();
 
-exports.sortByAlpha = function (_a, _b) {
+var sortByAlpha = function (_a, _b) {
   var value = _a.value,
       _c = _a.label,
       label = _c === void 0 ? value : _c;
@@ -3665,7 +3720,9 @@ exports.sortByAlpha = function (_a, _b) {
   });
 };
 
-exports.sortByScore = function (a, b) {
+exports.sortByAlpha = sortByAlpha;
+
+var sortByScore = function (a, b) {
   var _a = a.score,
       scoreA = _a === void 0 ? 0 : _a;
   var _b = b.score,
@@ -3673,7 +3730,9 @@ exports.sortByScore = function (a, b) {
   return scoreA - scoreB;
 };
 
-exports.dispatchEvent = function (element, type, customArgs) {
+exports.sortByScore = sortByScore;
+
+var dispatchEvent = function (element, type, customArgs) {
   if (customArgs === void 0) {
     customArgs = null;
   }
@@ -3686,7 +3745,9 @@ exports.dispatchEvent = function (element, type, customArgs) {
   return element.dispatchEvent(event);
 };
 
-exports.existsInArray = function (array, value, key) {
+exports.dispatchEvent = dispatchEvent;
+
+var existsInArray = function (array, value, key) {
   if (key === void 0) {
     key = 'value';
   }
@@ -3700,15 +3761,18 @@ exports.existsInArray = function (array, value, key) {
   });
 };
 
-exports.cloneObject = function (obj) {
+exports.existsInArray = existsInArray;
+
+var cloneObject = function (obj) {
   return JSON.parse(JSON.stringify(obj));
 };
+
+exports.cloneObject = cloneObject;
 /**
  * Returns an array of keys present on the first but missing on the second object
  */
 
-
-exports.diff = function (a, b) {
+var diff = function (a, b) {
   var aKeys = Object.keys(a).sort();
   var bKeys = Object.keys(b).sort();
   return aKeys.filter(function (i) {
@@ -3716,19 +3780,23 @@ exports.diff = function (a, b) {
   });
 };
 
+exports.diff = diff;
+
 /***/ }),
 
-/***/ 675:
+/***/ 273:
 /***/ (function(__unused_webpack_module, exports) {
 
 
 
-var __spreadArrays = this && this.__spreadArrays || function () {
-  for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
-
-  for (var r = Array(s), k = 0, i = 0; i < il; i++) for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++) r[k] = a[j];
-
-  return r;
+var __spreadArray = this && this.__spreadArray || function (to, from, pack) {
+  if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+    if (ar || !(i in from)) {
+      if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+      ar[i] = from[i];
+    }
+  }
+  return to.concat(ar || Array.prototype.slice.call(from));
 };
 
 Object.defineProperty(exports, "__esModule", ({
@@ -3740,6 +3808,10 @@ exports.defaultState = [];
 function choices(state, action) {
   if (state === void 0) {
     state = exports.defaultState;
+  }
+
+  if (action === void 0) {
+    action = {};
   }
 
   switch (action.type) {
@@ -3765,7 +3837,7 @@ function choices(state, action) {
           An active choice appears within the choice dropdown
         */
 
-        return __spreadArrays(state, [choice]);
+        return __spreadArray(__spreadArray([], state, true), [choice], false);
       }
 
     case 'ADD_ITEM':
@@ -3777,7 +3849,7 @@ function choices(state, action) {
           return state.map(function (obj) {
             var choice = obj;
 
-            if (choice.id === parseInt("" + addItemAction_1.choiceId, 10)) {
+            if (choice.id === parseInt("".concat(addItemAction_1.choiceId), 10)) {
               choice.selected = true;
             }
 
@@ -3797,7 +3869,7 @@ function choices(state, action) {
           return state.map(function (obj) {
             var choice = obj;
 
-            if (choice.id === parseInt("" + removeItemAction_1.choiceId, 10)) {
+            if (choice.id === parseInt("".concat(removeItemAction_1.choiceId), 10)) {
               choice.selected = false;
             }
 
@@ -3857,17 +3929,19 @@ exports["default"] = choices;
 
 /***/ }),
 
-/***/ 452:
+/***/ 871:
 /***/ (function(__unused_webpack_module, exports) {
 
 
 
-var __spreadArrays = this && this.__spreadArrays || function () {
-  for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
-
-  for (var r = Array(s), k = 0, i = 0; i < il; i++) for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++) r[k] = a[j];
-
-  return r;
+var __spreadArray = this && this.__spreadArray || function (to, from, pack) {
+  if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+    if (ar || !(i in from)) {
+      if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+      ar[i] = from[i];
+    }
+  }
+  return to.concat(ar || Array.prototype.slice.call(from));
 };
 
 Object.defineProperty(exports, "__esModule", ({
@@ -3881,16 +3955,20 @@ function groups(state, action) {
     state = exports.defaultState;
   }
 
+  if (action === void 0) {
+    action = {};
+  }
+
   switch (action.type) {
     case 'ADD_GROUP':
       {
         var addGroupAction = action;
-        return __spreadArrays(state, [{
+        return __spreadArray(__spreadArray([], state, true), [{
           id: addGroupAction.id,
           value: addGroupAction.value,
           active: addGroupAction.active,
           disabled: addGroupAction.disabled
-        }]);
+        }], false);
       }
 
     case 'CLEAR_CHOICES':
@@ -3909,7 +3987,7 @@ exports["default"] = groups;
 
 /***/ }),
 
-/***/ 694:
+/***/ 655:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
@@ -3927,15 +4005,15 @@ exports.defaultState = void 0;
 
 var redux_1 = __webpack_require__(857);
 
-var items_1 = __importDefault(__webpack_require__(267));
+var items_1 = __importDefault(__webpack_require__(52));
 
-var groups_1 = __importDefault(__webpack_require__(452));
+var groups_1 = __importDefault(__webpack_require__(871));
 
-var choices_1 = __importDefault(__webpack_require__(675));
+var choices_1 = __importDefault(__webpack_require__(273));
 
-var loading_1 = __importDefault(__webpack_require__(340));
+var loading_1 = __importDefault(__webpack_require__(502));
 
-var utils_1 = __webpack_require__(26);
+var utils_1 = __webpack_require__(799);
 
 exports.defaultState = {
   groups: [],
@@ -3943,7 +4021,7 @@ exports.defaultState = {
   choices: [],
   loading: false
 };
-var appReducer = redux_1.combineReducers({
+var appReducer = (0, redux_1.combineReducers)({
   items: items_1.default,
   groups: groups_1.default,
   choices: choices_1.default,
@@ -3959,7 +4037,7 @@ var rootReducer = function (passedState, action) {
   if (action.type === 'CLEAR_ALL') {
     state = exports.defaultState;
   } else if (action.type === 'RESET_TO') {
-    return utils_1.cloneObject(action.state);
+    return (0, utils_1.cloneObject)(action.state);
   }
 
   return appReducer(state, action);
@@ -3969,17 +4047,19 @@ exports["default"] = rootReducer;
 
 /***/ }),
 
-/***/ 267:
+/***/ 52:
 /***/ (function(__unused_webpack_module, exports) {
 
 
 
-var __spreadArrays = this && this.__spreadArrays || function () {
-  for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
-
-  for (var r = Array(s), k = 0, i = 0; i < il; i++) for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++) r[k] = a[j];
-
-  return r;
+var __spreadArray = this && this.__spreadArray || function (to, from, pack) {
+  if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+    if (ar || !(i in from)) {
+      if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+      ar[i] = from[i];
+    }
+  }
+  return to.concat(ar || Array.prototype.slice.call(from));
 };
 
 Object.defineProperty(exports, "__esModule", ({
@@ -3993,12 +4073,16 @@ function items(state, action) {
     state = exports.defaultState;
   }
 
+  if (action === void 0) {
+    action = {};
+  }
+
   switch (action.type) {
     case 'ADD_ITEM':
       {
         var addItemAction = action; // Add object to items array
 
-        var newState = __spreadArrays(state, [{
+        var newState = __spreadArray(__spreadArray([], state, true), [{
           id: addItemAction.id,
           choiceId: addItemAction.choiceId,
           groupId: addItemAction.groupId,
@@ -4009,7 +4093,7 @@ function items(state, action) {
           customProperties: addItemAction.customProperties,
           placeholder: addItemAction.placeholder || false,
           keyCode: null
-        }]);
+        }], false);
 
         return newState.map(function (obj) {
           var item = obj;
@@ -4057,7 +4141,7 @@ exports["default"] = items;
 
 /***/ }),
 
-/***/ 340:
+/***/ 502:
 /***/ (function(__unused_webpack_module, exports) {
 
 
@@ -4071,6 +4155,10 @@ exports.defaultState = false;
 var general = function (state, action) {
   if (state === void 0) {
     state = exports.defaultState;
+  }
+
+  if (action === void 0) {
+    action = {};
   }
 
   switch (action.type) {
@@ -4090,17 +4178,19 @@ exports["default"] = general;
 
 /***/ }),
 
-/***/ 127:
+/***/ 744:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
 
-var __spreadArrays = this && this.__spreadArrays || function () {
-  for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
-
-  for (var r = Array(s), k = 0, i = 0; i < il; i++) for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++) r[k] = a[j];
-
-  return r;
+var __spreadArray = this && this.__spreadArray || function (to, from, pack) {
+  if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+    if (ar || !(i in from)) {
+      if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+      ar[i] = from[i];
+    }
+  }
+  return to.concat(ar || Array.prototype.slice.call(from));
 };
 
 var __importDefault = this && this.__importDefault || function (mod) {
@@ -4116,13 +4206,13 @@ Object.defineProperty(exports, "__esModule", ({
 
 var redux_1 = __webpack_require__(857);
 
-var index_1 = __importDefault(__webpack_require__(694));
+var index_1 = __importDefault(__webpack_require__(655));
 
 var Store =
 /** @class */
 function () {
   function Store() {
-    this._store = redux_1.createStore(index_1.default, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
+    this._store = (0, redux_1.createStore)(index_1.default, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
   }
   /**
    * Subscribe store to function call (wrapped Redux method)
@@ -4236,7 +4326,7 @@ function () {
      * Get placeholder choice from store
      */
     get: function () {
-      return __spreadArrays(this.choices).reverse().find(function (choice) {
+      return __spreadArray([], this.choices, true).reverse().find(function (choice) {
         return choice.placeholder === true;
       });
     },
@@ -4308,19 +4398,18 @@ exports["default"] = Store;
 
 /***/ }),
 
-/***/ 68:
+/***/ 686:
 /***/ (function(__unused_webpack_module, exports) {
 
 
-
-Object.defineProperty(exports, "__esModule", ({
-  value: true
-}));
 /**
  * Helpers to create HTML elements used by Choices
  * Can be overridden by providing `callbackOnCreateTemplates` option
  */
 
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
 var templates = {
   containerOuter: function (_a, dir, isSelectElement, isSelectOneElement, searchEnabled, passedElementType) {
     var containerOuter = _a.containerOuter;
@@ -4360,7 +4449,7 @@ var templates = {
         listSingle = _a.listSingle,
         listItems = _a.listItems;
     return Object.assign(document.createElement('div'), {
-      className: list + " " + (isSelectOneElement ? listSingle : listItems)
+      className: "".concat(list, " ").concat(isSelectOneElement ? listSingle : listItems)
     });
   },
   placeholder: function (_a, value) {
@@ -4423,7 +4512,7 @@ var templates = {
         className: button,
         innerHTML: REMOVE_ITEM_TEXT
       });
-      removeButton.setAttribute('aria-label', REMOVE_ITEM_TEXT + ": '" + value + "'");
+      removeButton.setAttribute('aria-label', "".concat(REMOVE_ITEM_TEXT, ": '").concat(value, "'"));
       removeButton.dataset.button = '';
       div.appendChild(removeButton);
     }
@@ -4451,7 +4540,7 @@ var templates = {
         value = _b.value,
         disabled = _b.disabled;
     var div = Object.assign(document.createElement('div'), {
-      className: group + " " + (disabled ? itemDisabled : '')
+      className: "".concat(group, " ").concat(disabled ? itemDisabled : '')
     });
     div.setAttribute('role', 'group');
     Object.assign(div.dataset, {
@@ -4488,7 +4577,7 @@ var templates = {
     var div = Object.assign(document.createElement('div'), {
       id: elementId,
       innerHTML: label,
-      className: item + " " + itemChoice
+      className: "".concat(item, " ").concat(itemChoice)
     });
 
     if (isSelected) {
@@ -4523,7 +4612,7 @@ var templates = {
         inputCloned = _a.inputCloned;
     var inp = Object.assign(document.createElement('input'), {
       type: 'text',
-      className: input + " " + inputCloned,
+      className: "".concat(input, " ").concat(inputCloned),
       autocomplete: 'off',
       autocapitalize: 'off',
       spellcheck: false
@@ -4573,7 +4662,7 @@ var templates = {
     var opt = new Option(label, value, false, active);
 
     if (customProperties) {
-      opt.dataset.customProperties = "" + customProperties;
+      opt.dataset.customProperties = "".concat(customProperties);
     }
 
     opt.disabled = !!disabled;
@@ -4763,14 +4852,9 @@ function ownKeys(object, enumerableOnly) {
 
   if (Object.getOwnPropertySymbols) {
     var symbols = Object.getOwnPropertySymbols(object);
-
-    if (enumerableOnly) {
-      symbols = symbols.filter(function (sym) {
-        return Object.getOwnPropertyDescriptor(object, sym).enumerable;
-      });
-    }
-
-    keys.push.apply(keys, symbols);
+    enumerableOnly && (symbols = symbols.filter(function (sym) {
+      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+    })), keys.push.apply(keys, symbols);
   }
 
   return keys;
@@ -4778,19 +4862,12 @@ function ownKeys(object, enumerableOnly) {
 
 function _objectSpread2(target) {
   for (var i = 1; i < arguments.length; i++) {
-    var source = arguments[i] != null ? arguments[i] : {};
-
-    if (i % 2) {
-      ownKeys(Object(source), true).forEach(function (key) {
-        _defineProperty(target, key, source[key]);
-      });
-    } else if (Object.getOwnPropertyDescriptors) {
-      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
-    } else {
-      ownKeys(Object(source)).forEach(function (key) {
-        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
-      });
-    }
+    var source = null != arguments[i] ? arguments[i] : {};
+    i % 2 ? ownKeys(Object(source), !0).forEach(function (key) {
+      _defineProperty(target, key, source[key]);
+    }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) {
+      Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+    });
   }
 
   return target;
@@ -5528,7 +5605,7 @@ if (false) {}
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
 /******/ 	// This entry module is referenced by other modules so it can't be inlined
-/******/ 	var __webpack_exports__ = __webpack_require__(510);
+/******/ 	var __webpack_exports__ = __webpack_require__(373);
 /******/ 	__webpack_exports__ = __webpack_exports__["default"];
 /******/ 	
 /******/ 	return __webpack_exports__;

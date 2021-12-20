@@ -649,7 +649,7 @@ function setupSearch() {
       noResultsText: LANG.noResultsFound,
       itemSelectText: '+',
       shouldSort: false,
-      //renderChoiceLimit : -1,
+      renderChoiceLimit : 100,
       searchResultLimit: 100,
       position: 'bottom'
     }).disable();

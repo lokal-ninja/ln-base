@@ -27,12 +27,14 @@ Les affaires dans {{ .Title }}
         <input type="text" placeholder="Catégories de filtres..." aria-label="Catégories de filtres...">
       </div>
     </div>
-    {{- range $sortedShops }}
-    {{- $sortedShop := . }}
-    {{- range where ($.Site.GetPage "taxonomyTerm" "shops").Pages ".Title" . }}
-    <button>{{ $sortedShop }}<svg class="icon" role="img" aria-hidden="true"><use href={{ printf "%s%s" "/img/sprite.svg#" .Params.icon | relURL }}></use></svg></button>
-    {{- end }}
-    {{- end }}
+    <div class="categories-items">
+      {{- range $sortedShops }}
+      {{- $sortedShop := . }}
+      {{- range where ($.Site.GetPage "taxonomyTerm" "shops").Pages ".Title" . }}
+      <button>{{ $sortedShop }}<svg class="icon" role="img" aria-hidden="true"><use href={{ printf "%s%s" "/img/sprite.svg#" .Params.icon | relURL }}></use></svg></button>
+      {{- end }}
+      {{- end }}
+    </div>
   </div>
   <ul class="columns m-0">
   {{- $entries := slice }}

@@ -289,7 +289,7 @@ function startCategoriesFilter(value) {
 function setupFilters() {
   const filterInputs = query('.filter input');
   filterInputs.forEach(function(input) {
-    const startFilter = input.parentElement.classList.contains('filter-entries') ? startEntriesFilter : startCategoriesFilter;
+    const startFilter = input.closest('.filter-entries') ? startEntriesFilter : startCategoriesFilter;
     input.addEventListener('input', debounce(function () {
       startFilter(input.value);
     }, 500));

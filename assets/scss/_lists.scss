@@ -3,6 +3,8 @@
     column-gap: 5px;
     list-style: none;
     padding-left: 0;
+    max-height: 312px;
+    overflow: auto;
 
     @media (min-width: 576px) {
         columns: 3 168px;

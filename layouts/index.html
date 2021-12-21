@@ -22,9 +22,11 @@ Orte mit Geschäften in {{ .Site.Title }}
         <input type="text" placeholder="Kategorien filtern..." aria-label="Kategorien filtern...">
       </div>
     </div>
-    {{- range (.Site.GetPage "taxonomyTerm" "shops").Pages }}
-    <a href="{{ .RelPermalink }}">{{ .Title }}<svg class="icon" role="img" aria-hidden="true"><use href={{ printf "%s%s" "/img/sprite.svg#" .Params.icon | relURL }}></use></svg></a>
-    {{- end }}
+    <div class="categories-items">
+      {{- range (.Site.GetPage "taxonomyTerm" "shops").Pages }}
+      <a href="{{ .RelPermalink }}">{{ .Title }}<svg class="icon" role="img" aria-hidden="true"><use href={{ printf "%s%s" "/img/sprite.svg#" .Params.icon | relURL }}></use></svg></a>
+      {{- end }}
+    </div>
   </div>
   <ul class="columns m-0">
     {{- range (.Site.GetPage "section" "cities").Sections }}

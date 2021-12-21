@@ -14,8 +14,8 @@ Les affaires dans {{ .Title }}
     </div>
     <button id="categories-btn" class="m-0" aria-label="Les catégories s'affichent">➕</button>
   </div>
+  <h2 class="visually-hidden">Catégories</h2>
   <div class="categories d-none">
-    <h2 class="visually-hidden">Catégories</h2>
     {{- $shops := slice }}
     {{- range .RegularPages }}
     {{- $shops = $shops | append .Params.shop }}

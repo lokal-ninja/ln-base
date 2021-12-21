@@ -616,7 +616,7 @@ function setupSearch() {
       instance.passedElement.element.addEventListener('change', function(e) {
         city = instance.getValue();
         pathname = '/' + city.customProperties.region + '/' + slugo(city.value) + '/';
-        appendLinkToHead('prerender', pathname);
+        appendLinkToHead('prefetch', pathname);
         searchButton.disabled = false;
         shopsChoices.clearStore();
         shopsChoices.setChoices(async function() {  
@@ -636,7 +636,7 @@ function setupSearch() {
         .then(function(instance2) {
           instance2.passedElement.element.addEventListener('change', function() {
             shop = shopsChoices.getValue(true);
-            appendLinkToHead('prerender', createLocation(pathname, shop));
+            appendLinkToHead('prefetch', createLocation(pathname, shop));
           });
         });
         shopsChoices.enable();

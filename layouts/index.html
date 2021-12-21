@@ -14,8 +14,8 @@ Orte mit Geschäften in {{ .Site.Title }}
     </div>
     <button id="categories-btn" class="m-0" aria-label="Kategorien aufklappen">➕</button>
   </div>
+  <h2 class="visually-hidden">Kategorien</h2>
   <div class="categories d-none">
-    <h2 class="visually-hidden">Kategorien</h2>
     <div class="filter filter-categories">
       <div class="filter-box">
         <samp>{{ len (.Site.GetPage "taxonomyTerm" "shops").Pages }}</samp>

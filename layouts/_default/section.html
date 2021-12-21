@@ -14,8 +14,8 @@ Geschäfte in {{ .Title }}
     </div>
     <button id="categories-btn" class="m-0" aria-label="Kategorien aufklappen">➕</button>
   </div>
+  <h2 class="visually-hidden">Kategorien</h2>
   <div class="categories d-none">
-    <h2 class="visually-hidden">Kategorien</h2>
     {{- $shops := slice }}
     {{- range .RegularPages }}
     {{- $shops = $shops | append .Params.shop }}

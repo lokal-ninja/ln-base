@@ -8,8 +8,31 @@ Shops in {{ .Title }}
 <section id="eintraege">
   <h2 class="visually-hidden">Entries</h2>
   <div class="filter filter-entries">
-    <input type="text" placeholder="Filter name..." aria-label="Filter name...">
-    <div><samp>{{ len .Pages }}</samp>entries</div>
+    <div class="filter-box">
+      <samp>{{ len .Pages }}</samp>
+      <input type="text" placeholder="Filter entries..." aria-label="Filter entries...">
+    </div>
+    <button id="categories-btn" class="m-0" aria-label="Open categories">➕</button>
+  </div>
+  <div class="categories d-none">
+    <h2 class="visually-hidden">Categories</h2>
+    {{- $shops := slice }}
+    {{- range .RegularPages }}
+    {{- $shops = $shops | append .Params.shop }}
+    {{- end }}
+    {{- $sortedShops := sort $shops | uniq }}
+    <div class="filter filter-categories">
+      <div class="filter-box">
+        <samp>{{ len $sortedShops }}</samp>
+        <input type="text" placeholder="Filter categories..." aria-label="Filter categories...">
+      </div>
+    </div>
+    {{- range $sortedShops }}
+    {{- $sortedShop := . }}
+    {{- range where ($.Site.GetPage "taxonomyTerm" "shops").Pages ".Title" . }}
+    <button>{{ $sortedShop }}<svg class="icon" role="img" aria-hidden="true"><use href={{ printf "%s%s" "/img/sprite.svg#" .Params.icon | relURL }}></use></svg></button>
+    {{- end }}
+    {{- end }}
   </div>
   <ul class="columns m-0">
   {{- $entries := slice }}
@@ -42,28 +65,8 @@ Shops in {{ .Title }}
   </ul>
   <p>Missing an entry? Please add it to the free database at <a href="https://www.openstreetmap.org/" rel="nofollow noopener">OpenStreetMap ↗</a>!</p>
 </section>
-<div class="row">
-  <section id="infos" class="col-md-6">
-    <h2 class="visually-hidden">Kategorien</h2>
-    <div class="categories">
-      {{- $shops := slice }}
-      {{- range .RegularPages }}
-      {{- $shops = $shops | append .Params.shop }}
-      {{- end }}
-      {{- $sortedShops := sort $shops | uniq }}
-      <div class="filter filter-categories">
-        <input type="text" placeholder="Name filtern..." aria-label="Name filtern...">
-        <div><samp>{{ len $sortedShops }}</samp>Kategorien</div>
-      </div>
-      {{- range $sortedShops }}
-      {{- $sortedShop := . }}
-      {{- range where ($.Site.GetPage "taxonomyTerm" "shops").Pages ".Title" . }}
-      <button>{{ $sortedShop }}<svg class="icon" role="img" aria-hidden="true"><use href={{ printf "%s%s" "/img/sprite.svg#" .Params.icon | relURL }}></use></svg></button>
-      {{- end }}
-      {{- end }}
-    </div>  
-  </section>
-  <section class="col-md-6 mt-1 mt-md-0">
+<div class="row mt-1">
+  <section class="col-md-6">
     <h2 class="visually-hidden">Karte</h2>
     <div id="map" class="is-overlay">
       {{ partialCached "load-btn.html" . -}}
@@ -72,31 +75,27 @@ Shops in {{ .Title }}
       {{ partialCached "locate-btn.html" . -}}
     </div>
   </section>
-</div>
-<div class="row mt-1">
-  <div class="col-lg-7">
-    <article id="description">
-      <aside>
-        <div class="row">
-          <div class="col-sm-6">
-            <p>{{ with .Content }}{{ . }}{{ else }}There is no text on the general purchasing situation in {{ .Title }} yet. You can enter a description <a href="https://github.com/{{ .Site.Params.org }}/{{ .Site.Params.repo }}/edit/master/content/{{ with .File }}{{ .Dir }}{{ end }}_index.md" rel="nofollow noopener">here ↗</a> 🙂{{ end }}</p>
-          </div>
-          <div class="col-sm-6">
-            <p class="float-right-md"><strong>Weather in {{ .Title }}</strong></p>
-            {{- $coordsLocation := .Title }}
-            {{- if .Params.latitude }}
-            {{- $coordsLocation = printf "%.2f,%.2f" .Params.latitude .Params.longitude }}
-            {{- end }}
-            <img loading="lazy" class="img-fluid float-right-md" src="{{ printf "https://wttr.in/%s_0pQ_I_background=faebdc_lang=%s.png" $coordsLocation .Site.LanguageCode }}" alt="Current weather in {{ .Title }}">
-          </div>
-        </div>
-      </aside>
-    </article>
-  </div>
-  <div class="col-lg-5">
+  <div class="col-md-6">
     {{ partialCached "chat.html" . -}}
   </div>
 </div>
+<article id="description" class="mt-1">
+  <aside>
+    <div class="row">
+      <div class="col-sm-6">
+        <p>{{ with .Content }}{{ . }}{{ else }}There is no text on the general purchasing situation in {{ .Title }} yet. You can enter a description <a href="https://github.com/{{ .Site.Params.org }}/{{ .Site.Params.repo }}/edit/master/content/{{ with .File }}{{ .Dir }}{{ end }}_index.md" rel="nofollow noopener">here ↗</a> 🙂{{ end }}</p>
+      </div>
+      <div class="col-sm-6">
+        <p class="float-right-sm"><strong>Weather in {{ .Title }}</strong></p>
+        {{- $coordsLocation := .Title }}
+        {{- if .Params.latitude }}
+        {{- $coordsLocation = printf "%.2f,%.2f" .Params.latitude .Params.longitude }}
+        {{- end }}
+        <img loading="lazy" class="img-fluid float-right-sm" src="{{ printf "https://wttr.in/%s_0pQ_I_background=faebdc_lang=%s.png" $coordsLocation .Site.LanguageCode }}" alt="Current weather in {{ .Title }}">
+      </div>
+    </div>
+  </aside>
+</article>
 {{- end }}
 {{- define "back" }}
 <nav aria-label="Change to {{ .Site.Title }} or jump to top">

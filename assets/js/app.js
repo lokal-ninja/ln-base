@@ -302,6 +302,13 @@ function setupFilters() {
 }
 // Category buttons
 function setupButtons() {
+  const categoryOpenButton = document.getElementById('categories-btn');
+  if (categoryOpenButton) {
+    categoryOpenButton.onclick = function () {
+      categoryOpenButton.textContent = categoryOpenButton.textContent === '➕' ? '➖' : '➕';
+      document.querySelector('.categories').classList.toggle('d-none');
+    }
+  }
   categoryButtons = query('.categories button');
   categoryButtons.forEach(function(button) {
     button.onclick = function () {

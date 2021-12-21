@@ -2,4 +2,14 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+
+    samp {
+        position: absolute;
+        top: 14px;
+        right: 0.25rem;
+    }
+}
+
+.filter-box {
+    position: relative;
 }

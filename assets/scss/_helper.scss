@@ -10,8 +10,8 @@
   display: none !important;
 }
 
-@media (min-width: 768px) {
-  .float-right-md {
+@media (min-width: 576px) {
+  .float-right-sm {
     float: right !important;
   }
 }

@@ -8,8 +8,10 @@ Les {{ .Title }} affaires dans {{ .Site.Title }}
 <section id="eintraege">
   <h2 class="visually-hidden">Entrées</h2>
   <div class="filter filter-entries">
-    <input type="text" placeholder="Filtrer les entrées..." aria-label="Filtrer les entrées...">
-    <div><samp>{{ len (where .Site.Pages "Params.shop" .Title) }}</samp>Entrées</div>
+    <div class="filter-box">
+      <samp>{{ len (where .Site.Pages "Params.shop" .Title) }}</samp>
+      <input type="text" placeholder="Filtrer les entrées..." aria-label="Filtrer les entrées...">
+    </div>
   </div>
   <ul class="columns m-0">
     {{- range where .Site.Pages "Params.shop" .Title }}
@@ -22,35 +24,33 @@ Les {{ .Title }} affaires dans {{ .Site.Title }}
   </ul>
   <p>Une entrée est manquante ? Veuillez le saisir dans la base de données gratuite d'<a href="https://www.openstreetmap.org/" rel="nofollow noopener">OpenStreetMap ↗</a>!</p>
 </section>
-<section>
-  <h2 class="visually-hidden">Karte</h2>
-  <div id="map" class="is-overlay w-100">
-    {{ partialCached "load-btn.html" . -}}
-    <a href="https://www.openstreetmap.org/search?query={{ .Title }}" rel="nofollow noopener">OpenStreetMap ↗</a>
-    <a href="https://www.google.com/maps/dir//{{ .Title }}" rel="nofollow noopener">Google Maps ↗</a>
-    {{ partialCached "locate-btn.html" . -}}
-  </div>
-</section>
 <div class="row mt-1">
-  <div class="col-lg-7">
-    <article id="description">
-      <aside>
-        <div class="row">
-          <div class="col-sm-6">
-            <p>{{ with .Content }}{{ . }}{{ else }}Il n'y a pas encore de texte pour la catégorie {{ .Title }} dans {{ .Site.Title }}. Vous pouvez saisir une description <a href="https://github.com/{{ .Site.Params.org }}/{{ .Site.Params.repo }}/edit/master/content/{{ with .File }}{{ .Dir }}{{ end }}_index.md" rel="nofollow noopener">ici ↗</a> 🙂{{ end }}</p>
-          </div>
-          <div class="col-sm-6">
-            <p class="float-right-md"><strong>Météo à {{ .Site.Title }}</strong></p>
-            <img loading="lazy" class="img-fluid float-right-md" src="{{ printf "https://wttr.in/%s_0pQ_I_background=faebdc_lang=%s.png" .Site.Title .Site.LanguageCode }}" alt="Météo actuelle à {{ .Site.Title }}">
-          </div>
-        </div>
-      </aside>
-    </article>
-  </div>
-  <div class="col-lg-5">
+  <section class="col-md-6">
+    <h2 class="visually-hidden">Carte</h2>
+    <div id="map" class="is-overlay w-100">
+      {{ partialCached "load-btn.html" . -}}
+      <a href="https://www.openstreetmap.org/search?query={{ .Title }}" rel="nofollow noopener">OpenStreetMap ↗</a>
+      <a href="https://www.google.com/maps/dir//{{ .Title }}" rel="nofollow noopener">Google Maps ↗</a>
+      {{ partialCached "locate-btn.html" . -}}
+    </div>
+  </section>
+  <div class="col-md-6">
     {{ partialCached "chat.html" . -}}
   </div>
 </div>
+<article id="description" class="mt-1">
+  <aside>
+    <div class="row">
+      <div class="col-sm-6">
+        <p>{{ with .Content }}{{ . }}{{ else }}Il n'y a pas encore de texte pour la catégorie {{ .Title }} dans {{ .Site.Title }}. Vous pouvez saisir une description <a href="https://github.com/{{ .Site.Params.org }}/{{ .Site.Params.repo }}/edit/master/content/{{ with .File }}{{ .Dir }}{{ end }}_index.md" rel="nofollow noopener">ici ↗</a> 🙂{{ end }}</p>
+      </div>
+      <div class="col-sm-6">
+        <p class="float-right-sm"><strong>Météo à {{ .Site.Title }}</strong></p>
+        <img loading="lazy" class="img-fluid float-right-sm" src="{{ printf "https://wttr.in/%s_0pQ_I_background=faebdc_lang=%s.png" .Site.Title .Site.LanguageCode }}" alt="Météo actuelle à {{ .Site.Title }}">
+      </div>
+    </div>
+  </aside>
+</article>
 {{- end }}
 {{- define "back" }}
 <nav aria-label="Passer à {{ .Site.Title }} ou sauter en haut de la page">

@@ -8,8 +8,23 @@ Lieux avec des magasins en {{ .Site.Title }}
 <section id="eintraege">
   <h2 class="visually-hidden">Entrées</h2>
   <div class="filter filter-entries">
-    <input type="text" placeholder="Filtrer les entrées..." aria-label="Filtrer les entrées...">
-    <div><samp>{{ len (.Site.GetPage "section" "cities").Sections }}</samp>Orte</div>
+    <div class="filter-box">
+      <samp>{{ len (.Site.GetPage "section" "cities").Sections }}</samp>
+      <input type="text" placeholder="Filtrer les entrées..." aria-label="Filtrer les entrées...">
+    </div>
+    <button id="categories-btn" class="m-0" aria-label="Les catégories s'affichent">➕</button>
+  </div>
+  <div class="categories d-none">
+    <h2 class="visually-hidden">Catégories</h2>
+    <div class="filter filter-categories">
+      <div class="filter-box">
+        <samp>{{ len (.Site.GetPage "taxonomyTerm" "shops").Pages }}</samp>
+        <input type="text" placeholder="Catégories de filtres..." aria-label="Catégories de filtres...">
+      </div>
+    </div>
+    {{- range (.Site.GetPage "taxonomyTerm" "shops").Pages }}
+    <a href="{{ .RelPermalink }}">{{ .Title }}<svg class="icon" role="img" aria-hidden="true"><use href={{ printf "%s%s" "/img/sprite.svg#" .Params.icon | relURL }}></use></svg></a>
+    {{- end }}
   </div>
   <ul class="columns m-0">
     {{- range (.Site.GetPage "section" "cities").Sections }}
@@ -17,18 +32,8 @@ Lieux avec des magasins en {{ .Site.Title }}
     {{- end }}
   </ul>
 </section>
-<div class="row">
-  <section id="infos" class="col-md-6 categories">
-    <h2 class="visually-hidden">Catégories</h2>
-    <div class="filter filter-categories">
-      <input type="text" placeholder="Filtrer les catégories..." aria-label="Filtrer les catégories...">
-      <div><samp>{{ len (.Site.GetPage "taxonomyTerm" "shops").Pages }}</samp>Catégories</div>
-    </div>
-    {{- range (.Site.GetPage "taxonomyTerm" "shops").Pages }}
-    <a href="{{ .RelPermalink }}">{{ .Title }}<svg class="icon" role="img" aria-hidden="true"><use href={{ printf "%s%s" "/img/sprite.svg#" .Params.icon | relURL }}></use></svg></a>
-    {{- end }}
-  </section>
-  <section class="col-md-6 mt-1 mt-md-0">
+<div class="row mt-1">
+  <section class="col-md-6">
     <h2 class="visually-hidden">Carte</h2>
     <div id="map" class="is-overlay">
       {{ partialCached "load-btn.html" . -}}
@@ -37,27 +42,23 @@ Lieux avec des magasins en {{ .Site.Title }}
       {{ partialCached "locate-btn.html" . -}}
     </div>
   </section>
-</div>
-<div class="row mt-1">
-  <div class="col-lg-7">
-    <article id="description">
-      <aside>
-        <div class="row">
-          <div class="col-sm-6">
-            <p>{{ with .Content }}{{ . }}{{ else }}Il n'y a pas encore de texte sur la région {{ .Site.Title }}. Vous pouvez saisir une description <a href="https://github.com/{{ .Site.Params.org }}/{{ .Site.Params.repo }}/edit/master/content/_index.md" rel="nofollow noopener">ici ↗</a> 🙂{{ end }}</p>
-          </div>
-          <div class="col-sm-6">
-            <p class="float-right-md"><strong>Météo à {{ .Site.Title }}</strong></p>
-            <img loading="lazy" class="img-fluid float-right-md" src="{{ printf "https://wttr.in/%s_0pQ_I_background=faebdc_lang=%s.png" .Site.Title .Site.LanguageCode }}" alt="Météo actuelle à {{ .Site.Title }}">
-          </div>
-        </div>
-      </aside>
-    </article>
-  </div>
-  <div class="col-lg-5">
+  <div class="col-md-6">
     {{ partialCached "chat.html" . -}}
   </div>
 </div>
+<article id="description" class="mt-1">
+  <aside>
+    <div class="row">
+      <div class="col-sm-6">
+        <p>{{ with .Content }}{{ . }}{{ else }}Il n'y a pas encore de texte sur la région {{ .Site.Title }}. Vous pouvez saisir une description <a href="https://github.com/{{ .Site.Params.org }}/{{ .Site.Params.repo }}/edit/master/content/_index.md" rel="nofollow noopener">ici ↗</a> 🙂{{ end }}</p>
+      </div>
+      <div class="col-sm-6">
+        <p class="float-right-sm"><strong>Météo à {{ .Site.Title }}</strong></p>
+        <img loading="lazy" class="img-fluid float-right-sm" src="{{ printf "https://wttr.in/%s_0pQ_I_background=faebdc_lang=%s.png" .Site.Title .Site.LanguageCode }}" alt="Météo actuelle à {{ .Site.Title }}">
+      </div>
+    </div>
+  </aside>
+</article>
 {{- end }}
 {{- define "back" }}
 <nav aria-label="Aller à la page d'accueil ou sauter en haut de la page">

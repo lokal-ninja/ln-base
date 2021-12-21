@@ -558,9 +558,10 @@ function setupSearch() {
       noResultsText: LANG.noResultsFound,
       itemSelectText: '+',
       noChoicesText: LANG.withAtLeastThreeLetters,
+      shouldSort: true,
       renderChoiceLimit : 0,
       searchResultLimit: 100,
-      shouldSort: false,
+      searchFloor: 3,
       position: 'bottom'
     })
     .setChoices(function() {
@@ -648,9 +649,10 @@ function setupSearch() {
       loadingText: LANG.loading,
       noResultsText: LANG.noResultsFound,
       itemSelectText: '+',
-      shouldSort: false,
+      shouldSort: true,
       renderChoiceLimit : 100,
       searchResultLimit: 100,
+      searchFloor: 1,
       position: 'bottom'
     }).disable();
   }

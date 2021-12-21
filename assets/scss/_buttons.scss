@@ -6,18 +6,21 @@
 }
 
 .categories {
-  max-height: 312px;
-  overflow-y: auto;
 
-  > a {
+  > .categories-items {
+    max-height: 312px;
+    overflow-y: auto;
+  }
+
+  a {
     border: 2px solid #f57c00;
     border-radius: 5px;
     display: inline-block;
     line-height: normal;
   }
 
-  > a,
-  > button {
+  a,
+  button {
     background-color: var(--color-bg);
     color: var(--color);
     font-size: 14px;

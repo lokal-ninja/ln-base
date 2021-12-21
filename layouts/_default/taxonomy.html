@@ -8,8 +8,10 @@
 <section id="eintraege">
   <h2 class="visually-hidden">Einträge</h2>
   <div class="filter filter-entries">
-    <input type="text" placeholder="Name filtern..." aria-label="Name filtern...">
-    <div><samp>{{ len (where .Site.Pages "Params.shop" .Title) }}</samp>Einträge</div>
+    <div class="filter-box">
+      <samp>{{ len (where .Site.Pages "Params.shop" .Title) }}</samp>
+      <input type="text" placeholder="Einträge filtern..." aria-label="Einträge filtern...">
+    </div>
   </div>
   <ul class="columns m-0">
     {{- range where .Site.Pages "Params.shop" .Title }}
@@ -22,35 +24,33 @@
   </ul>
   <p>Fehlt ein Eintrag? Trage ihn bitte in die freie Datenbank der <a href="https://www.openstreetmap.org/" rel="nofollow noopener">OpenStreetMap ↗</a> ein!</p>
 </section>
-<section>
-  <h2 class="visually-hidden">Karte</h2>
-  <div id="map" class="is-overlay w-100">
-    {{ partialCached "load-btn.html" . -}}
-    <a href="https://www.openstreetmap.org/search?query={{ .Title }}" rel="nofollow noopener">OpenStreetMap ↗</a>
-    <a href="https://www.google.com/maps/dir//{{ .Title }}" rel="nofollow noopener">Google Maps ↗</a>
-    {{ partialCached "locate-btn.html" . -}}
-  </div>
-</section>
 <div class="row mt-1">
-  <div class="col-lg-7">
-    <article id="beschreibung">
-      <aside>
-        <div class="row">
-          <div class="col-sm-6">
-            <p>{{ with .Content }}{{ . }}{{ else }}Es gibt noch keinen Text zur Kategorie {{ .Title }} in {{ .Site.Title }}. Du kannst eine Beschreibung <a href="https://github.com/{{ .Site.Params.org }}/{{ .Site.Params.repo }}/edit/master/content/{{ with .File }}{{ .Dir }}{{ end }}_index.md" rel="nofollow noopener">hier ↗</a> eintragen 🙂{{ end }}</p>
-          </div>
-          <div class="col-sm-6">
-            <p class="float-right-md"><strong>Wetter in {{ .Site.Title }}</strong></p>
-            <img loading="lazy" class="img-fluid float-right-md" src="{{ printf "https://wttr.in/%s_0pQ_I_background=faebdc_lang=%s.png" .Site.Title .Site.LanguageCode }}" alt="Das aktuelle Wetter in {{ .Site.Title }}">
-          </div>
-        </div>
-      </aside>
-    </article>
-  </div>
-  <div class="col-lg-5">
+  <section class="col-md-6">
+    <h2 class="visually-hidden">Karte</h2>
+    <div id="map" class="is-overlay w-100">
+      {{ partialCached "load-btn.html" . -}}
+      <a href="https://www.openstreetmap.org/search?query={{ .Title }}" rel="nofollow noopener">OpenStreetMap ↗</a>
+      <a href="https://www.google.com/maps/dir//{{ .Title }}" rel="nofollow noopener">Google Maps ↗</a>
+      {{ partialCached "locate-btn.html" . -}}
+    </div>
+  </section>
+  <div class="col-md-6">
     {{ partialCached "chat.html" . -}}
   </div>
 </div>
+<article id="beschreibung" class="mt-1">
+  <aside>
+    <div class="row">
+      <div class="col-sm-6">
+        <p>{{ with .Content }}{{ . }}{{ else }}Es gibt noch keinen Text zur Kategorie {{ .Title }} in {{ .Site.Title }}. Du kannst eine Beschreibung <a href="https://github.com/{{ .Site.Params.org }}/{{ .Site.Params.repo }}/edit/master/content/{{ with .File }}{{ .Dir }}{{ end }}_index.md" rel="nofollow noopener">hier ↗</a> eintragen 🙂{{ end }}</p>
+      </div>
+      <div class="col-sm-6">
+        <p class="float-right-sm"><strong>Wetter in {{ .Site.Title }}</strong></p>
+        <img loading="lazy" class="img-fluid float-right-sm" src="{{ printf "https://wttr.in/%s_0pQ_I_background=faebdc_lang=%s.png" .Site.Title .Site.LanguageCode }}" alt="Das aktuelle Wetter in {{ .Site.Title }}">
+      </div>
+    </div>
+  </aside>
+</article>
 {{- end }}
 {{- define "back" }}
 <nav aria-label="Wechsle zu {{ .Site.Title }} oder springe nach oben">

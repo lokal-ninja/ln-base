@@ -1451,8 +1451,12 @@ function () {
   Choices.prototype._searchChoices = function (value) {
     var newValue = typeof value === 'string' ? value.trim() : value;
     var currentValue = typeof this._currentValue === 'string' ? this._currentValue.trim() : this._currentValue;
+    var _a = this.config,
+        searchFloor = _a.searchFloor,
+        searchResultLimit = _a.searchResultLimit,
+        shouldSort = _a.shouldSort;
 
-    if (newValue.length < 3 || newValue === "".concat(currentValue, " ")) {
+    if (newValue.length < searchFloor || newValue === "".concat(currentValue, " ")) {
       return 0;
     } // If new value matches the desired length and is not the same as the current value with a space
 
@@ -1496,8 +1500,8 @@ function () {
 
     var count = 0;
 
-    for (var i_1 = 0, j = haystack.length; i_1 < j; i_1++) {
-      var entry = haystack[i_1];
+    for (var i = 0, j = haystack.length; i < j; i++) {
+      var entry = haystack[i];
 
       if (kmpSearch(needle, entry.value.toLowerCase()) != -1) {
         //const choice: Choice = entry;
@@ -1505,27 +1509,30 @@ function () {
           item: entry
         });
 
-        if (++count === 100) {
+        if (++count === searchResultLimit) {
           break;
         }
       }
     } // Sort
 
 
-    results.sort(function (a, b) {
-      var aIndex = a.item.value.toLowerCase().indexOf(needle);
-      var bIndex = b.item.value.toLowerCase().indexOf(needle);
+    if (shouldSort) {
+      results.sort(function (a, b) {
+        var aIndex = a.item.value.toLowerCase().indexOf(needle);
+        var bIndex = b.item.value.toLowerCase().indexOf(needle);
 
-      if (aIndex < bIndex) {
-        return -1;
-      }
+        if (aIndex < bIndex) {
+          return -1;
+        }
 
-      if (aIndex > bIndex) {
-        return 1;
-      }
+        if (aIndex > bIndex) {
+          return 1;
+        }
 
-      return 0;
-    }); // Give score
+        return 0;
+      });
+    } // Give score
+
 
     var score = 0;
 

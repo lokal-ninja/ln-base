@@ -508,7 +508,7 @@ function clickScrollCategory (category) {
     const button = categoryButtons[i];
     if (button.textContent.toLowerCase() === name) {
       button.click();
-      button.scrollIntoView();
+      //button.scrollIntoView();
       break;
     }
   }

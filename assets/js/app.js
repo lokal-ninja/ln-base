@@ -467,6 +467,13 @@ function buildMap() {
   updateMap();
 }
 
+function appendLinkToHead (rel, href) {
+  const link = document.createElement('link');
+  link.rel = rel;
+  link.href = href;
+  document.head.appendChild(link);
+}
+
 function setupMap() {
   const mapButton = document.querySelector('#map button');
   if (mapButton) {
@@ -474,10 +481,7 @@ function setupMap() {
       // Preconnect to OSM early
       const tiles = ['a', 'b', 'c'];
       tiles.forEach(function(tile) {
-        const link = document.createElement('link');
-        link.rel = 'preconnect';
-        link.href = 'https://' + tile + '.tile.openstreetmap.org';
-        document.head.appendChild(link);
+        appendLinkToHead('preconnect', 'https://' + tile + '.tile.openstreetmap.org');
       });
       // Hide buttons and overlay
       const parent = mapButton.parentNode;
@@ -547,6 +551,14 @@ async function fetchRegion (region) {
   });
 }
 
+function isCategory (shop) {
+  return shop[0] === '#';
+}
+
+function createLocation (pathname, shop) {
+  return pathname + (shop ? isCategory(shop) ? shop : slugo(shop) + '/' : '');
+}
+
 function setupSearch() {
   const cities = document.getElementById('cities');
   if (cities) {
@@ -598,11 +610,16 @@ function setupSearch() {
           instance.input.element.focus();
         });
       }, { once: true });
+      let city;
+      let pathname;
+      let shop;
       instance.passedElement.element.addEventListener('change', function(e) {
+        city = instance.getValue();
+        pathname = '/' + city.customProperties.region + '/' + slugo(city.value) + '/';
+        appendLinkToHead('prerender', pathname);
         searchButton.disabled = false;
         shopsChoices.clearStore();
-        shopsChoices.setChoices(async function() {
-          const city = instance.getValue();
+        shopsChoices.setChoices(async function() {  
           return fetch('/' + city.customProperties.region + '/' + slugo(e.detail.value) + '/index.json')
           .then(function(response) {
             return response.json();
@@ -615,29 +632,31 @@ function setupSearch() {
               };
             });
           });
+        })
+        .then(function(instance2) {
+          instance2.passedElement.element.addEventListener('change', function() {
+            shop = shopsChoices.getValue(true);
+            appendLinkToHead('prerender', createLocation(pathname, shop));
+          });
         });
         shopsChoices.enable();
       });
       const searchButton = document.getElementById('search-btn');
       if (searchButton) {
         searchButton.onclick = function () {
-          const city = instance.getValue();
-          const shop = shopsChoices.getValue(true);
-          const pathname = '/' + city.customProperties.region + '/' + slugo(city.value) + '/';
-          const isCategory = shop ? shop[0] === '#' : false;
           if (window.location.pathname === pathname) {
-            if (isCategory) {
+            if (isCategory(shop)) {
               // We're on the right page already, only scroll to category
               clickScrollCategory(shop);
             }
           }
           else {
             // Relocate to new location
-            window.location =  pathname + (shop ? isCategory ? shop : slugo(shop) + '/' : '');
+            window.location = createLocation(pathname, shop);
           }
         };
       }
-    })
+    });
   }
 
   const shops = document.getElementById('shops');

@@ -456,6 +456,7 @@ function buildMap() {
   let first = true;
   let watchID;
   const locateButton = document.getElementById('locate-btn');
+  locateButton.classList.remove('d-none'); // Dont forget to show
   locateButton.onclick = function () {
     if (navigator.geolocation) {
       if (!this.classList.contains('tracking')) {
@@ -490,21 +491,17 @@ function setupMap() {
       tiles.forEach(function(tile) {
         appendLinkToHead('preconnect', 'https://' + tile + '.tile.openstreetmap.org');
       });
+      // Load OSM map library
+      loadScript('OpenLayers.js')
+      .then(function() {
+        buildMap();
+      });
       // Hide buttons and overlay
       const parent = mapButton.parentNode;
       for (let i = 0; i < 3; i++) {
         parent.children[i].style.display = 'none';
       }
       parent.classList.remove('is-overlay');
-
-      // Dont forget to show locate button
-      document.getElementById('locate-btn').style.display = 'inline-block';
-
-      // Finally load OSM map library
-      loadScript('OpenLayers.js')
-      .then(function() {
-        buildMap();
-      });
     };
   }
 }
@@ -519,15 +516,6 @@ function clickScrollCategory (category) {
       break;
     }
   }
-}
-
-function setupClickScroll() {
-  window.addEventListener('DOMContentLoaded', function() {
-    const hash = window.location.hash;
-    if (hash) {
-      clickScrollCategory(decodeURIComponent(hash));
-    }
-  });
 }
 // Search
 async function fetchRegions() {
@@ -836,18 +824,20 @@ async function fetchLanguage() {
   LANG = await response.json();
 }
 
-function setup() {
-  setupFilters();
-  setupMap();
-  setupSearch();
-  setupChat();
-  setupOpening();
-}
+window.addEventListener('DOMContentLoaded', function() {
+  fetchLanguage()
+  .then(function() {
+    setupButtons();
+    setupChat();
+    setupFilters();
+    setupMap();
+    setupOpening();
+    setupSearch();
 
-setupButtons();
-setupClickScroll();
-
-fetchLanguage()
-.then(function() {
-  setup();
+    // When everything is set up, respect category hash in URL
+    const hash = window.location.hash;
+    if (hash) {
+      clickScrollCategory(decodeURIComponent(hash));
+    }
+  });  
 });

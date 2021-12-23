@@ -49,15 +49,19 @@
       <header id="top">
         <h1 class="m-0"><a href="/" aria-label="Naviguer vers la page d'accueil">🛒</a> {{ block "heading" . }}{{ .Title }}{{ end }}</h1>
         <section id="suche" class="row mt-1" aria-hidden="true">
-          <div class="col-6 col-sm-5">
+          <div class="col-3 col-md-2 col-lg-1">
+            <label for="position-btn">Mon</label>
+            <button id="position-btn" class="d-block m-0" name="home">🏠</button>
+          </div>
+          <div class="col-9 col-md-4 col-lg-5">
             <label for="cities">Localisation</label>
             <select data-type="select-one" class="form-control" name="cities" id="cities"></select>
           </div>
-          <div class="col-6 col-sm-5 col-xl-6">
+          <div class="col-9 col-md-4 col-lg-5 mt-1 mt-md-0">
             <label for="shops">Catégorie / Affaires</label>
             <select data-type="select-one" class="form-control" name="shops" id="shops"></select>
           </div>
-          <div class="col-sm-2 col-xl-1 mt-1 mt-sm-0">
+          <div class="col-3 col-md-2 col-lg-1 mt-1 mt-md-0">
             <label for="search-btn">Allez</label>
             <button disabled id="search-btn" class="d-block m-0" name="finish">🚀</button>
           </div>

@@ -610,7 +610,7 @@ function setupSearch() {
           if (currentPosition) {
             // Calc nearest entry
             let nearstEntry;
-            let minimumDistance = 10000000;
+            let minimumDistance = 10000;
             for (let i = 0; i < citiesArray.length; i++) {
               const entry = citiesArray[i];
               const result = distance(
@@ -622,7 +622,7 @@ function setupSearch() {
               if (result < minimumDistance) {
                 minimumDistance = result;
                 nearstEntry = entry;
-                if (minimumDistance < 1000) {
+                if (minimumDistance < 1) {
                   break;
                 }
               }

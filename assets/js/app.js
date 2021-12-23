@@ -533,10 +533,12 @@ async function fetchRegion (region) {
   .then(function(data) {
     return data.map(function(item) {
       return {
-        value: item,
-        label: item + ', ' + region,
+        value: item.name,
+        label: item.name + ', ' + region,
         customProperties: {
           region: regionSlug,
+          lat: item.lat,
+          lon: item.lon
         }
       };
     });
@@ -552,6 +554,10 @@ function isCategory (shop) {
 
 function createLocation (pathname, shop) {
   return pathname + (shop ? isCategory(shop) ? shop : slugo(shop) + '/' : '');
+}
+
+function createPathName (city) {
+  return '/' + city.customProperties.region + '/' + slugo(city.value) + '/';
 }
 
 function setupSearch() {
@@ -577,6 +583,7 @@ function setupSearch() {
       });
     })
     .then(function(instance) {
+      let citiesArray = [];
       instance.containerOuter.element.addEventListener('click', function() {
         // Load data after user input
         instance.setChoices(async function() {
@@ -587,7 +594,6 @@ function setupSearch() {
             });
             return Promise.all(promises)
             .then(function(result) {
-              let citiesArray = [];
               result.forEach(function(array) {
                 if (array) {
                   citiesArray = citiesArray.concat(array);
@@ -601,8 +607,33 @@ function setupSearch() {
           })
         })
         .then(function() {
-          // We have to re-set focus on input again
-          instance.input.element.focus();
+          if (currentPosition) {
+            // Calc nearest entry
+            let nearstEntry;
+            let minimumDistance = 10000000;
+            for (let i = 0; i < citiesArray.length; i++) {
+              const entry = citiesArray[i];
+              const result = distance(
+                currentPosition.coords.latitude,
+                currentPosition.coords.longitude,
+                parseFloat(entry.customProperties.lat),
+                parseFloat(entry.customProperties.lon)
+              );
+              if (result < minimumDistance) {
+                minimumDistance = result;
+                nearstEntry = entry;
+                if (minimumDistance < 1000) {
+                  break;
+                }
+              }
+            }
+            // Relocate
+            window.location = createPathName(nearstEntry);
+          }
+          else {
+            // We have to re-set focus on input again
+            instance.input.element.focus();
+          }
         });
       }, { once: true });
       let city;
@@ -610,7 +641,7 @@ function setupSearch() {
       let shop;
       instance.passedElement.element.addEventListener('change', function(e) {
         city = instance.getValue();
-        pathname = '/' + city.customProperties.region + '/' + slugo(city.value) + '/';
+        pathname = createPathName(city);
         appendLinkToHead('prefetch', pathname);
         searchButton.disabled = false;
         shopsChoices.clearStore();
@@ -650,6 +681,21 @@ function setupSearch() {
             window.location = createLocation(pathname, shop);
           }
         };
+      }
+      let currentPosition;
+      const positionButton = document.getElementById('position-btn');
+      if (positionButton) {
+        positionButton.onclick = function () {
+          if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function (position) {
+              currentPosition = position;
+              instance.containerOuter.element.click();
+            });
+          }
+          else {
+            geolocationAlert();
+          }
+        }
       }
     });
   }

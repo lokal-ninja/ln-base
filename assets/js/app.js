@@ -350,6 +350,46 @@ function setupButtons() {
       updateGUI();
     }
   });
+  const positionButton = document.getElementById('position-btn');
+  if (positionButton) {
+    positionButton.onclick = function () {
+      if (navigator.geolocation) {
+        positionButton.disabled = true;
+        positionButton.classList.add('loading');
+
+        // Fetch cities
+        const promise = getCities();
+        promise.then(function (cities) {
+          navigator.geolocation.getCurrentPosition(function (position) {
+            // Calc nearest entry
+            let nearstEntry;
+            let minimumDistance = 10000;
+            for (let i = 0; i < cities.length; i++) {
+              const entry = cities[i];
+              const result = distance(
+                position.coords.latitude,
+                position.coords.longitude,
+                parseFloat(entry.customProperties.lat),
+                parseFloat(entry.customProperties.lon)
+              );
+              if (result < minimumDistance) {
+                minimumDistance = result;
+                nearstEntry = entry;
+                if (minimumDistance < 1) {
+                  break;
+                }
+              }
+            }
+            // Relocate
+            window.location = createPathName(nearstEntry);
+          });
+        });
+      }
+      else {
+        geolocationAlert();
+      }
+    }
+  }
 }
 // Map
 // multiple markers with clickable popups
@@ -548,6 +588,28 @@ async function fetchRegion (region) {
   });
 }
 
+async function getCities () {
+  return fetchRegions()
+  .then(async function(regions) {
+    const promises = regions.map(function(region) {
+      return fetchRegion(region);
+    });
+    return Promise.all(promises)
+    .then(function(result) {
+      let citiesArray = [];
+      result.forEach(function(array) {
+        if (array) {
+          citiesArray = citiesArray.concat(array);
+        }
+      });
+      return citiesArray;
+    })
+    .catch(function(error) {
+      console.error(error);
+    })
+  })
+}
+
 function isCategory (shop) {
   return shop[0] === '#';
 }
@@ -583,57 +645,14 @@ function setupSearch() {
       });
     })
     .then(function(instance) {
-      let citiesArray = [];
       instance.containerOuter.element.addEventListener('click', function() {
         // Load data after user input
         instance.setChoices(async function() {
-          return fetchRegions()
-          .then(async function(regions) {
-            const promises = regions.map(function(region) {
-              return fetchRegion(region);
-            });
-            return Promise.all(promises)
-            .then(function(result) {
-              result.forEach(function(array) {
-                if (array) {
-                  citiesArray = citiesArray.concat(array);
-                }
-              });
-              return citiesArray;
-            })
-            .catch(function(error) {
-              console.error(error);
-            })
-          })
+          return getCities();
         })
         .then(function() {
-          if (currentPosition) {
-            // Calc nearest entry
-            let nearstEntry;
-            let minimumDistance = 10000;
-            for (let i = 0; i < citiesArray.length; i++) {
-              const entry = citiesArray[i];
-              const result = distance(
-                currentPosition.coords.latitude,
-                currentPosition.coords.longitude,
-                parseFloat(entry.customProperties.lat),
-                parseFloat(entry.customProperties.lon)
-              );
-              if (result < minimumDistance) {
-                minimumDistance = result;
-                nearstEntry = entry;
-                if (minimumDistance < 1) {
-                  break;
-                }
-              }
-            }
-            // Relocate
-            window.location = createPathName(nearstEntry);
-          }
-          else {
-            // We have to re-set focus on input again
-            instance.input.element.focus();
-          }
+          // We have to re-set focus on input again
+          instance.input.element.focus();
         });
       }, { once: true });
       let city;
@@ -681,21 +700,6 @@ function setupSearch() {
             window.location = createLocation(pathname, shop);
           }
         };
-      }
-      let currentPosition;
-      const positionButton = document.getElementById('position-btn');
-      if (positionButton) {
-        positionButton.onclick = function () {
-          if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(function (position) {
-              currentPosition = position;
-              instance.containerOuter.element.click();
-            });
-          }
-          else {
-            geolocationAlert();
-          }
-        }
       }
     });
   }

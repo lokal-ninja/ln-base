@@ -1,0 +1,42 @@
+#map,
+#position-btn {
+  position: relative;
+  
+  &:before {
+    content: '';
+    position: absolute;
+    animation: spin 1s infinite;
+    border-radius: 100%;
+    border: em(4) solid #949ba3;
+    opacity: 0;
+    transition: opacity 0.5s;
+    
+  }
+  &.loading:before {
+    transition-delay: 0.5s;
+    transition-duration: 1s;
+    opacity: 1;
+  }
+}
+
+#map::before {
+  height: em(100);
+  left: calc(50% - #{em(50)});
+  top: calc(50% - #{em(50)});
+  width: em(100);
+  border-top-color: var(--color-bg);
+}
+
+#position-btn::before {
+  height: em(46);
+  left: calc(50% - #{em(23)});
+  top: calc(50% - #{em(23)});
+  width: em(46);
+  border-top-color: transparent;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

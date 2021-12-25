@@ -36,34 +36,3 @@
     }
   }
 }
-
-#position-btn {
-  position: relative;
-  
-  &:before {
-    content: '';
-    position: absolute;
-    right: 20px;
-    top: 50%;
-    margin-top: -12px;
-    width: 24px;
-    height: 24px;
-    border: 2px solid;
-    border-left-color: transparent;
-    border-right-color: transparent;
-    border-radius: 50%;
-    opacity: 0;
-    transition: opacity 0.5s;
-    animation: 0.8s linear infinite spin;
-  }
-  &.loading {
-    pointer-events: none;
-    cursor: not-allowed;
-    
-    &:before {
-      transition-delay: 0.5s;
-      transition-duration: 1s;
-      opacity: 1;
-    }
-  }
-}

@@ -357,10 +357,10 @@ function setupButtons() {
         positionButton.disabled = true;
         positionButton.classList.add('loading');
 
-        // Fetch cities
-        const promise = getCities();
-        promise.then(function (cities) {
-          navigator.geolocation.getCurrentPosition(function (position) {
+        navigator.geolocation.getCurrentPosition(function (position) {
+          // Fetch cities
+          const promise = getCities();
+          promise.then(function (cities) {
             // Calc nearest entry
             let nearstEntry;
             let minimumDistance = 10000;
@@ -536,12 +536,13 @@ function setupMap() {
       .then(function() {
         buildMap();
       });
-      // Hide buttons and overlay
+      // Hide buttons and overlay and add loader
       const parent = mapButton.parentNode;
       for (let i = 0; i < 3; i++) {
         parent.children[i].style.display = 'none';
       }
       parent.classList.remove('is-overlay');
+      parent.classList.add('loading');
     };
   }
 }
@@ -588,6 +589,17 @@ async function fetchRegion (region) {
   });
 }
 
+function flatten (array) {
+  const newArray = [];
+  for (let len = array.length, i = 0; i < len; i++) {
+    for (let jarr = array[i], jen = jarr.length, j = 0; j < jen; j++) {
+      newArray.push(jarr[j]);
+    }
+  }
+
+  return newArray;
+}
+
 async function getCities () {
   return fetchRegions()
   .then(async function(regions) {
@@ -596,13 +608,7 @@ async function getCities () {
     });
     return Promise.all(promises)
     .then(function(result) {
-      let citiesArray = [];
-      result.forEach(function(array) {
-        if (array) {
-          citiesArray = citiesArray.concat(array);
-        }
-      });
-      return citiesArray;
+      return flatten(result);
     })
     .catch(function(error) {
       console.error(error);

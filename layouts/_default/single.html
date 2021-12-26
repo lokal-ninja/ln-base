@@ -21,7 +21,7 @@ Shop at {{ .Title }} ({{ .Params.shop }})
     </ul>
     <hr>
     {{- range where ($.Site.GetPage "taxonomyTerm" "shops").Pages ".Title" .Params.shop }}
-    <p><samp>{{ $.Params.shop }}<svg class="icon" role="img" aria-hidden="true"><use href={{ printf "%s%s" "/img/sprite.svg#" .Params.icon | relURL }}></use></svg></samp> in <a href="/{{ .Site.Params.repo }}/{{ $city }}/#{{ $.Params.shop }}">↶ {{ $.Parent.Title }}</a> oder <a href="/{{ .Site.Params.repo }}{{ .Params.url }}">↺ {{ .Site.Title }}</a></p>
+    <p><samp>{{ $.Params.shop }}<svg class="icon" role="img" aria-hidden="true"><use href={{ printf "%s%s" "/img/sprite.svg#" .Params.icon | relURL }}></use></svg></samp> in <a href="/{{ .Site.Params.repo }}/{{ $city }}/#{{ $.Params.shop }}">↶ {{ $.Parent.Title }}</a> or <a href="/{{ .Site.Params.repo }}{{ .Params.url }}">↺ {{ .Site.Title }}</a></p>
     {{- end }}
   </aside>
 </section>

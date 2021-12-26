@@ -42,3 +42,9 @@ loadMap: Chargement de la carte
 trackLocation: Emplacement de la piste
 placesWithShopsIn: Lieux avec des magasins en
 startPage: Page d'accueil
+here: ici
+addDescription: Tu peux ajouter une description
+noTextSection: Il n'y a pas encore de texte sur la situation générale des achats
+noTextSingle: Il n'y a pas encore de texte sur
+noTextTaxonomy: Il n'y a pas encore de texte pour la catégorie
+noTextIndex: Il n'y a pas encore de texte sur la région

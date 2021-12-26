@@ -32,7 +32,7 @@ phone: Telefon
 website: Webseite
 changeToPreviousOrNextShopIn: Wechsle zu vorherigem oder nächsten Geschäft in
 shoutbox: Shoutbox
-openShoutboxWith: Öffne Shoutbox mit
+openShoutboxWith: Shoutbox aufklappen mit
 posts: Beiträgen
 write: Schreiben
 chatInputField: Chateingabefeld
@@ -42,3 +42,9 @@ loadMap: Karte laden
 trackLocation: Standort tracken
 placesWithShopsIn: Orte mit Geschäften in
 startPage: Startseite
+here: hier
+addDescription: Du kannst eine Beschreibung eintragen
+noTextSection: Es gibt noch keinen Text zur allgemeinen Einkaufslage
+noTextSingle: Es gibt noch keinen Text über
+noTextTaxonomy: Es gibt noch keinen Text zur Kategorie
+noTextIndex: Es gibt noch keinen Text zur Region

@@ -72,7 +72,7 @@
         {{- block "main" . }}{{ end }}
       </main>
       {{- block "back" . }}
-      <nav aria-label="{{ i18n `jump` }}{{ i18n `toTop` }}">
+      <nav aria-label="{{ i18n `jump` }} {{ i18n `toTop` }}">
         <ul>
           {{ partialCached "to-top-link.html" . }}
         </ul>

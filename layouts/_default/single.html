@@ -43,7 +43,7 @@
   <aside>
     <div class="row">
       <div class="col-sm-6">
-        <p>{{ with .Content }}{{ . }}{{ else }}There is no text about {{ .Title }} in {{ .Parent.Title }} yet. You can enter a description <a href="https://github.com/{{ .Site.Params.org }}/{{ .Site.Params.repo }}/edit/master/content/{{ with .File }}{{ .Dir }}{{ end }}{{ .File.BaseFileName }}.md" rel="nofollow noopener">here ↗</a> 🙂{{ end }}</p>
+        <p>{{ with .Content }}{{ . }}{{ else }}{{ i18n `noTextSingle` }} {{ .Title }} {{ i18n `in` }} {{ .Parent.Title }}. {{ i18n `addDescription` }} <a href="https://github.com/{{ .Site.Params.org }}/{{ .Site.Params.repo }}/edit/master/content/{{ with .File }}{{ .Dir }}{{ end }}{{ .File.BaseFileName }}.md" rel="nofollow noopener">{{ i18n `here` }} ↗</a> 🙂{{ end }}</p>
       </div>
       <div class="col-sm-6">
         <p class="float-right-sm"><strong>{{ i18n `weatherIn` }} {{ .Parent.Title }}</strong></p>

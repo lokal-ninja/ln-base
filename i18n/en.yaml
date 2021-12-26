@@ -42,3 +42,9 @@ loadMap: Load map
 trackLocation: Track location
 placesWithShopsIn: Places with shops in
 startPage: start page
+here: here
+addDescription: You can enter a description
+noTextSection: There is no text on the general purchasing situation
+noTextSingle: There is no text about
+noTextTaxonomy: There is no text on category
+noTextIndex: There is no text about the region

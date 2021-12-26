@@ -2,7 +2,7 @@
 {{ .Title }} ({{ .Params.shop }}) - {{ .Parent.Title }} - {{ .Site.Title }} | {{ .Site.Params.site }}
 {{- end }}
 {{- define "heading" -}}
-Shop at {{ .Title }} ({{ .Params.shop }})
+{{ i18n `shoppingAt` }} {{ .Title }} ({{ .Params.shop }})
 {{- end }}
 {{ define "main" }}
 {{- $dirs := split .File.Dir "/" }}
@@ -10,28 +10,28 @@ Shop at {{ .Title }} ({{ .Params.shop }})
 {{- $city := index $dirs 1 }}
 {{- $location := index .Site.Data $main $city .File.BaseFileName }}
 <section id="infos">
-  <h2 class="visually-hidden">Infos</h2>
+  <h2 class="visually-hidden">{{ i18n `infos` }}</h2>
   <aside>
     <ul class="list-unstyled mt-0">
-      <li>Adress: {{ $location.street }} {{ $location.housenumber }} in {{ $location.postcode }} {{ $location.city }}</li>
-      {{- with $location.opening_hours }}<li>Opening hours: <span id="opening-hours">{{ . }}</span></li>{{ end }}
-      {{- with $location.phone }}<li>Telephone: <a href="tel:{{ urlize . }}">{{ . }}</a></li>{{ end }}
-      {{- with $location.website }}<li class="text-truncate">Website: <a href="{{ . }}" rel="nofollow noopener">{{ . }}</a></li>{{ end }}
+      <li>{{ i18n `address` }}: {{ $location.street }} {{ $location.housenumber }} in {{ $location.postcode }} {{ $location.city }}</li>
+      {{- with $location.opening_hours }}<li>{{ i18n `openingHours` }}: <span id="opening-hours">{{ . }}</span></li>{{ end }}
+      {{- with $location.phone }}<li>{{ i18n `phone` }}: <a href="tel:{{ urlize . }}">{{ . }}</a></li>{{ end }}
+      {{- with $location.website }}<li class="text-truncate">{{ i18n `website` }}: <a href="{{ . }}" rel="nofollow noopener">{{ . }}</a></li>{{ end }}
       <li hidden data-lat="{{ $location.latitude }}" data-lon="{{ $location.longitude }}"><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>
     </ul>
     <hr>
     {{- range where ($.Site.GetPage "taxonomyTerm" "shops").Pages ".Title" .Params.shop }}
-    <p><samp>{{ $.Params.shop }}<svg class="icon" role="img" aria-hidden="true"><use href={{ printf "%s%s" "/img/sprite.svg#" .Params.icon | relURL }}></use></svg></samp> in <a href="/{{ .Site.Params.repo }}/{{ $city }}/#{{ $.Params.shop }}">↶ {{ $.Parent.Title }}</a> or <a href="/{{ .Site.Params.repo }}{{ .Params.url }}">↺ {{ .Site.Title }}</a></p>
+    <p><samp>{{ $.Params.shop }}<svg class="icon" role="img" aria-hidden="true"><use href="{{ printf `%s%s` `/img/sprite.svg#` .Params.icon | relURL }}"></use></svg></samp> in <a href="/{{ .Site.Params.repo }}/{{ $city }}/#{{ $.Params.shop }}">↶ {{ $.Parent.Title }}</a> {{ i18n `or` }} <a href="/{{ .Site.Params.repo }}{{ .Params.url }}">↺ {{ .Site.Title }}</a></p>
     {{- end }}
   </aside>
 </section>
 <div class="row mt-1">
   <section class="col-md-6">
-    <h2 class="visually-hidden">Map</h2>
+    <h2 class="visually-hidden">{{ i18n `map` }}</h2>
     <div id="map" class="is-overlay">
       {{ partialCached "load-btn.html" . -}}
       <a href="https://www.openstreetmap.org/{{ $location.type }}/{{ $location.id }}" rel="nofollow noopener">OpenStreetMap ↗</a>
-      <a href="https://www.google.com/maps/dir//{{ replace $location.street " " "%20" }}%20{{ replace $location.housenumber " " "%20" }},{{ replace $location.postcode " " "%20" }}%20{{ replace $location.city " " "%20" }}" rel="nofollow noopener">Google Maps ↗</a>
+      <a href="https://www.google.com/maps/dir//{{ replace $location.street ` ` `%20` }}%20{{ replace $location.housenumber ` ` `%20` }},{{ replace $location.postcode ` ` `%20` }}%20{{ replace $location.city ` ` `%20` }}" rel="nofollow noopener">Google Maps ↗</a>
       {{ partialCached "locate-btn.html" . -}}
     </div>
   </section>
@@ -46,14 +46,14 @@ Shop at {{ .Title }} ({{ .Params.shop }})
         <p>{{ with .Content }}{{ . }}{{ else }}There is no text about {{ .Title }} in {{ .Parent.Title }} yet. You can enter a description <a href="https://github.com/{{ .Site.Params.org }}/{{ .Site.Params.repo }}/edit/master/content/{{ with .File }}{{ .Dir }}{{ end }}{{ .File.BaseFileName }}.md" rel="nofollow noopener">here ↗</a> 🙂{{ end }}</p>
       </div>
       <div class="col-sm-6">
-        <p class="float-right-sm"><strong>Weather in {{ .Parent.Title }}</strong></p>
-        <img loading="lazy" class="img-fluid float-right-sm" src="{{ printf "https://wttr.in/%.2f,%.2f_0pQ_I_background=faebdc_lang=%s.png" $location.latitude $location.longitude .Site.LanguageCode }}" alt="Current weather in {{ .Parent.Title }}">
+        <p class="float-right-sm"><strong>{{ i18n `weatherIn` }} {{ .Parent.Title }}</strong></p>
+        <img loading="lazy" class="img-fluid float-right-sm" src="{{ printf `https://wttr.in/%.2f,%.2f_0pQ_I_background=faebdc_lang=%s.png` $location.latitude $location.longitude .Site.LanguageCode }}" alt="{{ i18n `weatherIn` }} {{ .Parent.Title }}">
       </div>
     </div>
   </aside>
 </article>
 {{- if (or .NextInSection .PrevInSection) }}
-<nav aria-label="Change to previous or next shop in {{ .Parent.Title }}">
+<nav aria-label="{{ i18n `changeToPreviousOrNextShopIn` }} {{ .Parent.Title }}">
   <ul>
     {{- with .NextInSection }}
     <li><a href="{{ .RelPermalink }}">← {{ .Title }}</a></li>
@@ -68,10 +68,10 @@ Shop at {{ .Title }} ({{ .Params.shop }})
 {{- define "back" }}
 {{- $dirs := split .File.Dir "/" }}
 {{- $city := index $dirs 1 }}
-<nav aria-label="Change to {{ .Parent.Title }} or jump to top">
+<nav aria-label="{{ i18n `changeTo` }} {{ .Parent.Title }} {{ i18n `or` }} {{ i18n `jump` }} {{ i18n `toTop` }}">
   <ul>
-    <li><a href="/{{ .Site.Params.repo }}/{{ $city }}/">↶ back to {{ .Parent.Title }}</a></li>
-    <li><a href="#top">to top ↑</a></li>
+    <li><a href="/{{ .Site.Params.repo }}/{{ $city }}/">↶ {{ i18n `backTo` }} {{ .Parent.Title }}</a></li>
+    {{ partialCached "to-top-link.html" . }}
   </ul>
 </nav>
 {{- end }}

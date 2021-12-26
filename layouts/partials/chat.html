@@ -1,16 +1,16 @@
 <section id="chat" class="mt-1 mt-lg-0">
-    <h2 class="visually-hidden">Shoutbox</h2>
+    <h2 class="visually-hidden">{{ i18n `shoutbox` }}</h2>
     <details>
-        <summary>Open shoutbox with <samp id="chat-samp">0</samp> posts </summary>
+        <summary>{{ i18n `openShoutboxWith` }} <samp id="chat-samp">0</samp> {{ i18n `posts` }} </summary>
         <ul id="chatbox" class="list-unstyled m-0"></ul>
         <form id="chat-form">
             <div class="input-group">
-                <input id="chat-input" class="form-control" type="text" autocomplete="off" placeholder="Write..." aria-label="Chatinputfield">
+                <input id="chat-input" class="form-control" type="text" autocomplete="off" placeholder="{{ i18n `write` }}..." aria-label="{{ i18n `chatInputField` }}">
                 <button id="chat-btn"
                         type="button"
-                        title="Send message"
-                        aria-label="Send message">
-                        Send
+                        title="{{ i18n `sendMessage` }}"
+                        aria-label="{{ i18n `sendMessage` }}">
+                        {{ i18n `send` }}
                 </button>
             </div>
         </form>

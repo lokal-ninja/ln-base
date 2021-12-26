@@ -2,19 +2,19 @@
 {{ .Title }} - {{ .Site.Title }} | {{ .Site.Params.site }}
 {{- end }}
 {{- define "heading" -}}
-Shops in {{ .Title }}
+{{ i18n `shopsIn` }} {{ .Title }}
 {{- end }}
 {{ define "main" }}
-<section id="eintraege">
-  <h2 class="visually-hidden">Entries</h2>
+<section id="entries">
+  <h2 class="visually-hidden">{{ i18n `entries` }}</h2>
   <div class="filter filter-entries">
     <div class="filter-box">
       <samp>{{ len .Pages }}</samp>
-      <input type="text" placeholder="Filter entries..." aria-label="Filter entries...">
+      {{ partialCached "entries-input.html" . }}
     </div>
-    <button id="categories-btn" class="m-0" aria-label="Open categories">➕</button>
+    {{ partialCached "categories-btn.html" . }}
   </div>
-  <h2 class="visually-hidden">Categories</h2>
+  <h2 class="visually-hidden">{{ i18n `categories` }}</h2>
   <div class="categories d-none">
     {{- $shops := slice }}
     {{- range .RegularPages }}
@@ -24,14 +24,14 @@ Shops in {{ .Title }}
     <div class="filter filter-categories">
       <div class="filter-box">
         <samp>{{ len $sortedShops }}</samp>
-        <input type="text" placeholder="Filter categories..." aria-label="Filter categories...">
+        {{ partialCached "categories-input.html" . }}
       </div>
     </div>
     <div class="categories-items">
       {{- range $sortedShops }}
       {{- $sortedShop := . }}
       {{- range where ($.Site.GetPage "taxonomyTerm" "shops").Pages ".Title" . }}
-      <button>{{ $sortedShop }}<svg class="icon" role="img" aria-hidden="true"><use href={{ printf "%s%s" "/img/sprite.svg#" .Params.icon | relURL }}></use></svg></button>
+      <button>{{ $sortedShop }}<svg class="icon" role="img" aria-hidden="true"><use href="{{ printf `%s%s` `/img/sprite.svg#` .Params.icon | relURL }}"></use></svg></button>
       {{- end }}
       {{- end }}
     </div>
@@ -45,7 +45,7 @@ Shops in {{ .Title }}
     {{- $location := index .Site.Data "cities" $city .File.BaseFileName }}
     {{- $street := $location.street }}
     {{- if not $street }}
-    {{- $street = "(ohne Straße)" }}
+    {{- $street = "({{ i18n `withoutStreet` }})" }}
     {{- end }}
     {{- $entry := dict "shop" .Params.shop "lat" $location.latitude "lon" $location.longitude "link" .RelPermalink "title" .Title "street" $street }}
     {{- $entries = $entries | append $entry }}
@@ -65,11 +65,11 @@ Shops in {{ .Title }}
     {{- end }}
     {{- end }}
   </ul>
-  <p>Missing an entry? Please add it to the free database at <a href="https://www.openstreetmap.org/" rel="nofollow noopener">OpenStreetMap ↗</a>!</p>
+  {{ partialCached "missing-entry.html" . }}
 </section>
 <div class="row mt-1">
   <section class="col-md-6">
-    <h2 class="visually-hidden">Karte</h2>
+    <h2 class="visually-hidden">{{ i18n `map` }}</h2>
     <div id="map" class="is-overlay">
       {{ partialCached "load-btn.html" . -}}
       <a href="https://www.openstreetmap.org/search?query={{ .Title }}" rel="nofollow noopener">OpenStreetMap ↗</a>
@@ -88,22 +88,22 @@ Shops in {{ .Title }}
         <p>{{ with .Content }}{{ . }}{{ else }}There is no text on the general purchasing situation in {{ .Title }} yet. You can enter a description <a href="https://github.com/{{ .Site.Params.org }}/{{ .Site.Params.repo }}/edit/master/content/{{ with .File }}{{ .Dir }}{{ end }}_index.md" rel="nofollow noopener">here ↗</a> 🙂{{ end }}</p>
       </div>
       <div class="col-sm-6">
-        <p class="float-right-sm"><strong>Weather in {{ .Title }}</strong></p>
+        <p class="float-right-sm"><strong>{{ i18n `weatherIn` }} {{ .Title }}</strong></p>
         {{- $coordsLocation := .Title }}
         {{- if .Params.latitude }}
         {{- $coordsLocation = printf "%.2f,%.2f" .Params.latitude .Params.longitude }}
         {{- end }}
-        <img loading="lazy" class="img-fluid float-right-sm" src="{{ printf "https://wttr.in/%s_0pQ_I_background=faebdc_lang=%s.png" $coordsLocation .Site.LanguageCode }}" alt="Current weather in {{ .Title }}">
+        <img loading="lazy" class="img-fluid float-right-sm" src="{{ printf `https://wttr.in/%s_0pQ_I_background=faebdc_lang=%s.png` $coordsLocation .Site.LanguageCode }}" alt="{{ i18n `weatherIn` }} {{ .Title }}">
       </div>
     </div>
   </aside>
 </article>
 {{- end }}
 {{- define "back" }}
-<nav aria-label="Change to {{ .Site.Title }} or jump to top">
+<nav aria-label="{{ i18n `changeTo` }} {{ .Site.Title }} {{ i18n `or` }} {{ i18n `jump` }} {{ i18n `toTop` }}">
   <ul>
-    <li><a href="/{{ .Site.Params.repo }}/">↶ back to {{ .Site.Title }}</a></li>
-    <li><a href="#top">to top ↑</a></li>
+    <li><a href="/{{ .Site.Params.repo }}/">↶ {{ i18n `backTo` }} {{ .Site.Title }}</a></li>
+    {{ partialCached "to-top-link.html" . }}
   </ul>
 </nav>
 {{- end }}

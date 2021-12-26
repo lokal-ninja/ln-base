@@ -2,29 +2,29 @@
 {{ .Site.Title }} | {{ .Site.Params.Site }}
 {{- end }}
 {{- define "heading" -}}
-Places with shops in {{ .Site.Title }}
+{{ i18n `placesWithShopsIn` }} {{ .Site.Title }}
 {{- end }}
 {{ define "main" }}
-<section id="eintraege">
-  <h2 class="visually-hidden">Entries</h2>
+<section id="entries">
+  <h2 class="visually-hidden">{{ i18n `entries` }}</h2>
   <div class="filter filter-entries">
     <div class="filter-box">
       <samp>{{ len (.Site.GetPage "section" "cities").Sections }}</samp>
-      <input type="text" placeholder="Filter entries..." aria-label="Filter entries...">
+      {{ partialCached "entries-input.html" . }}
     </div>
-    <button id="categories-btn" class="m-0" aria-label="Open categories">➕</button>
+    {{ partialCached "categories-btn.html" . }}
   </div>
-  <h2 class="visually-hidden">Categories</h2>
+  <h2 class="visually-hidden">{{ i18n `categories` }}</h2>
   <div class="categories d-none">
     <div class="filter filter-categories">
       <div class="filter-box">
         <samp>{{ len (.Site.GetPage "taxonomyTerm" "shops").Pages }}</samp>
-        <input type="text" placeholder="Filter categories..." aria-label="Filter categories...">
+        {{ partialCached "categories-input.html" . }}
       </div>
     </div>
     <div class="categories-items">
       {{- range (.Site.GetPage "taxonomyTerm" "shops").Pages }}
-      <a href="{{ .RelPermalink }}">{{ .Title }}<svg class="icon" role="img" aria-hidden="true"><use href={{ printf "%s%s" "/img/sprite.svg#" .Params.icon | relURL }}></use></svg></a>
+      <a href="{{ .RelPermalink }}">{{ .Title }}<svg class="icon" role="img" aria-hidden="true"><use href="{{ printf `%s%s` `/img/sprite.svg#` .Params.icon | relURL }}"></use></svg></a>
       {{- end }}
     </div>
   </div>
@@ -36,7 +36,7 @@ Places with shops in {{ .Site.Title }}
 </section>
 <div class="row mt-1">
   <section class="col-md-6">
-    <h2 class="visually-hidden">Map</h2>
+    <h2 class="visually-hidden">{{ i18n `map` }}</h2>
     <div id="map" class="is-overlay">
       {{ partialCached "load-btn.html" . -}}
       <a href="https://www.openstreetmap.org/search?query={{ .Site.Title }}" rel="nofollow noopener">OpenStreetMap ↗</a>
@@ -55,18 +55,18 @@ Places with shops in {{ .Site.Title }}
         <p>{{ with .Content }}{{ . }}{{ else }}There is no text about the region {{ .Site.Title }} yet. You can enter a description <a href="https://github.com/{{ .Site.Params.org }}/{{ .Site.Params.repo }}/edit/master/content/_index.md" rel="nofollow noopener">here ↗</a> 🙂{{ end }}</p>
       </div>
       <div class="col-sm-6">
-        <p class="float-right-sm"><strong>Weather in {{ .Site.Title }}</strong></p>
-        <img loading="lazy" class="img-fluid float-right-sm" src="{{ printf "https://wttr.in/%s_0pQ_I_background=faebdc_lang=%s.png" .Site.Title .Site.LanguageCode }}" alt="Current weather in {{ .Site.Title }}">
+        <p class="float-right-sm"><strong>{{ i18n `weatherIn` }} {{ .Site.Title }}</strong></p>
+        <img loading="lazy" class="img-fluid float-right-sm" src="{{ printf `https://wttr.in/%s_0pQ_I_background=faebdc_lang=%s.png` .Site.Title .Site.LanguageCode }}" alt="{{ i18n `weatherIn` }} {{ .Site.Title }}">
       </div>
     </div>
   </aside>
 </article>
 {{- end }}
 {{- define "back" }}
-<nav aria-label="Change to home page or jump to top">
+<nav aria-label="{{ i18n `changeTo` }} {{ i18n `startPage` }} {{ i18n `or` }} {{ i18n `jump` }} {{ i18n `toTop` }}">
   <ul>
-    <li><a href="/">↶ back to home page</a></li>
-    <li><a href="#top">to top ↑</a></li>
+    <li><a href="/">↶ {{ i18n `backTo` }} {{ i18n `startPage` }}</a></li>
+    {{ partialCached "to-top-link.html" . }}
   </ul>
 </nav>
 {{- end }}

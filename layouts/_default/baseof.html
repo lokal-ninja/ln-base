@@ -4,19 +4,19 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>{{ block "title" . }}{{ .Title }} | {{ .Site.Params.site }}{{ end }}</title>
-    {{- $description := printf "Discover all shopping facilities in %s" .Site.Title }}
+    {{- $description := printf "{{ i18n `discover` }} %s" .Site.Title }}
     {{- if eq .Kind "section" }}
-      {{- $description = printf "Discover all shopping facilities in %s" .Title }}
+      {{- $description = printf "{{ i18n `discover` }} %s" .Title }}
     {{- else if .IsPage }}
       {{- $dirs := split .File.Dir "/" }}
       {{- $main := index $dirs 0 }}
       {{- $city := index $dirs 1 }}
       {{- $entry := index .Site.Data $main $city .File.BaseFileName }}
       {{- $name := $entry.city }}
-      {{- $opening_hours := "" }}{{ if $entry.opening_hours }}{{ $opening_hours = ", opening hours" }}{{ end }}
-      {{- $phone := "" }}{{ if $entry.phone }}{{ $phone = ", phone number" }}{{ end }}
-      {{- $website := "" }}{{ if $entry.website }}{{ $website = " and link to website" }}{{ end }}
-      {{- $description = printf "Address%s%s%s of %s in %s" $opening_hours $phone $website .Title $name }}
+      {{- $opening_hours := "" }}{{ if $entry.opening_hours }}{{ $opening_hours = ", {{ i18n `openingHours` }}" }}{{ end }}
+      {{- $phone := "" }}{{ if $entry.phone }}{{ $phone = ", {{ i18n `phonenumber` }}" }}{{ end }}
+      {{- $website := "" }}{{ if $entry.website }}{{ $website = " {{ i18n `andLinkToWebsite` }}" }}{{ end }}
+      {{- $description = printf "{{ i18n `address` }}%s%s%s {{ i18n `of` }} %s {{ i18n `in` }} %s" $opening_hours $phone $website .Title $name }}
     {{- end }}
     <meta name="description" content="{{ $description }}">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -26,12 +26,12 @@
     <meta property="og:title" content="{{ with .Title }}{{ . }}{{ else }}{{ .Site.Title }}{{ end }}">
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ .Permalink }}">
-    <meta property="og:image" content="{{ "/img/logo-1200x1200.png" | absURL }}">
+    <meta property="og:image" content="{{ `/img/logo-1200x1200.png` | absURL }}">
     <meta property="og:image:width " content="1200">
     <meta property="og:image:height" content="1200">
-    <meta property="og:image:alt" content="Shopping cart">
+    <meta property="og:image:alt" content="{{ i18n `shoppingCart` }}">
     <meta property="og:description" content="{{ $description }}">
-    <meta property="og:locale" content="{{ replace .Site.LanguageCode "-" "_" }}">
+    <meta property="og:locale" content="{{ replace .Site.LanguageCode `-` `_` }}">
     <link rel="canonical" href="{{ .Permalink }}">
     <link rel="icon" href="data:image/svg+xml,%3csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20100%20100'%3e%3ctext%20y='.9em'%20font-size='90'%3e🛒%3c/text%3e%3c/svg%3e">
     <link rel="manifest" href="/site.webmanifest">
@@ -47,22 +47,22 @@
   <body>
     <div class="container">
       <header id="top">
-        <h1 class="m-0"><a href="/" aria-label="Navigate to home page">🛒</a> {{ block "heading" . }}{{ .Title }}{{ end }}</h1>
-        <section id="suche" class="row mt-1" aria-hidden="true">
+        <h1 class="m-0"><a href="/" aria-label="{{ i18n `navigateToStartPage` }}">🛒</a> {{ block "heading" . }}{{ .Title }}{{ end }}</h1>
+        <section id="search" class="row mt-1" aria-hidden="true">
           <div class="col-3 col-md-2 col-lg-1">
-            <label for="position-btn">My</label>
+            <label for="position-btn">{{ i18n `my` }}</label>
             <button id="position-btn" class="d-block m-0" name="home">🏠</button>
           </div>
           <div class="col-9 col-md-4 col-lg-5">
-            <label for="cities">Place</label>
+            <label for="cities">{{ i18n `place` }}</label>
             <select data-type="select-one" class="form-control" name="cities" id="cities"></select>
           </div>
           <div class="col-9 col-md-4 col-lg-5 mt-1 mt-md-0">
-            <label for="shops">Category / Shop</label>
+            <label for="shops">{{ i18n `category` }} / {{ i18n `shop` }}</label>
             <select data-type="select-one" class="form-control" name="shops" id="shops"></select>
           </div>
           <div class="col-3 col-md-2 col-lg-1 mt-1 mt-md-0">
-            <label for="search-btn">Go</label>
+            <label for="search-btn">{{ i18n `go` }}</label>
             <button disabled id="search-btn" class="d-block m-0" name="finish">🚀</button>
           </div>
         </section>
@@ -72,9 +72,9 @@
         {{- block "main" . }}{{ end }}
       </main>
       {{- block "back" . }}
-      <nav aria-label="Jump to top">
+      <nav aria-label="{{ i18n `jump` }}{{ i18n `toTop` }}">
         <ul>
-          <li><a href="#top">to top ↑</a></li>
+          {{ partialCached "to-top-link.html" . }}
         </ul>
       </nav>
       {{ end }}

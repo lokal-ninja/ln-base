@@ -2,15 +2,15 @@
 {{ .Title }} - {{ .Site.Title }} | {{ .Site.Params.site }}
 {{- end }}
 {{- define "heading" -}}
-{{ .Title }} Geschäfte in {{ .Site.Title }}
+{{ .Title }} {{ i18n `shopsIn` }} {{ .Site.Title }}
 {{- end }}
 {{ define "main" }}
-<section id="eintraege">
-  <h2 class="visually-hidden">Einträge</h2>
+<section id="entries">
+  <h2 class="visually-hidden">{{ i18n `entries` }}</h2>
   <div class="filter filter-entries">
     <div class="filter-box">
       <samp>{{ len (where .Site.Pages "Params.shop" .Title) }}</samp>
-      <input type="text" placeholder="Einträge filtern..." aria-label="Einträge filtern...">
+      {{ partialCached "entries-input.html" . }}
     </div>
   </div>
   <ul class="columns m-0">
@@ -22,11 +22,11 @@
     <li data-shop="{{ .Params.shop }}" data-lat="{{ $location.latitude }}" data-lon="{{ $location.longitude }}"><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>
     {{- end }}
   </ul>
-  <p>Fehlt ein Eintrag? Trage ihn bitte in die freie Datenbank der <a href="https://www.openstreetmap.org/" rel="nofollow noopener">OpenStreetMap ↗</a> ein!</p>
+  {{ partialCached "missing-entry.html" . }}
 </section>
 <div class="row mt-1">
   <section class="col-md-6">
-    <h2 class="visually-hidden">Karte</h2>
+    <h2 class="visually-hidden">{{ i18n `map` }}</h2>
     <div id="map" class="is-overlay w-100">
       {{ partialCached "load-btn.html" . -}}
       <a href="https://www.openstreetmap.org/search?query={{ .Title }}" rel="nofollow noopener">OpenStreetMap ↗</a>
@@ -38,25 +38,25 @@
     {{ partialCached "chat.html" . -}}
   </div>
 </div>
-<article id="beschreibung" class="mt-1">
+<article id="description" class="mt-1">
   <aside>
     <div class="row">
       <div class="col-sm-6">
         <p>{{ with .Content }}{{ . }}{{ else }}Es gibt noch keinen Text zur Kategorie {{ .Title }} in {{ .Site.Title }}. Du kannst eine Beschreibung <a href="https://github.com/{{ .Site.Params.org }}/{{ .Site.Params.repo }}/edit/master/content/{{ with .File }}{{ .Dir }}{{ end }}_index.md" rel="nofollow noopener">hier ↗</a> eintragen 🙂{{ end }}</p>
       </div>
       <div class="col-sm-6">
-        <p class="float-right-sm"><strong>Wetter in {{ .Site.Title }}</strong></p>
-        <img loading="lazy" class="img-fluid float-right-sm" src="{{ printf "https://wttr.in/%s_0pQ_I_background=faebdc_lang=%s.png" .Site.Title .Site.LanguageCode }}" alt="Das aktuelle Wetter in {{ .Site.Title }}">
+        <p class="float-right-sm"><strong>{{ i18n `weatherIn` }} {{ .Site.Title }}</strong></p>
+        <img loading="lazy" class="img-fluid float-right-sm" src="{{ printf `https://wttr.in/%s_0pQ_I_background=faebdc_lang=%s.png` .Site.Title .Site.LanguageCode }}" alt="{{ i18n `weatherIn` }} {{ .Site.Title }}">
       </div>
     </div>
   </aside>
 </article>
 {{- end }}
 {{- define "back" }}
-<nav aria-label="Wechsle zu {{ .Site.Title }} oder springe nach oben">
+<nav aria-label="{{ i18n `changeTo` }} {{ .Site.Title }} {{ i18n `or` }} {{ i18n `jump` }} {{ i18n `toTop` }}">
   <ul>
-    <li><a href="/{{ .Site.Params.repo }}/">↶ zurück zu {{ .Site.Title }}</a></li>
-    <li><a href="#top">nach oben ↑</a></li>
+    <li><a href="/{{ .Site.Params.repo }}/">↶ {{ i18n `backTo` }} {{ .Site.Title }}</a></li>
+    {{ partialCached "to-top-link.html" . }}
   </ul>
 </nav>
 {{- end }}

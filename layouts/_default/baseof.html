@@ -36,13 +36,7 @@
     <link rel="icon" href="data:image/svg+xml,%3csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20100%20100'%3e%3ctext%20y='.9em'%20font-size='90'%3e🛒%3c/text%3e%3c/svg%3e">
     <link rel="manifest" href="/site.webmanifest">
     <meta name="theme-color" content="#f57c00">
-    {{- $choices := resources.Get "scss/vendor/choices.scss" | toCSS }}
-    {{- $app := resources.Get "scss/app.scss" | toCSS }}
-    {{- $style := slice $choices $app | resources.Concat "css/main.css" }}
-    {{- if hugo.IsProduction }}
-      {{- $style = $style | minify | fingerprint }}
-    {{- end }}
-    <link rel="stylesheet" href="{{ $style.RelPermalink }}">
+    {{ partialCached "styles.html" . }}
   </head>
   <body>
     <div class="container">
@@ -82,17 +76,6 @@
       <hr>
       {{ partialCached "footer.html" . }}
     </div>
-    <script nomodule src="/js/es6-promise.auto.js"></script>
-    <script nomodule src="/js/fetch.umd.js"></script>
-    <script nomodule src="/js/polyfills.js"></script>
-    {{- $openinghours := resources.Get "/js/simple-opening-hours.js" }}
-    {{- $choices := resources.Get "/js/choices.js" }}
-    {{- $slugo := resources.Get "/js/slugo.js" }}
-    {{- $app := resources.Get "/js/app.js" }}
-    {{- $js := slice $openinghours $choices $slugo $app | resources.Concat "js/main.js" }}
-    {{- if hugo.IsProduction }}
-      {{- $js = $js | minify | fingerprint }}
-    {{- end }}
-    <script defer src="{{ $js.RelPermalink }}"></script>
+    {{ partialCached "scripts.html" . }}
   </body>
 </html>

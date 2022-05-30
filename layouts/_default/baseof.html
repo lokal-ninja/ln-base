@@ -13,10 +13,10 @@
       {{- $city := index $dirs 1 }}
       {{- $entry := index .Site.Data $main $city .File.BaseFileName }}
       {{- $name := $entry.city }}
-      {{- $opening_hours := "" }}{{ if $entry.opening_hours }}{{ $opening_hours = ", {{ i18n `openingHours` }}" }}{{ end }}
-      {{- $phone := "" }}{{ if $entry.phone }}{{ $phone = ", {{ i18n `phonenumber` }}" }}{{ end }}
-      {{- $website := "" }}{{ if $entry.website }}{{ $website = " {{ i18n `andLinkToWebsite` }}" }}{{ end }}
-      {{- $description = printf "{{ i18n `address` }}%s%s%s {{ i18n `of` }} %s {{ i18n `in` }} %s" $opening_hours $phone $website .Title $name }}
+      {{- $opening_hours := "" }}{{ if $entry.opening_hours }}{{ $opening_hours = printf ", %s" (i18n `openingHours`) }}{{ end }}
+      {{- $phone := "" }}{{ if $entry.phone }}{{ $phone = printf ", %s" (i18n `phonenumber`) }}{{ end }}
+      {{- $website := "" }}{{ if $entry.website }}{{ $website = printf "%s" (i18n `andLinkToWebsite`) }}{{ end }}
+      {{- $description = printf "%s%s%s%s %s %s %s %s" (i18n `address`) $opening_hours $phone $website (i18n `of`) .Title (i18n `in`) $name }}
     {{- end }}
     <meta name="description" content="{{ $description }}">
     <meta name="viewport" content="width=device-width, initial-scale=1">

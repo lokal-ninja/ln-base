@@ -45,7 +45,7 @@
     {{- $location := index .Site.Data "cities" $city .File.BaseFileName }}
     {{- $street := $location.street }}
     {{- if not $street }}
-    {{- $street = "({{ i18n `withoutStreet` }})" }}
+    {{- $street = printf "%s" (i18n `withoutStreet`) }}
     {{- end }}
     {{- $entry := dict "shop" .Params.shop "lat" $location.latitude "lon" $location.longitude "link" .RelPermalink "title" .Title "street" $street }}
     {{- $entries = $entries | append $entry }}

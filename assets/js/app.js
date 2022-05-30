@@ -196,6 +196,10 @@ function setCenter(entries) {
   }
 }
 // Filter input
+function isElementHidden(element) {
+  return element.classList.contains('d-none') || element.classList.contains('hide');
+}
+
 function updateCount(count, selector) {
   const filterSamp = document.querySelector('.filter-' + selector + ' samp');
   if (filterSamp) {
@@ -208,7 +212,7 @@ function updateMap() {
   vectorLayer.features.forEach(function(feature) {
     const entry = feature.attributes.entry;
     if (entry) {
-      if (entry.getClientRects().length !== 0 || entry.hidden) {
+      if (!isElementHidden(entry)) {
         feature.style = null;
         matches.push(entry);
       }
@@ -237,7 +241,7 @@ function updateGUI() {
 function countShownItems(items) {
   let count = 0;
   items.forEach(function(item) {
-    if (item.getClientRects().length !== 0) {
+    if (!isElementHidden(item)) {
       count++;
     }
   });
@@ -289,7 +293,11 @@ function startCategoriesFilter(value) {
 function setupFilters() {
   const filterInputs = query('.filter input');
   filterInputs.forEach(function(input) {
-    const startFilter = input.closest('.filter-entries') ? startEntriesFilter : startCategoriesFilter;
+    const isEntriesFilter = input.closest('.filter-entries');
+    const startFilter = isEntriesFilter ? startEntriesFilter : startCategoriesFilter;
+    input.addEventListener('input', debounce(function () {
+      updateCount('Loading...', isEntriesFilter ? 'entries' : 'categories');
+    }, 250));
     input.addEventListener('input', debounce(function () {
       startFilter(input.value);
     }, 500));

@@ -36,35 +36,65 @@
       {{- end }}
     </div>
   </div>
-  <ul class="columns m-0">
   {{- $entries := slice }}
-    {{- range .Pages }}
-    {{- $dirs := split .File.Dir "/" }}
-    {{- $main := index $dirs 0 }}
-    {{- $city := index $dirs 1 }}
-    {{- $location := index .Site.Data "cities" $city .File.BaseFileName }}
-    {{- $street := $location.street }}
-    {{- if not $street }}
-    {{- $street = printf "%s" (i18n `withoutStreet`) }}
-    {{- end }}
-    {{- $entry := dict "shop" .Params.shop "lat" $location.latitude "lon" $location.longitude "link" .RelPermalink "title" .Title "street" $street }}
-    {{- $entries = $entries | append $entry }}
-    {{- end }}
-    {{- $doneEntries := slice }}
-    {{- range $entries }}
-    {{- $titleEntries := where $entries "title" .title }}
-    {{- if (gt (len $titleEntries) 1) }}
-    {{- if not (in $doneEntries .title) }}
-    {{- $doneEntries = $doneEntries | append .title }}
-    {{- range $titleEntries }}
-    <li data-shop="{{ .shop }}" data-lat="{{ .lat }}" data-lon="{{ .lon }}"><a href="{{ .link }}">{{ .title }} - {{ .street }}</a></li>
-    {{- end }}
-    {{- end }}
-    {{- else }}
-    <li data-shop="{{ .shop }}" data-lat="{{ .lat }}" data-lon="{{ .lon }}"><a href="{{ .link }}">{{ .title }}</a></li>
-    {{- end }}
-    {{- end }}
-  </ul>
+  <div class="columns-wrapper">
+    <ul class="columns m-0">
+      {{- range first 100 .Pages }}
+      {{- $dirs := split .File.Dir "/" }}
+      {{- $main := index $dirs 0 }}
+      {{- $city := index $dirs 1 }}
+      {{- $location := index .Site.Data "cities" $city .File.BaseFileName }}
+      {{- $street := $location.street }}
+      {{- if not $street }}
+      {{- $street = printf "%s" (i18n `withoutStreet`) }}
+      {{- end }}
+      {{- $entry := dict "shop" .Params.shop "lat" $location.latitude "lon" $location.longitude "link" .RelPermalink "title" .Title "street" $street }}
+      {{- $entries = $entries | append $entry }}
+      {{- end }}
+      {{- $doneEntries := slice }}
+      {{- range $entries }}
+      {{- $titleEntries := where $entries "title" .title }}
+      {{- if (gt (len $titleEntries) 1) }}
+      {{- if not (in $doneEntries .title) }}
+      {{- $doneEntries = $doneEntries | append .title }}
+      {{- range $titleEntries }}
+      <li data-shop="{{ .shop }}" data-lat="{{ .lat }}" data-lon="{{ .lon }}"><a href="{{ .link }}">{{ .title }} - {{ .street }}</a></li>
+      {{- end }}
+      {{- end }}
+      {{- else }}
+      <li data-shop="{{ .shop }}" data-lat="{{ .lat }}" data-lon="{{ .lon }}"><a href="{{ .link }}">{{ .title }}</a></li>
+      {{- end }}
+      {{- end }}
+    </ul>
+    <ul class="columns hidden m-0" data-empty="true" data-button="false">
+      {{- range after 100 .Pages }}
+      {{- $dirs := split .File.Dir "/" }}
+      {{- $main := index $dirs 0 }}
+      {{- $city := index $dirs 1 }}
+      {{- $location := index .Site.Data "cities" $city .File.BaseFileName }}
+      {{- $street := $location.street }}
+      {{- if not $street }}
+      {{- $street = printf "%s" (i18n `withoutStreet`) }}
+      {{- end }}
+      {{- $entry := dict "shop" .Params.shop "lat" $location.latitude "lon" $location.longitude "link" .RelPermalink "title" .Title "street" $street }}
+      {{- $entries = $entries | append $entry }}
+      {{- end }}
+      {{- $doneEntries := slice }}
+      {{- range $entries }}
+      {{- $titleEntries := where $entries "title" .title }}
+      {{- if (gt (len $titleEntries) 1) }}
+      {{- if not (in $doneEntries .title) }}
+      {{- $doneEntries = $doneEntries | append .title }}
+      {{- range $titleEntries }}
+      <li data-shop="{{ .shop }}" data-lat="{{ .lat }}" data-lon="{{ .lon }}"><a href="{{ .link }}">{{ .title }} - {{ .street }}</a></li>
+      {{- end }}
+      {{- end }}
+      {{- else }}
+      <li data-shop="{{ .shop }}" data-lat="{{ .lat }}" data-lon="{{ .lon }}"><a href="{{ .link }}">{{ .title }}</a></li>
+      {{- end }}
+      {{- end }}
+    </ul>
+  </div>
   {{ partialCached "missing-entry.html" . }}
 </section>
 <div class="row mt-1">
@@ -93,7 +123,7 @@
         {{- if .Params.latitude }}
         {{- $coordsLocation = printf "%.2f,%.2f" .Params.latitude .Params.longitude }}
         {{- end }}
-        <img loading="lazy" class="img-fluid float-right-sm" src="{{ printf `https://wttr.in/%s_0pQ_I_background=faebdc_lang=%s.png` $coordsLocation .Site.LanguageCode }}" alt="{{ i18n `weatherIn` }} {{ .Title }}">
+        <img class="img-fluid float-right-sm" src="{{ printf `https://wttr.in/%s_0pQ_I_background=faebdc_lang=%s.png` $coordsLocation .Site.LanguageCode }}" width="240" height="98" loading="lazy" alt="{{ i18n `weatherIn` }} {{ .Title }}">
       </div>
     </div>
   </aside>

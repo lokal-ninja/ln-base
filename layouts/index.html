@@ -28,11 +28,18 @@
       {{- end }}
     </div>
   </div>
-  <ul class="columns m-0">
-    {{- range (.Site.GetPage "section" "cities").Sections }}
-    <li data-lat="{{ .Params.latitude }}" data-lon="{{ .Params.longitude }}"><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>
-    {{- end }}
-  </ul>
+  <div class="columns-wrapper">
+    <ul class="columns m-0">
+      {{- range first 100 (.Site.GetPage "section" "cities").Sections }}
+      <li data-lat="{{ .Params.latitude }}" data-lon="{{ .Params.longitude }}"><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>
+      {{- end }}
+    </ul>
+    <ul class="columns hidden m-0" data-empty="true" data-button="false">
+      {{- range after 100 (.Site.GetPage "section" "cities").Sections }}
+      <li data-lat="{{ .Params.latitude }}" data-lon="{{ .Params.longitude }}"><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>
+      {{- end }}
+    </ul>
+  </div>
 </section>
 <div class="row mt-1">
   <section class="col-md-6">
@@ -56,7 +63,7 @@
       </div>
       <div class="col-sm-6">
         <p class="float-right-sm"><strong>{{ i18n `weatherIn` }} {{ .Site.Title }}</strong></p>
-        <img loading="lazy" class="img-fluid float-right-sm" src="{{ printf `https://wttr.in/%s_0pQ_I_background=faebdc_lang=%s.png` .Site.Title .Site.LanguageCode }}" alt="{{ i18n `weatherIn` }} {{ .Site.Title }}">
+        <img class="img-fluid float-right-sm" src="{{ printf `https://wttr.in/%s_0pQ_I_background=faebdc_lang=%s.png` .Site.Title .Site.LanguageCode }}" width="240" height="98" loading="lazy" alt="{{ i18n `weatherIn` }} {{ .Site.Title }}">
       </div>
     </div>
   </aside>

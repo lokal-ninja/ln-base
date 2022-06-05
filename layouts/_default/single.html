@@ -47,7 +47,7 @@
       </div>
       <div class="col-sm-6">
         <p class="float-right-sm"><strong>{{ i18n `weatherIn` }} {{ .Parent.Title }}</strong></p>
-        <img loading="lazy" class="img-fluid float-right-sm" src="{{ printf `https://wttr.in/%.2f,%.2f_0pQ_I_background=faebdc_lang=%s.png` $location.latitude $location.longitude .Site.LanguageCode }}" alt="{{ i18n `weatherIn` }} {{ .Parent.Title }}">
+        <img class="img-fluid float-right-sm" src="{{ printf `https://wttr.in/%.2f,%.2f_0pQ_I_background=faebdc_lang=%s.png` $location.latitude $location.longitude .Site.LanguageCode }}" width="240" height="98" loading="lazy" alt="{{ i18n `weatherIn` }} {{ .Parent.Title }}">
       </div>
     </div>
   </aside>

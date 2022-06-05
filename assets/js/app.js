@@ -7,6 +7,7 @@ let vectorLayer;
 let citiesChoices;
 let shopsChoices;
 let categoryButtons;
+let secondColumn;
 
 // Constants
 const SUBDOMAIN = window.location.hostname.split(".")[0];
@@ -86,6 +87,18 @@ function loadScript(file) {
       resolve();
     }
   })
+}
+
+function query(selector) {
+  return Array.from(document.querySelectorAll(selector));
+}
+
+function getEntries() {
+  return entries ? entries : entries = query('li[data-lat]');
+}
+
+function getCategories() {
+  return categories ? categories : categories = query('.categories button, .categories a');
 }
 
 function geolocationError(error) {
@@ -187,15 +200,31 @@ function determineZoom(entries, count, center) {
   // Entry page or no other city match
   return 16;
 }
-
-function setCenter(entries) {
-  const count = entries.length;
-  if (count) {
-    const center = getLatLngCenter(entries, count);
-    vectorLayer.map.setCenter(createLonLat(center[1], center[0]), determineZoom(entries, count, center));
+// Filter input
+function setupColumns() {
+  if (!secondColumn) {
+    secondColumn = query('.columns')[1];
+  }
+  const columnsWrapper = document.querySelector('.columns-wrapper');
+  if (columnsWrapper) {
+    columnsWrapper.addEventListener('scroll', function (event) {
+      const element = event.target;
+      if (element.scrollHeight - element.scrollTop < element.clientHeight + 1) {
+          // Scrolled to bottom
+          // Had to fix by +1 because columnsWrapper has a (potential) hidden sibling with 1px height
+          event.target.removeEventListener(event.type, arguments.callee);
+          showSecondColumn(true);
+          setupColumns();
+      }
+    },
+    { passive: true });
   }
 }
-// Filter input
+
+function showSecondColumn(alwaysShow) {
+  alwaysShow || secondColumn.getAttribute('data-empty') === 'false' || secondColumn.getAttribute('data-button') === 'true' ? secondColumn.classList.remove('hidden') : secondColumn.classList.add('hidden');
+}
+
 function isElementHidden(element) {
   return element.classList.contains('d-none') || element.classList.contains('hide');
 }
@@ -208,34 +237,27 @@ function updateCount(count, selector) {
 }
 
 function updateMap() {
-  const matches = [];
-  vectorLayer.features.forEach(function(feature) {
-    const entry = feature.attributes.entry;
-    if (entry) {
-      if (!isElementHidden(entry)) {
-        feature.style = null;
-        matches.push(entry);
-      }
-      else {
-        feature.style = { display: 'none' };
-      }
-    }
-  });
-  setCenter(matches);
-  vectorLayer.redraw();
-
-  return matches.length;
-}
-
-function updateGUI() {
-  let count = 0;
   if (vectorLayer) {
-    count = updateMap();
+    const matches = [];
+    vectorLayer.features.forEach(function(feature) {
+      const entry = feature.attributes.entry;
+      if (entry) {
+        if (!isElementHidden(entry)) {
+          feature.style = null;
+          matches.push(entry);
+        }
+        else {
+          feature.style = { display: 'none' };
+        }
+      }
+    });
+    const count = matches.length;
+    if (count) {
+      const center = getLatLngCenter(matches, count);
+      vectorLayer.map.setCenter(createLonLat(center[1], center[0]), determineZoom(matches, count, center));
+    }
+    vectorLayer.redraw();
   }
-  else {
-    count = countShownItems(entries);
-  }
-  updateCount(count, 'entries');
 }
 
 function countShownItems(items) {
@@ -250,19 +272,17 @@ function countShownItems(items) {
 }
 
 function toggleItemDisplay(value, items) {
-  const regex = new RegExp(value, 'i');
-  items.forEach(function(item) {
-    if (regex.test(item.textContent)) {
+  if (value === '') {
+    items.forEach(function(item) {
       item.classList.remove('d-none');
-    }
-    else {
-      item.classList.add('d-none');
-    }
-  });
-}
-
-function query(selector) {
-  return Array.from(document.querySelectorAll(selector));
+    });
+  }
+  else {
+    const regex = new RegExp(value, 'i');
+    items.forEach(function(item) {
+      regex.test(item.textContent) ? item.classList.remove('d-none') : item.classList.add('d-none');
+    });
+  }
 }
 
 function debounce(fn, duration) {
@@ -274,20 +294,21 @@ function debounce(fn, duration) {
   }
 }
 
+function updateGUI(value, filter) {
+  const items = filter === 'entries' ? getEntries() : getCategories();
+  toggleItemDisplay(value, items);
+  updateCount(countShownItems(items), filter);
+}
+
 function startEntriesFilter(value) {
-  if (!entries) {
-    entries = query('li[data-lat]');
-  }
-  toggleItemDisplay(value, entries);
-  updateGUI();
+  secondColumn.setAttribute('data-empty', value === '');
+  showSecondColumn(false);
+  updateGUI(value, 'entries');
+  updateMap();
 }
 
 function startCategoriesFilter(value) {
-  if (!categories) {
-    categories = query('.categories button, .categories a');
-  }
-  toggleItemDisplay(value, categories);
-  updateCount(countShownItems(categories), 'categories');
+  updateGUI(value, 'categories');
 }
 
 function setupFilters() {
@@ -320,24 +341,22 @@ function setupButtons() {
   categoryButtons = query('.categories button');
   categoryButtons.forEach(function(button) {
     button.onclick = function () {
-      if (!entries) {
-        entries = query('li[data-lat]');
-      }
-      let showAll = true;
-      if (button.classList.contains('active')) {
-        // Check sibling buttons if there is any other active
-        let count = 0;
-        for (let i = 0; i < categoryButtons.length; i++) {
-          if (categoryButtons[i].classList.contains('active') && ++count === 2) {
-            // We found at least one other active button
-            showAll = false;
-            break
-          }
+      button.classList.toggle('active');
+
+      // Any other category buttons active?
+      let categoryButtonActive = false;
+      const length = categoryButtons.length;
+      for (let i = 0; i < length; i++) {
+        if (categoryButtons[i].classList.contains('active')) {
+          categoryButtonActive = true;
+          break;
         }
       }
-      entries.forEach(function(entry) {
-        if (button.classList.contains('active')) {
-          if (showAll) {
+      secondColumn.setAttribute('data-button', categoryButtonActive);
+      showSecondColumn(false);
+      getEntries().forEach(function(entry) {
+        if (!button.classList.contains('active')) {
+          if (!categoryButtonActive) {
             entry.classList.remove('show');
             entry.classList.remove('hide');
           }
@@ -354,8 +373,8 @@ function setupButtons() {
           entry.classList.add('hide')
         }
       });
-      button.classList.toggle('active');
-      updateGUI();
+      updateCount(countShownItems(getEntries()), 'entries');
+      updateMap();
     }
   });
   const positionButton = document.getElementById('position-btn');
@@ -419,10 +438,7 @@ function buildMap() {
   epsg4326 = new OpenLayers.Projection('EPSG:4326'); // WGS 1984 projection
   projectTo = map.getProjectionObject(); // The map projection (Spherical Mercator)
 
-  if (!entries) {
-    entries = query('li[data-lat]');
-  }
-  entries.forEach(function(entry) {
+  getEntries().forEach(function(entry) {
     const lat = entry.dataset.lat;
     const lon = entry.dataset.lon;
     if (lat && lon) {
@@ -893,6 +909,7 @@ window.addEventListener('DOMContentLoaded', function() {
   .then(function() {
     setupButtons();
     setupChat();
+    setupColumns();
     setupFilters();
     setupMap();
     setupOpening();

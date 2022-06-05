@@ -58,14 +58,17 @@
     }
 }
 
+.columns-wrapper {
+    max-height: 256px;
+    overflow-y: auto;
+}
+
 .columns {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     grid-gap: 0.5rem;
     list-style: none;
     padding-left: 0;
-    max-height: 256px;
-    overflow-y: auto;
 
     @media (min-width: 576px) {
         grid-template-columns: repeat(3, 1fr);
@@ -93,5 +96,9 @@
     
     .hide {
         display: none;
+    }
+
+    &.hidden {
+        content-visibility: hidden;
     }
 }

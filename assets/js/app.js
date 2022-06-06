@@ -205,7 +205,7 @@ function setupColumns() {
   if (!secondColumn) {
     secondColumn = query('.columns')[1];
   }
-  if (secondColumn.getAttribute('data-listener') === 'true') {
+  if (!secondColumn || secondColumn.getAttribute('data-listener') === 'true') {
     return;
   }
   const columnsWrapper = document.querySelector('.scrollable-box');

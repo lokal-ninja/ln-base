@@ -1,9 +1,7 @@
-
 {{- $nameSlice := slice -}}
-{{- $shopSlice := slice }}
+{{- $shopSlice := slice -}}
 {{- range $i, $p := .RegularPages -}}
 {{- $nameSlice = $nameSlice | append .Title }}
 {{- $shopSlice = $shopSlice | append (printf "#%s" .Params.shop) }}
 {{- end }}
-{{- $nameSlice = $nameSlice | append $shopSlice}}
-{{- jsonify (sort (uniq $nameSlice)) -}}
+{{- jsonify (sort (uniq $shopSlice) | append (sort (uniq $nameSlice))) -}}

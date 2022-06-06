@@ -205,28 +205,35 @@ function setupColumns() {
   if (!secondColumn) {
     secondColumn = query('.columns')[1];
   }
-  const columnsWrapper = document.querySelector('.columns-wrapper');
+  if (secondColumn.getAttribute('data-listener') === 'true') {
+    return;
+  }
+  const columnsWrapper = document.querySelector('.scrollable-box');
   if (columnsWrapper) {
     columnsWrapper.addEventListener('scroll', function (event) {
       const element = event.target;
       if (element.scrollHeight - element.scrollTop < element.clientHeight + 1) {
           // Scrolled to bottom
           // Had to fix by +1 because columnsWrapper has a (potential) hidden sibling with 1px height
+          secondColumn.setAttribute('data-listener', 'false');
           event.target.removeEventListener(event.type, arguments.callee);
           showSecondColumn(true);
-          setupColumns();
       }
     },
     { passive: true });
+    secondColumn.setAttribute('data-listener', 'true');
   }
 }
 
 function showSecondColumn(alwaysShow) {
-  alwaysShow || secondColumn.getAttribute('data-empty') === 'false' || secondColumn.getAttribute('data-button') === 'true' ? secondColumn.classList.remove('hidden') : secondColumn.classList.add('hidden');
+  alwaysShow ||
+  secondColumn.getAttribute('data-empty') === 'false' ||
+  secondColumn.getAttribute('data-button') === 'true' ?
+  secondColumn.classList.remove('hidden') : secondColumn.classList.add('hidden') || setupColumns();
 }
 
-function isElementHidden(element) {
-  return element.classList.contains('d-none') || element.classList.contains('hide');
+function isElementVisible(element) {
+  return !element.classList.contains('d-none') && !element.classList.contains('hide');
 }
 
 function updateCount(count, selector) {
@@ -242,7 +249,7 @@ function updateMap() {
     vectorLayer.features.forEach(function(feature) {
       const entry = feature.attributes.entry;
       if (entry) {
-        if (!isElementHidden(entry)) {
+        if (isElementVisible(entry)) {
           feature.style = null;
           matches.push(entry);
         }
@@ -260,29 +267,15 @@ function updateMap() {
   }
 }
 
-function countShownItems(items) {
+function countVisibleItems(items) {
   let count = 0;
   items.forEach(function(item) {
-    if (!isElementHidden(item)) {
+    if (isElementVisible(item)) {
       count++;
     }
   });
 
   return count;
-}
-
-function toggleItemDisplay(value, items) {
-  if (value === '') {
-    items.forEach(function(item) {
-      item.classList.remove('d-none');
-    });
-  }
-  else {
-    const regex = new RegExp(value, 'i');
-    items.forEach(function(item) {
-      regex.test(item.textContent) ? item.classList.remove('d-none') : item.classList.add('d-none');
-    });
-  }
 }
 
 function debounce(fn, duration) {
@@ -296,8 +289,11 @@ function debounce(fn, duration) {
 
 function updateGUI(value, filter) {
   const items = filter === 'entries' ? getEntries() : getCategories();
-  toggleItemDisplay(value, items);
-  updateCount(countShownItems(items), filter);
+  const regex = new RegExp(value, 'i');
+  items.forEach(function(item) {
+    value === '' || regex.test(item.textContent) ? item.classList.remove('d-none') : item.classList.add('d-none');
+  });
+  updateCount(countVisibleItems(items), filter);
 }
 
 function startEntriesFilter(value) {
@@ -354,26 +350,30 @@ function setupButtons() {
       }
       secondColumn.setAttribute('data-button', categoryButtonActive);
       showSecondColumn(false);
-      getEntries().forEach(function(entry) {
-        if (!button.classList.contains('active')) {
-          if (!categoryButtonActive) {
-            entry.classList.remove('show');
-            entry.classList.remove('hide');
+      if (!categoryButtonActive) {
+        getEntries().forEach(function(entry) {
+          entry.classList.remove('show');
+          entry.classList.remove('hide');
+        });
+      }
+      else {
+        getEntries().forEach(function(entry) {
+          if (entry.dataset.shop === button.textContent) {
+            if (button.classList.contains('active')) {
+              entry.classList.remove('hide');
+              entry.classList.add('show');
+            }
+            else {
+              entry.classList.remove('show');
+              entry.classList.add('hide');
+            }
           }
-          else if (entry.dataset.shop === button.textContent) {
-            entry.classList.remove('show');
+          else if (!entry.classList.contains('show')) {
             entry.classList.add('hide');
           }
-        }
-        else if (entry.dataset.shop === button.textContent) {
-          entry.classList.remove('hide')
-          entry.classList.add('show');
-        }
-        else if (!entry.classList.contains('show')) {
-          entry.classList.add('hide')
-        }
-      });
-      updateCount(countShownItems(getEntries()), 'entries');
+        });
+      }
+      updateCount(countVisibleItems(getEntries()), 'entries');
       updateMap();
     }
   });

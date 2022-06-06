@@ -863,16 +863,22 @@ function setupChat() {
     }
   }
 
-  document.getElementById('chat-btn').onclick = function() {
-    sendTextMessage()
-  };
-
-  document.getElementById('chat-form').onkeypress = function(event) {
-    if (event.keyCode === 13) {
-      event.preventDefault();
+  const chatBtn = document.getElementById('chat-btn');
+  if (chatBtn) {
+    chatBtn.onclick = function() {
       sendTextMessage();
-    }
-  };
+    };
+  }
+
+  const chatForm = document.getElementById('chat-form');
+  if (chatForm) {
+    chatForm.onkeypress = function(event) {
+      if (event.keyCode === 13) {
+        event.preventDefault();
+        sendTextMessage();
+      }
+    };
+  }
 }
 // Shop open
 function setupOpening() {

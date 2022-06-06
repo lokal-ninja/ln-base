@@ -7,7 +7,67 @@
 {{ define "main" }}
 <section id="entries">
   <h2 class="visually-hidden">{{ i18n `entries` }}</h2>
-  <div class="filter filter-entries">
+  <div class="scrollable-box">
+    <ul class="columns m-0">
+      {{- $entries := slice }}
+      {{- range first 42 .Pages }}
+      {{- $dirs := split .File.Dir "/" }}
+      {{- $main := index $dirs 0 }}
+      {{- $city := index $dirs 1 }}
+      {{- $location := index .Site.Data "cities" $city .File.BaseFileName }}
+      {{- $street := $location.street }}
+      {{- if not $street }}
+      {{- $street = printf "%s" (i18n `withoutStreet`) }}
+      {{- end }}
+      {{- $entry := dict "shop" .Params.shop "lat" $location.latitude "lon" $location.longitude "link" .RelPermalink "title" .Title "street" $street }}
+      {{- $entries = $entries | append $entry }}
+      {{- end }}
+      {{- $doneEntries := slice }}
+      {{- range $entries }}
+      {{- $titleEntries := where $entries "title" .title }}
+      {{- if (gt (len $titleEntries) 1) }}
+      {{- if not (in $doneEntries .title) }}
+      {{- $doneEntries = $doneEntries | append .title }}
+      {{- range $titleEntries }}
+      <li data-shop="{{ .shop }}" data-lat="{{ .lat }}" data-lon="{{ .lon }}"><a href="{{ .link }}">{{ .title }} - {{ .street }}</a></li>
+      {{- end }}
+      {{- end }}
+      {{- else }}
+      <li data-shop="{{ .shop }}" data-lat="{{ .lat }}" data-lon="{{ .lon }}"><a href="{{ .link }}">{{ .title }}</a></li>
+      {{- end }}
+      {{- end }}
+    </ul>
+    <ul class="columns hidden m-0" data-empty="true" data-button="false" data-listener="false">
+      {{- $entries = slice }}
+      {{- range after 42 .Pages }}
+      {{- $dirs := split .File.Dir "/" }}
+      {{- $main := index $dirs 0 }}
+      {{- $city := index $dirs 1 }}
+      {{- $location := index .Site.Data "cities" $city .File.BaseFileName }}
+      {{- $street := $location.street }}
+      {{- if not $street }}
+      {{- $street = printf "%s" (i18n `withoutStreet`) }}
+      {{- end }}
+      {{- $entry := dict "shop" .Params.shop "lat" $location.latitude "lon" $location.longitude "link" .RelPermalink "title" .Title "street" $street }}
+      {{- $entries = $entries | append $entry }}
+      {{- end }}
+      {{- $doneEntries := slice }}
+      {{- range $entries }}
+      {{- $titleEntries := where $entries "title" .title }}
+      {{- if (gt (len $titleEntries) 1) }}
+      {{- if not (in $doneEntries .title) }}
+      {{- $doneEntries = $doneEntries | append .title }}
+      {{- range $titleEntries }}
+      <li data-shop="{{ .shop }}" data-lat="{{ .lat }}" data-lon="{{ .lon }}"><a href="{{ .link }}">{{ .title }} - {{ .street }}</a></li>
+      {{- end }}
+      {{- end }}
+      {{- else }}
+      <li data-shop="{{ .shop }}" data-lat="{{ .lat }}" data-lon="{{ .lon }}"><a href="{{ .link }}">{{ .title }}</a></li>
+      {{- end }}
+      {{- end }}
+    </ul>
+  </div>
+  <div class="filter filter-entries mt-1">
     <div class="filter-box">
       <samp>{{ len .Pages }}</samp>
       {{ partialCached "entries-input.html" . }}
@@ -15,19 +75,13 @@
     {{ partialCached "categories-btn.html" . }}
   </div>
   <h2 class="visually-hidden">{{ i18n `categories` }}</h2>
-  <div class="categories d-none">
+  <div class="categories mt-1 d-none">
     {{- $shops := slice }}
     {{- range .RegularPages }}
     {{- $shops = $shops | append .Params.shop }}
     {{- end }}
     {{- $sortedShops := sort $shops | uniq }}
-    <div class="filter filter-categories">
-      <div class="filter-box">
-        <samp>{{ len $sortedShops }}</samp>
-        {{ partialCached "categories-input.html" . }}
-      </div>
-    </div>
-    <div class="categories-items">
+    <div class="scrollable-box">
       {{- range $sortedShops }}
       {{- $sortedShop := . }}
       {{- range where ($.Site.GetPage "taxonomyTerm" "shops").Pages ".Title" . }}
@@ -35,65 +89,12 @@
       {{- end }}
       {{- end }}
     </div>
-  </div>
-  {{- $entries := slice }}
-  <div class="columns-wrapper">
-    <ul class="columns m-0">
-      {{- range first 100 .Pages }}
-      {{- $dirs := split .File.Dir "/" }}
-      {{- $main := index $dirs 0 }}
-      {{- $city := index $dirs 1 }}
-      {{- $location := index .Site.Data "cities" $city .File.BaseFileName }}
-      {{- $street := $location.street }}
-      {{- if not $street }}
-      {{- $street = printf "%s" (i18n `withoutStreet`) }}
-      {{- end }}
-      {{- $entry := dict "shop" .Params.shop "lat" $location.latitude "lon" $location.longitude "link" .RelPermalink "title" .Title "street" $street }}
-      {{- $entries = $entries | append $entry }}
-      {{- end }}
-      {{- $doneEntries := slice }}
-      {{- range $entries }}
-      {{- $titleEntries := where $entries "title" .title }}
-      {{- if (gt (len $titleEntries) 1) }}
-      {{- if not (in $doneEntries .title) }}
-      {{- $doneEntries = $doneEntries | append .title }}
-      {{- range $titleEntries }}
-      <li data-shop="{{ .shop }}" data-lat="{{ .lat }}" data-lon="{{ .lon }}"><a href="{{ .link }}">{{ .title }} - {{ .street }}</a></li>
-      {{- end }}
-      {{- end }}
-      {{- else }}
-      <li data-shop="{{ .shop }}" data-lat="{{ .lat }}" data-lon="{{ .lon }}"><a href="{{ .link }}">{{ .title }}</a></li>
-      {{- end }}
-      {{- end }}
-    </ul>
-    <ul class="columns hidden m-0" data-empty="true" data-button="false">
-      {{- range after 100 .Pages }}
-      {{- $dirs := split .File.Dir "/" }}
-      {{- $main := index $dirs 0 }}
-      {{- $city := index $dirs 1 }}
-      {{- $location := index .Site.Data "cities" $city .File.BaseFileName }}
-      {{- $street := $location.street }}
-      {{- if not $street }}
-      {{- $street = printf "%s" (i18n `withoutStreet`) }}
-      {{- end }}
-      {{- $entry := dict "shop" .Params.shop "lat" $location.latitude "lon" $location.longitude "link" .RelPermalink "title" .Title "street" $street }}
-      {{- $entries = $entries | append $entry }}
-      {{- end }}
-      {{- $doneEntries := slice }}
-      {{- range $entries }}
-      {{- $titleEntries := where $entries "title" .title }}
-      {{- if (gt (len $titleEntries) 1) }}
-      {{- if not (in $doneEntries .title) }}
-      {{- $doneEntries = $doneEntries | append .title }}
-      {{- range $titleEntries }}
-      <li data-shop="{{ .shop }}" data-lat="{{ .lat }}" data-lon="{{ .lon }}"><a href="{{ .link }}">{{ .title }} - {{ .street }}</a></li>
-      {{- end }}
-      {{- end }}
-      {{- else }}
-      <li data-shop="{{ .shop }}" data-lat="{{ .lat }}" data-lon="{{ .lon }}"><a href="{{ .link }}">{{ .title }}</a></li>
-      {{- end }}
-      {{- end }}
-    </ul>
+    <div class="filter filter-categories mt-1">
+      <div class="filter-box">
+        <samp>{{ len $sortedShops }}</samp>
+        {{ partialCached "categories-input.html" . }}
+      </div>
+    </div>
   </div>
   {{ partialCached "missing-entry.html" . }}
 </section>

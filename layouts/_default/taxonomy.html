@@ -7,31 +7,31 @@
 {{ define "main" }}
 <section id="entries">
   <h2 class="visually-hidden">{{ i18n `entries` }}</h2>
-  <div class="filter filter-entries">
+  <div class="scrollable-box">
+    <ul class="columns m-0">
+      {{- range first 42 (where .Site.Pages "Params.shop" .Title) }}
+      {{- $dirs := split .File.Dir "/" }}
+      {{- $main := index $dirs 0 }}
+      {{- $city := index $dirs 1 }}
+      {{- $location := index .Site.Data $main $city .File.BaseFileName }}
+      <li data-shop="{{ .Params.shop }}" data-lat="{{ $location.latitude }}" data-lon="{{ $location.longitude }}"><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>
+      {{- end }}
+    </ul>
+    <ul class="columns hidden m-0" data-empty="true" data-button="false" data-listener="false">
+      {{- range after 42 (where .Site.Pages "Params.shop" .Title) }}
+      {{- $dirs := split .File.Dir "/" }}
+      {{- $main := index $dirs 0 }}
+      {{- $city := index $dirs 1 }}
+      {{- $location := index .Site.Data $main $city .File.BaseFileName }}
+      <li data-shop="{{ .Params.shop }}" data-lat="{{ $location.latitude }}" data-lon="{{ $location.longitude }}"><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>
+      {{- end }}
+    </ul>
+  </div>
+  <div class="filter filter-entries mt-1">
     <div class="filter-box">
       <samp>{{ len (where .Site.Pages "Params.shop" .Title) }}</samp>
       {{ partialCached "entries-input.html" . }}
     </div>
-  </div>
-  <div class="columns-wrapper">
-    <ul class="columns m-0">
-      {{- range first 100 (where .Site.Pages "Params.shop" .Title) }}
-      {{- $dirs := split .File.Dir "/" }}
-      {{- $main := index $dirs 0 }}
-      {{- $city := index $dirs 1 }}
-      {{- $location := index .Site.Data $main $city .File.BaseFileName }}
-      <li data-shop="{{ .Params.shop }}" data-lat="{{ $location.latitude }}" data-lon="{{ $location.longitude }}"><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>
-      {{- end }}
-    </ul>
-    <ul class="columns hidden m-0" data-empty="true" data-button="false">
-      {{- range after 100 (where .Site.Pages "Params.shop" .Title) }}
-      {{- $dirs := split .File.Dir "/" }}
-      {{- $main := index $dirs 0 }}
-      {{- $city := index $dirs 1 }}
-      {{- $location := index .Site.Data $main $city .File.BaseFileName }}
-      <li data-shop="{{ .Params.shop }}" data-lat="{{ $location.latitude }}" data-lon="{{ $location.longitude }}"><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>
-      {{- end }}
-    </ul>
   </div>
   {{ partialCached "missing-entry.html" . }}
 </section>

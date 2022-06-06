@@ -7,7 +7,19 @@
 {{ define "main" }}
 <section id="entries">
   <h2 class="visually-hidden">{{ i18n `entries` }}</h2>
-  <div class="filter filter-entries">
+  <div class="scrollable-box">
+    <ul class="columns m-0">
+      {{- range first 42 (.Site.GetPage "section" "cities").Sections }}
+      <li data-lat="{{ .Params.latitude }}" data-lon="{{ .Params.longitude }}"><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>
+      {{- end }}
+    </ul>
+    <ul class="columns hidden m-0" data-empty="true" data-button="false" data-listener="false">
+      {{- range after 42 (.Site.GetPage "section" "cities").Sections }}
+      <li data-lat="{{ .Params.latitude }}" data-lon="{{ .Params.longitude }}"><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>
+      {{- end }}
+    </ul>
+  </div>
+  <div class="filter filter-entries mt-1">
     <div class="filter-box">
       <samp>{{ len (.Site.GetPage "section" "cities").Sections }}</samp>
       {{ partialCached "entries-input.html" . }}
@@ -15,30 +27,18 @@
     {{ partialCached "categories-btn.html" . }}
   </div>
   <h2 class="visually-hidden">{{ i18n `categories` }}</h2>
-  <div class="categories d-none">
-    <div class="filter filter-categories">
+  <div class="categories mt-1 d-none">
+    <div class="scrollable-box">
+      {{- range (.Site.GetPage "taxonomyTerm" "shops").Pages }}
+      <a href="{{ .RelPermalink }}">{{ .Title }}<svg class="icon" role="img" aria-hidden="true"><use href="{{ printf `%s%s` `/img/sprite.svg#` .Params.icon | relURL }}"></use></svg></a>
+      {{- end }}
+    </div>
+    <div class="filter filter-categories mt-1">
       <div class="filter-box">
         <samp>{{ len (.Site.GetPage "taxonomyTerm" "shops").Pages }}</samp>
         {{ partialCached "categories-input.html" . }}
       </div>
     </div>
-    <div class="categories-items">
-      {{- range (.Site.GetPage "taxonomyTerm" "shops").Pages }}
-      <a href="{{ .RelPermalink }}">{{ .Title }}<svg class="icon" role="img" aria-hidden="true"><use href="{{ printf `%s%s` `/img/sprite.svg#` .Params.icon | relURL }}"></use></svg></a>
-      {{- end }}
-    </div>
-  </div>
-  <div class="columns-wrapper">
-    <ul class="columns m-0">
-      {{- range first 100 (.Site.GetPage "section" "cities").Sections }}
-      <li data-lat="{{ .Params.latitude }}" data-lon="{{ .Params.longitude }}"><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>
-      {{- end }}
-    </ul>
-    <ul class="columns hidden m-0" data-empty="true" data-button="false">
-      {{- range after 100 (.Site.GetPage "section" "cities").Sections }}
-      <li data-lat="{{ .Params.latitude }}" data-lon="{{ .Params.longitude }}"><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>
-      {{- end }}
-    </ul>
   </div>
 </section>
 <div class="row mt-1">

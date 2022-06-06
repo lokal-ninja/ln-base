@@ -719,11 +719,9 @@ function setupSearch() {
       const searchButton = document.getElementById('search-btn');
       if (searchButton) {
         searchButton.onclick = function () {
-          if (window.location.pathname === pathname) {
-            if (isCategory(shop)) {
-              // We're on the right page already, only scroll to category
-              clickScrollCategory(shop);
-            }
+          if (window.location.pathname === pathname && isCategory(shop)) {
+            // We're on the right page already, only scroll to category
+            clickScrollCategory(shop);
           }
           else {
             // Relocate to new location

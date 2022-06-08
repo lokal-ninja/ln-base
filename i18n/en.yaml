@@ -19,7 +19,7 @@ entries: Einträge
 filterEntries: Einträge filtern
 categories: Kategorien
 filterCategories: Kategorien filtern
-openCategories: Kategorien aufklappen
+openCategories: Kategorien zeigen
 withoutStreet: ohne Straße
 map: Karte
 weatherIn: Wetter in
@@ -32,8 +32,8 @@ phone: Telefon
 website: Webseite
 changeToPreviousOrNextShopIn: Wechsle zu vorherigem oder nächsten Geschäft in
 shoutbox: Shoutbox
-openShoutboxWith: Shoutbox aufklappen mit
-posts: Beiträgen
+openShoutbox: Shoutbox zeigen
+chooseEmoji: Emoji auswählen
 write: Schreiben
 chatInputField: Chateingabefeld
 sendMessage: Nachricht senden

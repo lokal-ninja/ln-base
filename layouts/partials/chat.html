@@ -1,10 +1,18 @@
 <section id="chat" class="mt-1 mt-lg-0">
     <h2 class="visually-hidden">{{ i18n `shoutbox` }}</h2>
     <details>
-        <summary>{{ i18n `openShoutboxWith` }} <samp id="chat-samp">0</samp> {{ i18n `posts` }}</summary>
+        <summary>{{ i18n `openShoutbox` }}</summary>
         <ul id="chatbox" class="list-unstyled m-0"></ul>
         <form id="chat-form">
             <div class="input-group">
+                <button id="emoji-btn"
+                        type="button"
+                        data-bs-toggle="tooltip"
+                        data-bs-placement="bottom"
+                        title="{{ i18n `chooseEmoji` }}"
+                        aria-label="{{ i18n `chooseEmoji` }}">
+                    🙂
+                </button>
                 <input id="chat-input" class="form-control" type="text" autocomplete="off" placeholder="{{ i18n `write` }}..." aria-label="{{ i18n `chatInputField` }}">
                 <button id="chat-btn"
                         type="button"

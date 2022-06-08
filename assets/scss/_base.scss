@@ -111,7 +111,7 @@ a:hover {
     text-decoration: underline;
 }
 
-button {
+button:not(.emoji-picker__category-button, .emoji-picker__emoji) {
     border-radius: var(--border-radius);
     display: inline-block;
     font-size: medium;
@@ -139,7 +139,7 @@ input {
     //width: 175px;
 }
 
-input {
+input:not(.emoji-picker__search) {
     border: 1px solid var(--color-bg-secondary);
     border-radius: var(--border-radius);
     margin: 0.5rem 0;

@@ -835,61 +835,63 @@ function setupChat() {
     if (chatInput.value) {
       sendMessage(removeTags(chatInput.value));
       chatInput.value = '';
-      updateNumberMessages(1);
     }
   }
-  
-  function updateNumberMessages(length) {
-    numberMessages += length;
-    chatSamp.textContent = numberMessages;
-  }
+
   const chatbox = document.getElementById('chatbox'),
     chatInput = document.getElementById('chat-input'),
-    chatSamp = document.getElementById('chat-samp');
+    chatDetails = document.querySelector('#chat details');
 
   let incomingMessages = [],
     scheduled,
     prefix = '',
-    numberMessages = 0;
-  if (SUBDOMAIN !== 'localhost') {
-    prefix = SUBDOMAIN + '_';
-  }
-  const protocol = prefix + window.location.pathname.replace(/\//g, '_');
-  const ws = new WebSocket('wss://chat.shoogle.net/',  protocol);
+    ws;
 
-  ws.onmessage = function(message) {
-    incomingMessages.push(createMessage(message.data));
-
-    if (!scheduled) {
-      scheduled = true;
-      window.requestAnimationFrame(function() {
-        const frag = document.createDocumentFragment();
-        for (let i = 0, len = incomingMessages.length; i < len; i++) {
-          frag.appendChild(incomingMessages[i]);
+  if (chatDetails) {
+    chatDetails.onclick = function() {
+      if (!ws) {
+        if (SUBDOMAIN !== 'localhost') {
+          prefix = SUBDOMAIN + '_';
         }
-        appendToList(frag);
-        updateNumberMessages(incomingMessages.length);
-        incomingMessages.length = 0;
-        scheduled = false;
-      })
-    }
-  }
+        const protocol = prefix + window.location.pathname.replace(/\//g, '_');
+        ws = new WebSocket('wss://chat.shoogle.net/',  protocol);
+        ws.onmessage = function(message) {
+          incomingMessages.push(createMessage(message.data));
+      
+          if (!scheduled) {
+            scheduled = true;
+            window.requestAnimationFrame(function() {
+              const frag = document.createDocumentFragment();
+              for (let i = 0, len = incomingMessages.length; i < len; i++) {
+                frag.appendChild(incomingMessages[i]);
+              }
+              appendToList(frag);
+              incomingMessages.length = 0;
+              scheduled = false;
+            })
+          }
+        }
 
-  const chatBtn = document.getElementById('chat-btn');
-  if (chatBtn) {
-    chatBtn.onclick = function() {
-      sendTextMessage();
-    };
-  }
+        document.getElementById('chat-btn').onclick = function() {
+          sendTextMessage();
+        };
 
-  const chatForm = document.getElementById('chat-form');
-  if (chatForm) {
-    chatForm.onkeypress = function(event) {
-      if (event.keyCode === 13) {
-        event.preventDefault();
-        sendTextMessage();
+        document.getElementById('chat-form').onkeypress = function(event) {
+          if (event.keyCode === 13) {
+            event.preventDefault();
+            sendTextMessage();
+          }
+        };
+
+        let emojiButton = document.getElementById('emoji-btn');
+        emojiButton.onclick = function() {
+          loadScript('emoji.js');
+
+          // Remove reference (and handler)
+          emojiButton = null;
+        }
       }
-    };
+    }
   }
 }
 // Shop open

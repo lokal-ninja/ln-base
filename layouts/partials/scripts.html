@@ -1,12 +1,14 @@
 <script nomodule src="/js/es6-promise.auto.js"></script>
 <script nomodule src="/js/fetch.umd.js"></script>
 <script nomodule src="/js/polyfills.js"></script>
-{{- $openinghours := resources.Get "/js/simple-opening-hours.js" }}
-{{- $choices := resources.Get "/js/choices.js" }}
-{{- $slugo := resources.Get "/js/slugo.js" }}
-{{- $app := resources.Get "/js/app.js" }}
+{{- $openinghours := resources.Get "js/simple-opening-hours.js" }}
+{{- $choices := resources.Get "js/choices.js" }}
+{{- $slugo := resources.Get "js/slugo.js" }}
+{{- $app := resources.Get "js/app.js" }}
 {{- $js := slice $openinghours $choices $slugo $app | resources.Concat "js/main.js" }}
 {{- if hugo.IsProduction }}
     {{- $js = $js | minify | fingerprint }}
 {{- end }}
 <script defer src="{{ $js.RelPermalink }}"></script>
+{{- $emoji := resources.Get "js/emoji.js" | js.Build -}}
+{{ $emoji.Publish }}

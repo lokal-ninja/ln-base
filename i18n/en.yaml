@@ -32,8 +32,8 @@ phone: Phone
 website: Website
 changeToPreviousOrNextShopIn: Change to previous or next shop in
 shoutbox: Shoutbox
-openShoutboxWith: Open Shoutbox with
-posts: posts
+openShoutbox: Show shoutbox
+chooseEmoji: Choose emoji
 write: Write
 chatInputField: chat input field
 sendMessage: Send message

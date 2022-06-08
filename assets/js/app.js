@@ -585,8 +585,7 @@ function clickScrollCategory (category) {
 // Search
 async function fetchRegions() {
   const response = await fetch('/' + SUBDOMAIN + '.json');
-  const regions = await response.json();
-  return regions;
+  return response.json();
 }
 
 async function fetchRegion (region) {
@@ -652,6 +651,10 @@ function createPathName (city) {
   return '/' + city.customProperties.region + '/' + slugo(city.value) + '/';
 }
 
+function setInputFocus (instance) {
+  instance.input.element.focus();
+}
+
 function setupSearch() {
   const cities = document.getElementById('cities');
   if (cities) {
@@ -682,33 +685,44 @@ function setupSearch() {
         })
         .then(function() {
           // We have to re-set focus on input again
-          instance.input.element.focus();
+          setInputFocus(instance);
         });
       }, { once: true });
       let city;
       let pathname;
       let shop;
-      instance.passedElement.element.addEventListener('change', function(e) {
+      instance.passedElement.element.addEventListener('change', function() {
         city = instance.getValue();
         pathname = createPathName(city);
         appendLinkToHead('prefetch', pathname);
         searchButton.disabled = false;
         shopsChoices.clearStore();
-        shopsChoices.setChoices(async function() {  
-          return fetch('/' + city.customProperties.region + '/' + slugo(e.detail.value) + '/index.json')
-          .then(function(response) {
-            return response.json();
-          })
-          .then(function(data) {
-            return data.map(function(item) {
-              return {
-                value: item,
-                label: item
-              };
-            });
+        shopsChoices.setChoices(function() {
+          return new Promise(function (resolve) {
+            resolve();
           });
         })
         .then(function(instance2) {
+          instance2.containerOuter.element.addEventListener('click', function() {
+            shopsChoices.setChoices(async function() {
+              return fetch(createPathName(city) + 'index.json')
+              .then(function(response) {
+                return response.json();
+              })
+              .then(function(data) {
+                return data.map(function(item) {
+                  return {
+                    value: item,
+                    label: item
+                  };
+                });
+              });
+            })
+            .then(function() {
+              // We have to re-set focus on input again
+              setInputFocus(instance2);
+            });
+          }, { once: true });
           instance2.passedElement.element.addEventListener('change', function() {
             shop = shopsChoices.getValue(true);
             appendLinkToHead('prefetch', createLocation(pathname, shop));

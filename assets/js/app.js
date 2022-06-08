@@ -212,7 +212,7 @@ function setupColumns() {
   if (columnsWrapper) {
     columnsWrapper.addEventListener('scroll', function (event) {
       const element = event.target;
-      if (element.scrollHeight - element.scrollTop < element.clientHeight + 1) {
+      if (element.scrollHeight - element.scrollTop < element.clientHeight + 42) {
           // Scrolled to bottom
           // Had to fix by +1 because columnsWrapper has a (potential) hidden sibling with 1px height
           secondColumn.setAttribute('data-listener', 'false');

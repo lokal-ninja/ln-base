@@ -348,7 +348,7 @@ function setup(LANG) {
     return categories ? categories : categories = query('.categories button, .categories a');
   }
 
-  function geolocationError(error) {
+  function getGeolocationErrorMessage(error) {
     let message = LANG.geolocationError.message;
     switch(error.code) {
       case error.PERMISSION_DENIED:
@@ -364,11 +364,8 @@ function setup(LANG) {
         message = LANG.geolocationError.unknownError;
         break;
     }
-    alert(message);
-  }
 
-  function geolocationAlert(LANG) {
-    alert(LANG.geolocationAlert);
+    return message;
   }
   // Buttons
   function setupButtons() {
@@ -455,10 +452,14 @@ function setup(LANG) {
               // Relocate
               window.location = createPathName(nearstEntry);
             });
-          }, geolocationError, { timeout: 5000 });
+          }, function(error) {
+            alert(getGeolocationErrorMessage(error));
+            positionButton.disabled = false;
+            positionButton.classList.remove('loading');
+          }, { timeout: 5000 });
         }
         else {
-          geolocationAlert();
+          alert(LANG.geolocationAlert);
         }
       }
     }
@@ -634,41 +635,6 @@ function setup(LANG) {
   }
 
   function setupMap(LANG) {
-    let userFeature;
-    
-    function locateSuccess(position) {
-      const longitude = position.coords.longitude;
-      const latitude = position.coords.latitude;
-      const lonLat = createLonLat(longitude, latitude, map);
-      if (!userFeature) {
-        // Create (new) marker for user location
-        userFeature = new OpenLayers.Feature.Vector(
-          createGeometryPoint(longitude, latitude, epsg4326, projectTo),
-          {
-            link: LANG.myLocation
-          },
-          {
-            externalGraphic: '/js/img/marker.png',
-            graphicHeight: 25,
-            graphicWidth: 21,
-            graphicXOffset: -10,
-            graphicYOffset: -25
-          }
-        );
-        vectorLayer.addFeatures(userFeature);
-
-        // and center map
-        map.setCenter(lonLat, 16);
-      }
-      else {
-        // Move feature to new position
-        userFeature.move(lonLat);
-      }
-      // Set button
-      locateButton.classList.add('tracking');
-      locateButton.textContent = LANG.stopTracking;
-    }
-
     function buildMap() {
       const map = new OpenLayers.Map('map');
       map.addLayer(new OpenLayers.Layer.OSM());
@@ -722,13 +688,50 @@ function setup(LANG) {
       map.addControl(controls['selector']);
       controls['selector'].activate();
 
+      let userFeature;
       let watchID;
       const locateButton = document.getElementById('locate-btn');
       locateButton.classList.remove('d-none'); // Dont forget to show
       locateButton.onclick = function () {
         if (navigator.geolocation) {
           if (!this.classList.contains('tracking')) {
-            watchID = navigator.geolocation.watchPosition(locateSuccess, geolocationError, { timeout: 5000 });
+            watchID = navigator.geolocation.watchPosition(function(position) {
+              const longitude = position.coords.longitude;
+              const latitude = position.coords.latitude;
+              const lonLat = createLonLat(longitude, latitude, map);
+              if (!userFeature) {
+                // Create (new) marker for user location
+                userFeature = new OpenLayers.Feature.Vector(
+                  createGeometryPoint(longitude, latitude, epsg4326, projectTo),
+                  {
+                    link: LANG.myLocation
+                  },
+                  {
+                    externalGraphic: '/js/img/marker.png',
+                    graphicHeight: 25,
+                    graphicWidth: 21,
+                    graphicXOffset: -10,
+                    graphicYOffset: -25
+                  }
+                );
+                vectorLayer.addFeatures(userFeature);
+
+                // and center map
+                map.setCenter(lonLat, 16);
+              }
+              else {
+                // Move feature to new position
+                userFeature.move(lonLat);
+              }
+              // Set button
+              locateButton.classList.add('tracking');
+              locateButton.textContent = LANG.stopTracking;
+            },
+            function(error) {
+              alert(getGeolocationErrorMessage(error));
+              locateButton.classList.add('d-none');
+            },
+            { timeout: 5000 });
           }
           else {
             navigator.geolocation.clearWatch(watchID);
@@ -737,7 +740,7 @@ function setup(LANG) {
           }
         }
         else {
-          geolocationAlert();
+          alert(LANG.geolocationAlert);
         }
       }
       updateMap();

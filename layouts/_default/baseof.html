@@ -3,6 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="preload" href="/lang.json" as="fetch" crossorigin>
     <title>{{ block "title" . }}{{ .Title }} | {{ .Site.Params.site }}{{ end }}</title>
     {{- $description := printf "%s %s" (i18n `discover`) .Site.Title }}
     {{- if eq .Kind "section" }}

@@ -1,20 +1,3 @@
-// Globals
-let categories;
-let entries;
-let epsg4326;
-let projectTo;
-let vectorLayer;
-let citiesChoices;
-let shopsChoices;
-let categoryButtons;
-let secondColumn;
-
-// Constants
-const SUBDOMAIN = window.location.hostname.split(".")[0];
-
-// Language
-let LANG;
-
 // Helpers
 // adopted from https://github.com/gabmontes/fast-haversine
 const R = 6378;
@@ -89,39 +72,17 @@ function loadScript(file) {
   })
 }
 
+async function fetchJSON(path) {
+  const response = await fetch(path);
+  return response.json();
+}
+
 function query(selector) {
   return Array.from(document.querySelectorAll(selector));
 }
 
-function getEntries() {
-  return entries ? entries : entries = query('li[data-lat]');
-}
-
-function getCategories() {
-  return categories ? categories : categories = query('.categories button, .categories a');
-}
-
-function geolocationError(error) {
-  let message = LANG.geolocationError.message;
-  switch(error.code) {
-    case error.PERMISSION_DENIED:
-      message = LANG.geolocationError.permissionDenied;
-      break;
-    case error.POSITION_UNAVAILABLE:
-      message = LANG.geolocationError.positionUnavailable;
-      break;
-    case error.TIMEOUT:
-      message = LANG.geolocationError.timeout;
-      break;
-    case error.UNKNOWN_ERROR:
-      message = LANG.geolocationError.unknownError;
-      break;
-  }
-  alert(message);
-}
-
-function geolocationAlert() {
-  alert(LANG.geolocationAlert);
+function getSubdomain() {
+  return window.location.hostname.split(".")[0];
 }
 
 function calcMaxDistance(entries, count, center, stop) {
@@ -200,37 +161,6 @@ function determineZoom(entries, count, center) {
   // Entry page or no other city match
   return 16;
 }
-// Filter input
-function setupColumns() {
-  if (!secondColumn) {
-    secondColumn = query('.columns')[1];
-  }
-  if (!secondColumn || secondColumn.getAttribute('data-listener') === 'true') {
-    return;
-  }
-  const columnsWrapper = document.querySelector('.scrollable-box');
-  if (columnsWrapper) {
-    columnsWrapper.addEventListener('scroll', function (event) {
-      const element = event.target;
-      if (element.scrollHeight - element.scrollTop < element.clientHeight + 42) {
-          // Scrolled to bottom
-          // Had to fix by +1 because columnsWrapper has a (potential) hidden sibling with 1px height
-          secondColumn.setAttribute('data-listener', 'false');
-          event.target.removeEventListener(event.type, arguments.callee);
-          showSecondColumn(true);
-      }
-    },
-    { passive: true });
-    secondColumn.setAttribute('data-listener', 'true');
-  }
-}
-
-function showSecondColumn(alwaysShow) {
-  alwaysShow ||
-  secondColumn.getAttribute('data-empty') === 'false' ||
-  secondColumn.getAttribute('data-button') === 'true' ?
-  secondColumn.classList.remove('hidden') : secondColumn.classList.add('hidden') || setupColumns();
-}
 
 function isElementVisible(element) {
   return !element.classList.contains('d-none') && !element.classList.contains('hide');
@@ -243,28 +173,16 @@ function updateCount(count, selector) {
   }
 }
 
-function updateMap() {
-  if (vectorLayer) {
-    const matches = [];
-    vectorLayer.features.forEach(function(feature) {
-      const entry = feature.attributes.entry;
-      if (entry) {
-        if (isElementVisible(entry)) {
-          feature.style = null;
-          matches.push(entry);
-        }
-        else {
-          feature.style = { display: 'none' };
-        }
-      }
-    });
-    const count = matches.length;
-    if (count) {
-      const center = getLatLngCenter(matches, count);
-      vectorLayer.map.setCenter(createLonLat(center[1], center[0]), determineZoom(matches, count, center));
-    }
-    vectorLayer.redraw();
-  }
+function createEPSG() {
+  return new OpenLayers.Projection('EPSG:4326'); // WGS 1984 projection
+}
+
+function createLonLat(longitude, latitude, map) {
+  return new OpenLayers.LonLat(longitude, latitude).transform(createEPSG(), map.getProjectionObject());
+}
+
+function createGeometryPoint(longitude, latitude, epsg4326, projectTo) {
+  return new OpenLayers.Geometry.Point(longitude, latitude).transform(epsg4326, projectTo);
 }
 
 function countVisibleItems(items) {
@@ -287,258 +205,6 @@ function debounce(fn, duration) {
   }
 }
 
-function updateGUI(value, filter) {
-  const items = filter === 'entries' ? getEntries() : getCategories();
-  const regex = new RegExp(value, 'i');
-  items.forEach(function(item) {
-    value === '' || regex.test(item.textContent) ? item.classList.remove('d-none') : item.classList.add('d-none');
-  });
-  updateCount(countVisibleItems(items), filter);
-}
-
-function startEntriesFilter(value) {
-  secondColumn.setAttribute('data-empty', value === '');
-  showSecondColumn(false);
-  updateGUI(value, 'entries');
-  updateMap();
-}
-
-function startCategoriesFilter(value) {
-  updateGUI(value, 'categories');
-}
-
-function setupFilters() {
-  const filterInputs = query('.filter input');
-  filterInputs.forEach(function(input) {
-    const isEntriesFilter = input.closest('.filter-entries');
-    const startFilter = isEntriesFilter ? startEntriesFilter : startCategoriesFilter;
-    input.addEventListener('input', debounce(function () {
-      updateCount('Loading...', isEntriesFilter ? 'entries' : 'categories');
-    }, 250));
-    input.addEventListener('input', debounce(function () {
-      startFilter(input.value);
-    }, 500));
-    input.addEventListener('keypress', function(event) {
-      if (event.keyCode === 13) {
-        event.preventDefault();
-      }
-    });
-  });
-}
-// Category buttons
-function setupButtons() {
-  const categoryOpenButton = document.getElementById('categories-btn');
-  if (categoryOpenButton) {
-    categoryOpenButton.onclick = function () {
-      categoryOpenButton.textContent = categoryOpenButton.textContent === '➕' ? '➖' : '➕';
-      document.querySelector('.categories').classList.toggle('d-none');
-    }
-  }
-  categoryButtons = query('.categories button');
-  categoryButtons.forEach(function(button) {
-    button.onclick = function () {
-      button.classList.toggle('active');
-
-      // Any other category buttons active?
-      let categoryButtonActive = false;
-      const length = categoryButtons.length;
-      for (let i = 0; i < length; i++) {
-        if (categoryButtons[i].classList.contains('active')) {
-          categoryButtonActive = true;
-          break;
-        }
-      }
-      secondColumn.setAttribute('data-button', categoryButtonActive);
-      showSecondColumn(false);
-      if (!categoryButtonActive) {
-        getEntries().forEach(function(entry) {
-          entry.classList.remove('show');
-          entry.classList.remove('hide');
-        });
-      }
-      else {
-        getEntries().forEach(function(entry) {
-          if (entry.dataset.shop === button.textContent) {
-            if (button.classList.contains('active')) {
-              entry.classList.remove('hide');
-              entry.classList.add('show');
-            }
-            else {
-              entry.classList.remove('show');
-              entry.classList.add('hide');
-            }
-          }
-          else if (!entry.classList.contains('show')) {
-            entry.classList.add('hide');
-          }
-        });
-      }
-      updateCount(countVisibleItems(getEntries()), 'entries');
-      updateMap();
-    }
-  });
-  const positionButton = document.getElementById('position-btn');
-  if (positionButton) {
-    positionButton.onclick = function () {
-      if (navigator.geolocation) {
-        positionButton.disabled = true;
-        positionButton.classList.add('loading');
-
-        navigator.geolocation.getCurrentPosition(function (position) {
-          // Fetch cities
-          const promise = getCities();
-          promise.then(function (cities) {
-            // Calc nearest entry
-            let nearstEntry;
-            let minimumDistance = 10000;
-            for (let i = 0; i < cities.length; i++) {
-              const entry = cities[i];
-              const result = distance(
-                position.coords.latitude,
-                position.coords.longitude,
-                parseFloat(entry.customProperties.lat),
-                parseFloat(entry.customProperties.lon)
-              );
-              if (result < minimumDistance) {
-                minimumDistance = result;
-                nearstEntry = entry;
-                if (minimumDistance < 1) {
-                  break;
-                }
-              }
-            }
-            // Relocate
-            window.location = createPathName(nearstEntry);
-          });
-        });
-      }
-      else {
-        geolocationAlert();
-      }
-    }
-  }
-}
-// Map
-// multiple markers with clickable popups
-// via http://harrywood.co.uk/maps/examples/openlayers/marker-popups.view.html
-function createLonLat(longitude, latitude) {
-  return new OpenLayers.LonLat(longitude, latitude).transform(epsg4326, projectTo);
-}
-
-function createGeometryPoint(longitude, latitude) {
-  return new OpenLayers.Geometry.Point(longitude, latitude).transform(epsg4326, projectTo);
-}
-
-function buildMap() {
-  const map = new OpenLayers.Map('map');
-  map.addLayer(new OpenLayers.Layer.OSM());
-  vectorLayer = new OpenLayers.Layer.Vector('Overlay');
-  map.addLayer(vectorLayer);
-
-  epsg4326 = new OpenLayers.Projection('EPSG:4326'); // WGS 1984 projection
-  projectTo = map.getProjectionObject(); // The map projection (Spherical Mercator)
-
-  getEntries().forEach(function(entry) {
-    const lat = entry.dataset.lat;
-    const lon = entry.dataset.lon;
-    if (lat && lon) {
-      // Define markers as "features" of the vector layer:
-      const link = entry.firstElementChild;
-      const feature = new OpenLayers.Feature.Vector(
-        createGeometryPoint(lon, lat),
-        {
-          link: '<a href="' + link.href + '">' + link.textContent + '</a>',
-          entry: entry
-        }
-      );
-      vectorLayer.addFeatures(feature);
-    }
-  });
-  // Add a selector control to the vectorLayer with popup functions
-  const controls = {
-    selector: new OpenLayers.Control.SelectFeature(vectorLayer, { onSelect: createPopup, onUnselect: destroyPopup })
-  };
-
-  function createPopup(feature) {
-    feature.popup = new OpenLayers.Popup.FramedCloud('pop',
-      feature.geometry.getBounds().getCenterLonLat(),
-      null,
-      feature.attributes.link,
-      null,
-      true,
-      function() {
-        controls['selector'].unselectAll();
-      }
-    );
-    //feature.popup.closeOnMove = true;
-    map.addPopup(feature.popup);
-  }
-  
-  function destroyPopup(feature) {
-    feature.popup.destroy();
-    feature.popup = null;
-  }
-
-  map.addControl(controls['selector']);
-  controls['selector'].activate();
-
-  // Locate user position
-  function locateSuccess(position) {
-    const longitude = position.coords.longitude;
-    const latitude = position.coords.latitude;
-    const lonLat = createLonLat(longitude, latitude);
-    if (first) {
-      // Create (new) marker for user location
-      userFeature = new OpenLayers.Feature.Vector(
-        createGeometryPoint(longitude, latitude),
-        {
-          link: LANG.myLocation
-        },
-        {
-          externalGraphic: '/js/img/marker.png',
-          graphicHeight: 25,
-          graphicWidth: 21,
-          graphicXOffset: -10,
-          graphicYOffset: -25
-        }
-      );
-      vectorLayer.addFeatures(userFeature);
-
-      // and center map
-      map.setCenter(lonLat, 16);
-      first = false;
-    }
-    else {
-      // Move feature to new position
-      userFeature.move(lonLat);
-    }
-    // Set button
-    locateButton.classList.add('tracking');
-    locateButton.textContent = LANG.stopTracking;
-  }
-  let userFeature;
-  let first = true;
-  let watchID;
-  const locateButton = document.getElementById('locate-btn');
-  locateButton.classList.remove('d-none'); // Dont forget to show
-  locateButton.onclick = function () {
-    if (navigator.geolocation) {
-      if (!this.classList.contains('tracking')) {
-        watchID = navigator.geolocation.watchPosition(locateSuccess, geolocationError, { enableHighAccuracy: true });
-      }
-      else {
-        navigator.geolocation.clearWatch(watchID);
-        this.classList.remove('tracking');
-        this.textContent = LANG.trackLocation;
-      }
-    }
-    else {
-      geolocationAlert();
-    }
-  }
-  updateMap();
-}
-
 function appendLinkToHead (rel, href) {
   const link = document.createElement('link');
   link.rel = rel;
@@ -546,224 +212,6 @@ function appendLinkToHead (rel, href) {
   document.head.appendChild(link);
 }
 
-function setupMap() {
-  const mapButton = document.querySelector('#map button');
-  if (mapButton) {
-    mapButton.onclick = function () {
-      // Preconnect to OSM early
-      const tiles = ['a', 'b', 'c'];
-      tiles.forEach(function(tile) {
-        appendLinkToHead('preconnect', 'https://' + tile + '.tile.openstreetmap.org');
-      });
-      // Load OSM map library
-      loadScript('OpenLayers.js')
-      .then(function() {
-        buildMap();
-      });
-      // Hide buttons and overlay and add loader
-      const parent = mapButton.parentNode;
-      for (let i = 0; i < 3; i++) {
-        parent.children[i].style.display = 'none';
-      }
-      parent.classList.remove('is-overlay');
-      parent.classList.add('loading');
-    };
-  }
-}
-// Select to category
-function clickScrollCategory (category) {
-  const name = category.replace('#', '').toLowerCase();
-  for (let i = 0; i < categoryButtons.length; i++) {
-    const button = categoryButtons[i];
-    if (button.textContent.toLowerCase() === name) {
-      button.click();
-      //button.scrollIntoView();
-      break;
-    }
-  }
-}
-// Search
-async function fetchRegions() {
-  const response = await fetch('/' + SUBDOMAIN + '.json');
-  return response.json();
-}
-
-async function fetchRegion (region) {
-  const regionSlug = slugo(region);
-  return fetch('/' + regionSlug + '/index.json')
-  .then(function(response) {
-    return response.json();
-  })
-  .then(function(data) {
-    return data.map(function(item) {
-      return {
-        value: item.name,
-        label: item.name + ', ' + region,
-        customProperties: {
-          region: regionSlug,
-          lat: item.lat,
-          lon: item.lon
-        }
-      };
-    });
-  })
-  .catch(function(error) {
-    console.error(error);
-  });
-}
-
-function flatten (array) {
-  const newArray = [];
-  for (let len = array.length, i = 0; i < len; i++) {
-    for (let jarr = array[i], jen = jarr.length, j = 0; j < jen; j++) {
-      newArray.push(jarr[j]);
-    }
-  }
-
-  return newArray;
-}
-
-async function getCities () {
-  return fetchRegions()
-  .then(async function(regions) {
-    const promises = regions.map(function(region) {
-      return fetchRegion(region);
-    });
-    return Promise.all(promises)
-    .then(function(result) {
-      return flatten(result);
-    })
-    .catch(function(error) {
-      console.error(error);
-    })
-  })
-}
-
-function isCategory (shop) {
-  return shop[0] === '#';
-}
-
-function createLocation (pathname, shop) {
-  return pathname + (shop ? isCategory(shop) ? shop : slugo(shop) + '/' : '');
-}
-
-function createPathName (city) {
-  return '/' + city.customProperties.region + '/' + slugo(city.value) + '/';
-}
-
-function setInputFocus (instance) {
-  instance.input.element.focus();
-}
-
-function setupSearch() {
-  const cities = document.getElementById('cities');
-  if (cities) {
-    citiesChoices = new Choices(cities, {
-      placeholderValue: LANG.choose,
-      searchFields: ['value'],
-      searchPlaceholderValue: LANG.search,
-      loadingText: LANG.loading,
-      noResultsText: LANG.noResultsFound,
-      itemSelectText: '+',
-      noChoicesText: LANG.withAtLeastThreeLetters,
-      shouldSort: true,
-      renderChoiceLimit : 0,
-      searchResultLimit: 100,
-      searchFloor: 3,
-      position: 'bottom'
-    })
-    .setChoices(function() {
-      return new Promise(function (resolve) {
-        resolve();
-      });
-    })
-    .then(function(instance) {
-      instance.containerOuter.element.addEventListener('click', function() {
-        // Load data after user input
-        instance.setChoices(async function() {
-          return getCities();
-        })
-        .then(function() {
-          // We have to re-set focus on input again
-          setInputFocus(instance);
-        });
-      }, { once: true });
-      let city;
-      let pathname;
-      let shop;
-      instance.passedElement.element.addEventListener('change', function() {
-        city = instance.getValue();
-        pathname = createPathName(city);
-        appendLinkToHead('prefetch', pathname);
-        searchButton.disabled = false;
-        shopsChoices.clearStore();
-        shopsChoices.setChoices(function() {
-          return new Promise(function (resolve) {
-            resolve();
-          });
-        })
-        .then(function(instance2) {
-          instance2.containerOuter.element.addEventListener('click', function() {
-            shopsChoices.setChoices(async function() {
-              return fetch(createPathName(city) + 'index.json')
-              .then(function(response) {
-                return response.json();
-              })
-              .then(function(data) {
-                return data.map(function(item) {
-                  return {
-                    value: item,
-                    label: item
-                  };
-                });
-              });
-            })
-            .then(function() {
-              // We have to re-set focus on input again
-              setInputFocus(instance2);
-            });
-          }, { once: true });
-          instance2.passedElement.element.addEventListener('change', function() {
-            shop = shopsChoices.getValue(true);
-            appendLinkToHead('prefetch', createLocation(pathname, shop));
-          });
-        });
-        shopsChoices.enable();
-      });
-      const searchButton = document.getElementById('search-btn');
-      if (searchButton) {
-        searchButton.onclick = function () {
-          if (window.location.pathname === pathname && isCategory(shop)) {
-            // We're on the right page already, only scroll to category
-            clickScrollCategory(shop);
-          }
-          else {
-            // Relocate to new location
-            window.location = createLocation(pathname, shop);
-          }
-        };
-      }
-    });
-  }
-
-  const shops = document.getElementById('shops');
-  if (shops) {
-    shopsChoices = new Choices(shops, {
-      placeholderValue: LANG.choose,
-      searchFields: ['value'],
-      searchPlaceholderValue: LANG.filter,
-      loadingText: LANG.loading,
-      noResultsText: LANG.noResultsFound,
-      itemSelectText: '+',
-      shouldSort: true,
-      renderChoiceLimit : 100,
-      searchResultLimit: 100,
-      searchFloor: 1,
-      position: 'bottom'
-    }).disable();
-  }
-}
-// Chat
 function removeTags (string) {
   return string.replace(/<(?:.|\n)*?>/gm, '');
 }
@@ -820,125 +268,663 @@ function createMessage (content) {
   return item;
 }
 
-function setupChat() {
-  function appendToList (child) {
-    chatbox.appendChild(child);
-    chatbox.scrollTop = chatbox.scrollHeight;
-  }
-  
-  function sendMessage (message) {
-    appendToList(createMessage(message));
-    ws.send(message);
-  }
-  
-  function sendTextMessage () {
-    if (chatInput.value) {
-      sendMessage(removeTags(chatInput.value));
-      chatInput.value = '';
+async function fetchRegion (region) {
+  const regionSlug = slugo(region);
+  return fetchJSON('/' + regionSlug + '/index.json')
+  .then(function(data) {
+    return data.map(function(item) {
+      return {
+        value: item.name,
+        label: item.name + ', ' + region,
+        customProperties: {
+          region: regionSlug,
+          lat: item.lat,
+          lon: item.lon
+        }
+      };
+    });
+  })
+  .catch(function(error) {
+    console.error(error);
+  });
+}
+
+function flatten (array) {
+  const newArray = [];
+  for (let len = array.length, i = 0; i < len; i++) {
+    for (let jarr = array[i], jen = jarr.length, j = 0; j < jen; j++) {
+      newArray.push(jarr[j]);
     }
   }
 
-  const chatbox = document.getElementById('chatbox'),
-    chatInput = document.getElementById('chat-input'),
-    chatDetails = document.querySelector('#chat details');
+  return newArray;
+}
 
-  let incomingMessages = [],
-    scheduled,
-    prefix = '',
-    ws;
+async function getCities () {
+  return fetchJSON('/' + getSubdomain() + '.json')
+  .then(async function(regions) {
+    const promises = regions.map(function(region) {
+      return fetchRegion(region);
+    });
+    return Promise.all(promises)
+    .then(function(result) {
+      return flatten(result);
+    })
+    .catch(function(error) {
+      console.error(error);
+    })
+  })
+}
 
-  if (chatDetails) {
-    chatDetails.onclick = function() {
-      if (!ws) {
-        if (SUBDOMAIN !== 'localhost') {
-          prefix = SUBDOMAIN + '_';
+function isCategory (shop) {
+  return shop[0] === '#';
+}
+
+function createLocation (pathname, shop) {
+  return pathname + (shop ? isCategory(shop) ? shop : slugo(shop) + '/' : '');
+}
+
+function createPathName (city) {
+  return '/' + city.customProperties.region + '/' + slugo(city.value) + '/';
+}
+
+function setInputFocus (instance) {
+  instance.input.element.focus();
+}
+// Setup
+function setup(LANG) {
+  let categories;
+  let entries;
+  let vectorLayer;
+  let categoryButtons;
+  let secondColumn;
+
+  // Helpers
+  function getEntries() {
+    return entries ? entries : entries = query('li[data-lat]');
+  }
+  
+  function getCategories() {
+    return categories ? categories : categories = query('.categories button, .categories a');
+  }
+
+  function geolocationError(error) {
+    let message = LANG.geolocationError.message;
+    switch(error.code) {
+      case error.PERMISSION_DENIED:
+        message = LANG.geolocationError.permissionDenied;
+        break;
+      case error.POSITION_UNAVAILABLE:
+        message = LANG.geolocationError.positionUnavailable;
+        break;
+      case error.TIMEOUT:
+        message = LANG.geolocationError.timeout;
+        break;
+      case error.UNKNOWN_ERROR:
+        message = LANG.geolocationError.unknownError;
+        break;
+    }
+    alert(message);
+  }
+
+  function geolocationAlert(LANG) {
+    alert(LANG.geolocationAlert);
+  }
+  // Buttons
+  function setupButtons() {
+    const categoryOpenButton = document.getElementById('categories-btn');
+    if (categoryOpenButton) {
+      categoryOpenButton.onclick = function () {
+        categoryOpenButton.textContent = categoryOpenButton.textContent === '➕' ? '➖' : '➕';
+        document.querySelector('.categories').classList.toggle('d-none');
+      }
+    }
+    categoryButtons = query('.categories button');
+    categoryButtons.forEach(function(button) {
+      button.onclick = function () {
+        button.classList.toggle('active');
+  
+        // Any other category buttons active?
+        let categoryButtonActive = false;
+        const length = categoryButtons.length;
+        for (let i = 0; i < length; i++) {
+          if (categoryButtons[i].classList.contains('active')) {
+            categoryButtonActive = true;
+            break;
+          }
         }
-        const protocol = prefix + window.location.pathname.replace(/\//g, '_');
-        ws = new WebSocket('wss://chat.shoogle.net/',  protocol);
-        ws.onmessage = function(message) {
-          incomingMessages.push(createMessage(message.data));
-      
-          if (!scheduled) {
-            scheduled = true;
-            window.requestAnimationFrame(function() {
-              const frag = document.createDocumentFragment();
-              for (let i = 0, len = incomingMessages.length; i < len; i++) {
-                frag.appendChild(incomingMessages[i]);
+        secondColumn.setAttribute('data-button', categoryButtonActive);
+        showSecondColumn(false);
+        if (!categoryButtonActive) {
+          getEntries().forEach(function(entry) {
+            entry.classList.remove('show');
+            entry.classList.remove('hide');
+          });
+        }
+        else {
+          getEntries().forEach(function(entry) {
+            if (entry.dataset.shop === button.textContent) {
+              if (button.classList.contains('active')) {
+                entry.classList.remove('hide');
+                entry.classList.add('show');
               }
-              appendToList(frag);
-              incomingMessages.length = 0;
-              scheduled = false;
-            })
-          }
+              else {
+                entry.classList.remove('show');
+                entry.classList.add('hide');
+              }
+            }
+            else if (!entry.classList.contains('show')) {
+              entry.classList.add('hide');
+            }
+          });
         }
+        updateCount(countVisibleItems(getEntries()), 'entries');
+        updateMap();
+      }
+    });
+    const positionButton = document.getElementById('position-btn');
+    if (positionButton) {
+      positionButton.onclick = function () {
+        if (navigator.geolocation) {
+          positionButton.disabled = true;
+          positionButton.classList.add('loading');
+  
+          navigator.geolocation.getCurrentPosition(function (position) {
+            // Fetch cities
+            getCities()
+            .then(function (cities) {
+              // Calc nearest entry
+              let nearstEntry;
+              let minimumDistance = 10000;
+              for (let i = 0; i < cities.length; i++) {
+                const entry = cities[i];
+                const result = distance(
+                  position.coords.latitude,
+                  position.coords.longitude,
+                  parseFloat(entry.customProperties.lat),
+                  parseFloat(entry.customProperties.lon)
+                );
+                if (result < minimumDistance) {
+                  minimumDistance = result;
+                  nearstEntry = entry;
+                  if (minimumDistance < 1) {
+                    break;
+                  }
+                }
+              }
+              // Relocate
+              window.location = createPathName(nearstEntry);
+            });
+          }, geolocationError, { timeout: 5000 });
+        }
+        else {
+          geolocationAlert();
+        }
+      }
+    }
+  };
+  // Chat
+  function setupChat() {
+    function appendToList (child) {
+      chatbox.appendChild(child);
+      chatbox.scrollTop = chatbox.scrollHeight;
+    }
+    
+    function sendMessage (message) {
+      appendToList(createMessage(message));
+      ws.send(message);
+    }
+    
+    function sendTextMessage () {
+      if (chatInput.value) {
+        sendMessage(removeTags(chatInput.value));
+        chatInput.value = '';
+      }
+    }
 
-        document.getElementById('chat-btn').onclick = function() {
-          sendTextMessage();
-        };
+    const chatbox = document.getElementById('chatbox'),
+      chatInput = document.getElementById('chat-input'),
+      chatDetails = document.querySelector('#chat details');
 
-        document.getElementById('chat-form').onkeypress = function(event) {
-          if (event.keyCode === 13) {
-            event.preventDefault();
-            sendTextMessage();
+    let incomingMessages = [],
+      scheduled,
+      prefix = '',
+      ws;
+
+    if (chatDetails) {
+      chatDetails.onclick = function() {
+        if (!ws) {
+          if (getSubdomain() !== 'localhost') {
+            prefix = getSubdomain() + '_';
           }
-        };
+          const protocol = prefix + window.location.pathname.replace(/\//g, '_');
+          ws = new WebSocket('wss://chat.shoogle.net/',  protocol);
+          ws.onmessage = function(message) {
+            incomingMessages.push(createMessage(message.data));
+        
+            if (!scheduled) {
+              scheduled = true;
+              window.requestAnimationFrame(function() {
+                const frag = document.createDocumentFragment();
+                for (let i = 0, len = incomingMessages.length; i < len; i++) {
+                  frag.appendChild(incomingMessages[i]);
+                }
+                appendToList(frag);
+                incomingMessages.length = 0;
+                scheduled = false;
+              })
+            }
+          }
 
-        let emojiButton = document.getElementById('emoji-btn');
-        emojiButton.onclick = function() {
-          loadScript('emoji.js');
+          document.getElementById('chat-btn').onclick = function() {
+            sendTextMessage();
+          };
 
-          // Remove reference (and handler)
-          emojiButton = null;
+          document.getElementById('chat-form').onkeypress = function(event) {
+            if (event.keyCode === 13) {
+              event.preventDefault();
+              sendTextMessage();
+            }
+          };
+
+          let emojiButton = document.getElementById('emoji-btn');
+          emojiButton.onclick = function() {
+            loadScript('emoji.js');
+
+            // Remove reference (and handler)
+            emojiButton = null;
+          }
         }
       }
     }
   }
-}
-// Shop open
-function setupOpening() {
-  const openingHours = document.getElementById('opening-hours');
-  if (openingHours) {
-    const opening = new SimpleOpeningHours(openingHours.textContent);
-    // Translate
-    openingHours.textContent = openingHours.textContent.replace('Mo', LANG.weekdays.Mo)
-                                                       .replace('Tu', LANG.weekdays.Tu)
-                                                       .replace('We', LANG.weekdays.We)
-                                                       .replace('Th', LANG.weekdays.Th)
-                                                       .replace('Fr', LANG.weekdays.Fr)
-                                                       .replace('Sa', LANG.weekdays.Sa)
-                                                       .replace('Su', LANG.weekdays.Su)
-                                                       .replace('PH', LANG.weekdays.PH)
-                                                       .replace('off', LANG.weekdays.off);
-    if (opening.isOpen()) {
-      // Append banner
-      const openSamp = document.createElement('samp');
-      openSamp.textContent = LANG.nowOpen;
-      openingHours.appendChild(openSamp);
+  // Columns
+  function setupColumns() {
+    secondColumn = query('.columns')[1];
+    if (!secondColumn || secondColumn.getAttribute('data-listener') === 'true') {
+      return;
+    }
+    const columnsWrapper = document.querySelector('.scrollable-box');
+    if (columnsWrapper) {
+      columnsWrapper.addEventListener('scroll', function (event) {
+        const element = event.target;
+        if (element.scrollHeight - element.scrollTop < element.clientHeight + 42) {
+            // Scrolled to bottom
+            // Had to fix by +1 because columnsWrapper has a (potential) hidden sibling with 1px height
+            secondColumn.setAttribute('data-listener', 'false');
+            event.target.removeEventListener(event.type, arguments.callee);
+            showSecondColumn(true);
+        }
+      },
+      { passive: true });
+      secondColumn.setAttribute('data-listener', 'true');
+    }
+  };
+  
+  function showSecondColumn(alwaysShow) {
+    alwaysShow ||
+    secondColumn.getAttribute('data-empty') === 'false' ||
+    secondColumn.getAttribute('data-button') === 'true' ?
+    secondColumn.classList.remove('hidden') : secondColumn.classList.add('hidden') || setupColumns();
+  }
+  // Filters
+  function updateGUI(value, filter) {
+    const items = filter === 'entries' ? getEntries() : getCategories();
+    const regex = new RegExp(value, 'i');
+    items.forEach(function(item) {
+      value === '' || regex.test(item.textContent) ? item.classList.remove('d-none') : item.classList.add('d-none');
+    });
+    updateCount(countVisibleItems(items), filter);
+  }
+  
+  function startEntriesFilter(value) {
+    secondColumn.setAttribute('data-empty', value === '');
+    showSecondColumn(false);
+    updateGUI(value, 'entries');
+    updateMap();
+  }
+  
+  function startCategoriesFilter(value) {
+    updateGUI(value, 'categories');
+  }
+
+  function setupFilters() {
+    const filterInputs = query('.filter input');
+    filterInputs.forEach(function(input) {
+      const isEntriesFilter = input.closest('.filter-entries');
+      const startFilter = isEntriesFilter ? startEntriesFilter : startCategoriesFilter;
+      input.addEventListener('input', debounce(function () {
+        updateCount('Loading...', isEntriesFilter ? 'entries' : 'categories');
+      }, 250));
+      input.addEventListener('input', debounce(function () {
+        startFilter(input.value);
+      }, 500));
+      input.addEventListener('keypress', function(event) {
+        if (event.keyCode === 13) {
+          event.preventDefault();
+        }
+      });
+    });
+  }
+  // Map
+  // multiple markers with clickable popups
+  // via http://harrywood.co.uk/maps/examples/openlayers/marker-popups.view.html
+  function updateMap() {
+    if (vectorLayer) {
+      const matches = [];
+      vectorLayer.features.forEach(function(feature) {
+        const entry = feature.attributes.entry;
+        if (entry) {
+          if (isElementVisible(entry)) {
+            feature.style = null;
+            matches.push(entry);
+          }
+          else {
+            feature.style = { display: 'none' };
+          }
+        }
+      });
+      const count = matches.length;
+      if (count) {
+        const center = getLatLngCenter(matches, count);
+        vectorLayer.map.setCenter(createLonLat(center[1], center[0], vectorLayer.map), determineZoom(matches, count, center));
+      }
+      vectorLayer.redraw();
     }
   }
-}
-// Kickstart
-// by loading language file
-async function fetchLanguage() {
-  const response = await fetch('/lang.json');
-  LANG = await response.json();
-}
 
-window.addEventListener('DOMContentLoaded', function() {
-  fetchLanguage()
-  .then(function() {
-    setupButtons();
-    setupChat();
-    setupColumns();
-    setupFilters();
-    setupMap();
-    setupOpening();
-    setupSearch();
+  function setupMap(LANG) {
+    let userFeature;
+    
+    function locateSuccess(position) {
+      const longitude = position.coords.longitude;
+      const latitude = position.coords.latitude;
+      const lonLat = createLonLat(longitude, latitude, map);
+      if (!userFeature) {
+        // Create (new) marker for user location
+        userFeature = new OpenLayers.Feature.Vector(
+          createGeometryPoint(longitude, latitude, epsg4326, projectTo),
+          {
+            link: LANG.myLocation
+          },
+          {
+            externalGraphic: '/js/img/marker.png',
+            graphicHeight: 25,
+            graphicWidth: 21,
+            graphicXOffset: -10,
+            graphicYOffset: -25
+          }
+        );
+        vectorLayer.addFeatures(userFeature);
 
-    // When everything is set up, respect category hash in URL
-    const hash = window.location.hash;
-    if (hash) {
-      clickScrollCategory(decodeURIComponent(hash));
+        // and center map
+        map.setCenter(lonLat, 16);
+      }
+      else {
+        // Move feature to new position
+        userFeature.move(lonLat);
+      }
+      // Set button
+      locateButton.classList.add('tracking');
+      locateButton.textContent = LANG.stopTracking;
     }
+
+    function buildMap() {
+      const map = new OpenLayers.Map('map');
+      map.addLayer(new OpenLayers.Layer.OSM());
+      vectorLayer = new OpenLayers.Layer.Vector('Overlay');
+      map.addLayer(vectorLayer);
+  
+      const epsg4326 = createEPSG();
+      const projectTo = map.getProjectionObject(); // The map projection (Spherical Mercator)
+  
+      getEntries().forEach(function(entry) {
+        const lat = entry.dataset.lat;
+        const lon = entry.dataset.lon;
+        if (lat && lon) {
+          // Define markers as "features" of the vector layer:
+          const link = entry.firstElementChild;
+          const feature = new OpenLayers.Feature.Vector(
+            createGeometryPoint(lon, lat, epsg4326, projectTo),
+            {
+              link: '<a href="' + link.href + '">' + link.textContent + '</a>',
+              entry: entry
+            }
+          );
+          vectorLayer.addFeatures(feature);
+        }
+      });
+      // Add a selector control to the vectorLayer with popup functions
+      const controls = {
+        selector: new OpenLayers.Control.SelectFeature(vectorLayer, { onSelect: createPopup, onUnselect: destroyPopup })
+      };
+  
+      function createPopup(feature) {
+        feature.popup = new OpenLayers.Popup.FramedCloud('pop',
+          feature.geometry.getBounds().getCenterLonLat(),
+          null,
+          feature.attributes.link,
+          null,
+          true,
+          function() {
+            controls['selector'].unselectAll();
+          }
+        );
+        //feature.popup.closeOnMove = true;
+        map.addPopup(feature.popup);
+      }
+      
+      function destroyPopup(feature) {
+        feature.popup.destroy();
+        feature.popup = null;
+      }
+  
+      map.addControl(controls['selector']);
+      controls['selector'].activate();
+
+      let watchID;
+      const locateButton = document.getElementById('locate-btn');
+      locateButton.classList.remove('d-none'); // Dont forget to show
+      locateButton.onclick = function () {
+        if (navigator.geolocation) {
+          if (!this.classList.contains('tracking')) {
+            watchID = navigator.geolocation.watchPosition(locateSuccess, geolocationError, { timeout: 5000 });
+          }
+          else {
+            navigator.geolocation.clearWatch(watchID);
+            this.classList.remove('tracking');
+            this.textContent = LANG.trackLocation;
+          }
+        }
+        else {
+          geolocationAlert();
+        }
+      }
+      updateMap();
+    }
+
+    const mapButton = document.querySelector('#map button');
+    if (mapButton) {
+      mapButton.onclick = function () {
+        // Preconnect to OSM early
+        const tiles = ['a', 'b', 'c'];
+        tiles.forEach(function(tile) {
+          appendLinkToHead('preconnect', 'https://' + tile + '.tile.openstreetmap.org');
+        });
+        // Load OSM map library
+        loadScript('OpenLayers.js')
+        .then(function() {
+          buildMap();
+        });
+        // Hide buttons and overlay and add loader
+        const parent = mapButton.parentNode;
+        for (let i = 0; i < 3; i++) {
+          parent.children[i].style.display = 'none';
+        }
+        parent.classList.remove('is-overlay');
+        parent.classList.add('loading');
+      };
+    }
+  }
+  // Opening
+  function setupOpening(LANG) {
+    const openingHours = document.getElementById('opening-hours');
+    if (openingHours) {
+      const opening = new SimpleOpeningHours(openingHours.textContent);
+      // Translate
+      openingHours.textContent = openingHours.textContent.replace('Mo', LANG.weekdays.Mo)
+                                                        .replace('Tu', LANG.weekdays.Tu)
+                                                        .replace('We', LANG.weekdays.We)
+                                                        .replace('Th', LANG.weekdays.Th)
+                                                        .replace('Fr', LANG.weekdays.Fr)
+                                                        .replace('Sa', LANG.weekdays.Sa)
+                                                        .replace('Su', LANG.weekdays.Su)
+                                                        .replace('PH', LANG.weekdays.PH)
+                                                        .replace('off', LANG.weekdays.off);
+      if (opening.isOpen()) {
+        // Append banner
+        const openSamp = document.createElement('samp');
+        openSamp.textContent = LANG.nowOpen;
+        openingHours.appendChild(openSamp);
+      }
+    }
+  }
+  // Search
+  function setupSearch(LANG) {
+    let shopsChoices;
+    const cities = document.getElementById('cities');
+    if (cities) {
+      new Choices(cities, {
+        placeholderValue: LANG.choose,
+        searchFields: ['value'],
+        searchPlaceholderValue: LANG.search,
+        loadingText: LANG.loading,
+        noResultsText: LANG.noResultsFound,
+        itemSelectText: '+',
+        noChoicesText: LANG.withAtLeastThreeLetters,
+        shouldSort: true,
+        renderChoiceLimit : 0,
+        searchResultLimit: 100,
+        searchFloor: 3,
+        position: 'bottom'
+      })
+      .setChoices(function() {
+        return new Promise(function (resolve) {
+          resolve();
+        });
+      })
+      .then(function(instance) {
+        instance.containerOuter.element.addEventListener('click', function() {
+          // Load data after user input
+          instance.setChoices(async function() {
+            return getCities();
+          })
+          .then(function() {
+            // We have to re-set focus on input again
+            setInputFocus(instance);
+          });
+        }, { once: true });
+        let city;
+        let pathname;
+        let shop;
+        instance.passedElement.element.addEventListener('change', function() {
+          city = instance.getValue();
+          pathname = createPathName(city);
+          appendLinkToHead('prefetch', pathname);
+          searchButton.disabled = false;
+          shopsChoices.clearStore();
+          shopsChoices.setChoices(function() {
+            return new Promise(function (resolve) {
+              resolve();
+            });
+          })
+          .then(function(instance2) {
+            instance2.containerOuter.element.addEventListener('click', function() {
+              shopsChoices.setChoices(async function() {
+                return fetchJSON(createPathName(city) + 'index.json')
+                .then(function(data) {
+                  return data.map(function(item) {
+                    return {
+                      value: item,
+                      label: item
+                    };
+                  });
+                });
+              })
+              .then(function() {
+                // We have to re-set focus on input again
+                setInputFocus(instance2);
+              });
+            }, { once: true });
+            instance2.passedElement.element.addEventListener('change', function() {
+              shop = shopsChoices.getValue(true);
+              appendLinkToHead('prefetch', createLocation(pathname, shop));
+            });
+          });
+          shopsChoices.enable();
+        });
+        const searchButton = document.getElementById('search-btn');
+        if (searchButton) {
+          searchButton.onclick = function () {
+            if (window.location.pathname === pathname && isCategory(shop)) {
+              // We're on the right page already, only scroll to category
+              clickScrollCategory(shop);
+            }
+            else {
+              // Relocate to new location
+              window.location = createLocation(pathname, shop);
+            }
+          };
+        }
+      });
+    }
+  
+    const shops = document.getElementById('shops');
+    if (shops) {
+      shopsChoices = new Choices(shops, {
+        placeholderValue: LANG.choose,
+        searchFields: ['value'],
+        searchPlaceholderValue: LANG.filter,
+        loadingText: LANG.loading,
+        noResultsText: LANG.noResultsFound,
+        itemSelectText: '+',
+        shouldSort: true,
+        renderChoiceLimit : 100,
+        searchResultLimit: 100,
+        searchFloor: 1,
+        position: 'bottom'
+      }).disable();
+    }
+  }
+  // Select to category
+  function clickScrollCategory (category) {
+    const name = category.replace('#', '').toLowerCase();
+    for (let i = 0; i < categoryButtons.length; i++) {
+      const button = categoryButtons[i];
+      if (button.textContent.toLowerCase() === name) {
+        button.click();
+        break;
+      }
+    }
+  }
+  setupButtons();
+  setupChat();
+  setupColumns();
+  setupFilters();
+  setupMap(LANG);
+  setupOpening(LANG);
+  setupSearch(LANG);
+
+  // When everything is set up, respect category hash in URL
+  const hash = window.location.hash;
+  if (hash) {
+    clickScrollCategory(decodeURIComponent(hash));
+  }
+}
+// Kickstart by loading language file
+window.addEventListener('DOMContentLoaded', function() {
+  fetchJSON('/lang.json')
+  .then(function(LANG) {
+    setup(LANG);
   });  
 });

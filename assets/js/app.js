@@ -1,9 +1,10 @@
-// Helpers
-// adopted from https://github.com/gabmontes/fast-haversine
+// Constants
 const R = 6378;
 const PI_360 = Math.PI / 360;
 
-function distance(lat1, lon1, lat2, lon2) {
+// Globals
+// adopted from https://github.com/gabmontes/fast-haversine
+window.calcDistance = function(lat1, lon1, lat2, lon2) {
   const cLat = Math.cos((lat1 + lat2) * PI_360);
   const dLat = (lat2 - lat1) * PI_360;
   const dLon = (lon2 - lon1) * PI_360;
@@ -13,53 +14,11 @@ function distance(lat1, lon1, lat2, lon2) {
 
   return R * c;
 }
-// via https://stackoverflow.com/a/30033564
-/**
- * @param latLngInDeg array of arrays with latitude and longtitude
- *   pairs in degrees. e.g. [[latitude1, longtitude1], [latitude2
- *   [longtitude2] ...]
- *
- * @return array with the center latitude longtitude pairs in 
- *   degrees.
- */
-function rad2degr(rad) { return rad * 180 / Math.PI; }
-function degr2rad(degr) { return degr * Math.PI / 180; }
 
-function getLatLngCenter(entries, count) {
-  let sumX = 0;
-  let sumY = 0;
-  let sumZ = 0;
-  for (let i = 0; i < count; i++) {
-    const lat = entries[i].dataset.lat;
-    const lon = entries[i].dataset.lon;
-
-    if (lat && lon) {
-      // May be empty for cities without coords, see Bremerhaven for example
-      const latRad = degr2rad(lat);
-      const lngRad = degr2rad(lon);
-      
-      // Sum of cartesian coordinates
-      sumX += Math.cos(latRad) * Math.cos(lngRad);
-      sumY += Math.cos(latRad) * Math.sin(lngRad);
-      sumZ += Math.sin(latRad);
-    }
-  }
-  const avgX = sumX / count;
-  const avgY = sumY / count;
-  const avgZ = sumZ / count;
-
-  // Convert average x, y, z coordinate to latitude and longtitude
-  const lng = Math.atan2(avgY, avgX);
-  const hyp = Math.sqrt(avgX * avgX + avgY * avgY);
-  const lat = Math.atan2(avgZ, hyp);
-
-  return ([rad2degr(lat), rad2degr(lng)]);
-}
-
-function loadScript(file) {
+window.loadScript = function(file) {
   return new Promise(function(resolve, reject) {
     const script = document.createElement('script');
-    script.async = true;
+    script.async = false;
     script.src = '/js/' + file;
     script.onload = resolve;
     script.onerror = reject;
@@ -72,98 +31,67 @@ function loadScript(file) {
   })
 }
 
-async function fetchJSON(path) {
-  const response = await fetch(path);
-  return response.json();
+window.getSubdomain = function() {
+  return window.location.hostname.split(".")[0];
 }
 
+window.isElementVisible = function(element) {
+  return !element.classList.contains('d-none') && !element.classList.contains('hide');
+}
+
+window.getEntries = function() {
+  return window.listEntries = window.listEntries || query('li[data-lat]');
+}
+
+window.getGeolocationErrorMessage = function(error) {
+  let message = LANG.geolocationError.message;
+  switch(error.code) {
+    case error.PERMISSION_DENIED:
+      message = LANG.geolocationError.permissionDenied;
+      break;
+    case error.POSITION_UNAVAILABLE:
+      message = LANG.geolocationError.positionUnavailable;
+      break;
+    case error.TIMEOUT:
+      message = LANG.geolocationError.timeout;
+      break;
+    case error.UNKNOWN_ERROR:
+      message = LANG.geolocationError.unknownError;
+      break;
+  }
+
+  return message;
+}
+// Helpers
 function query(selector) {
   return Array.from(document.querySelectorAll(selector));
 }
 
-function getSubdomain() {
-  return window.location.hostname.split(".")[0];
-}
-
-function calcMaxDistance(entries, count, center, stop) {
-  let maximumDistance = 0;
-
-  for (let i = 0; i < count; i++) {
-    const entry = entries[i];
-    const result = distance(
-      center[0],
-      center[1],
-      parseFloat(entry.dataset.lat),
-      parseFloat(entry.dataset.lon)
-    );
-    if (result > maximumDistance) {
-      maximumDistance = result;
-      if (maximumDistance > stop) {
-        break;
+function flatten(array) {
+  const newArray = [];
+  for (let len = array.length, i = 0; i < len; i++) {
+      for (let jarr = array[i], jen = jarr.length, j = 0; j < jen; j++) {
+          newArray.push(jarr[j]);
       }
-    }
   }
-  
-  return maximumDistance;
+
+  return newArray;
 }
 
-function determineZoom(entries, count, center) {
-  const page = window.location.pathname.split('/').length; // 3, 4, 5
-  if (page === 3 || document.querySelector('#map.w-100')) {
-    // Region/Category page
-    const maximumDistance = calcMaxDistance(entries, count, center, 128);
-    if (maximumDistance > 128) {
-      return 6;
-    }
-    else if (count > 1250 || maximumDistance > 64) {
-      return 7;
-    }
-    else if (count > 250 || maximumDistance > 32) {
-      return 8;
-    }
-    else if (count > 50 || maximumDistance > 16) {
-      return 9;
-    }
-    else if (count > 10 || maximumDistance > 8) {
-      return 10;
-    }
-    else if (count > 1 || maximumDistance > 4) {
-      return 11;
-    }
-    // Default value for this page type
-    return 12;
-  }
-  else if (page === 4) {
-    // City page
-    if (count > 2500) {
-      return 10;
-    }
-    const maximumDistance = calcMaxDistance(entries, count, center, 8);
-    if (maximumDistance > 8) {
-      return 10;
-    }
-    else if (count > 500 || maximumDistance > 4) {
-      return 11;
-    }
-    else if (count > 100 || maximumDistance > 2) {
-      return 12;
-    }
-    else if (count > 20 || maximumDistance > 1) {
-      return 13;
-    }
-    else if (count > 4 || maximumDistance > 0.5) {
-      return 14;
-    }
-    else if (count > 1 || maximumDistance > 0.25) {
-      return 15;
-    }
-  }
-  // Entry page or no other city match
-  return 16;
+function isCategory(shop) {
+  return shop[0] === '#';
 }
 
-function isElementVisible(element) {
-  return !element.classList.contains('d-none') && !element.classList.contains('hide');
+function createLocation(pathname, shop) {
+  return pathname + (shop ? isCategory(shop) ? shop : slugo(shop) + '/' : '');
+}
+
+function createPathName(city) {
+  return '/' + city.customProperties.region + '/' + slugo(city.value) + '/';
+}
+
+function setInputFocus(instance) {
+  instance.input.element.focus();
 }
 
 function updateCount(count, selector) {
@@ -173,22 +101,10 @@ function updateCount(count, selector) {
   }
 }
 
-function createEPSG() {
-  return new OpenLayers.Projection('EPSG:4326'); // WGS 1984 projection
-}
-
-function createLonLat(longitude, latitude, map) {
-  return new OpenLayers.LonLat(longitude, latitude).transform(createEPSG(), map.getProjectionObject());
-}
-
-function createGeometryPoint(longitude, latitude, epsg4326, projectTo) {
-  return new OpenLayers.Geometry.Point(longitude, latitude).transform(epsg4326, projectTo);
-}
-
 function countVisibleItems(items) {
   let count = 0;
   items.forEach(function(item) {
-    if (isElementVisible(item)) {
+    if (window.isElementVisible(item)) {
       count++;
     }
   });
@@ -196,346 +112,143 @@ function countVisibleItems(items) {
   return count;
 }
 
-function debounce(fn, duration) {
-  let timer;
-
-  return function () {
-    clearTimeout(timer);
-    timer = setTimeout(fn, duration);
-  }
-}
-
-function appendLinkToHead (rel, href) {
+function appendLinkToHead(rel, href) {
   const link = document.createElement('link');
   link.rel = rel;
   link.href = href;
   document.head.appendChild(link);
 }
-
-function removeTags (string) {
-  return string.replace(/<(?:.|\n)*?>/gm, '');
+// Async
+async function fetchJSON(path) {
+  const response = await fetch(path);
+  return response.json();
 }
 
-function md2html (md) {
-  const bold_pattern1 = /\*{2}(.+)\*{2}/gim; // <b>
-  const bold_pattern2 = /\_{2}(.+)\_{2}/gim;  // <b>
-  const italic_pattern1 = /\_(.+)\_/gim; // <i>
-  const italic_pattern2 = /\*(.+)\*/gim; // <i>
-  const striketrough_pattern = /\~{2}(.+)\~{2}/gim; // <del>
-  const a_pattern1 = /\[(.+)\]\((.+)\)/gim; // <a>
-  const a_pattern2 = /\[(.+)\]\((.+) \"(.+)\"\)/gim; // <a>
-  const a_pattern3 = /\[(.+)\]/gim; // <a>
-
-  /* links */
-  md = md.replace(a_pattern1, function(match, title, url) {
-    return '<a href="' + url + '">' + title + '</a>';
-  })
-  md = md.replace(a_pattern2, function(match, title, url, tooltip) {
-    return '<a href="' + url + '" title="' + tooltip + '">' + title + '</a>';
-  })
-  md = md.replace(a_pattern3, function(match, url) {
-    return '<a href="' + url + '">' + url + '</a>';
-  })
-
-  /* bold */
-  md = md.replace(bold_pattern1, function(match, str) {
-    return '<b>' + str + '</b>';
-  })
-  md = md.replace(bold_pattern2, function(match, str) {
-    return '<b>' + str + '</b>';
-  })
-
-  /* italic */
-  md = md.replace(italic_pattern1, function(match, str) {
-    return '<i>' + str + '</i>';
-  })
-  md = md.replace(italic_pattern2, function(match, str) {
-    return '<i>' + str + '</i>';
-  })
-
-  /* striketrough */
-  md = md.replace(striketrough_pattern, function(match, str) {
-    return '<del>' + str + '</del>';
-  })
-
-  return md;
-}
-
-function createMessage (content) {
-  const item = document.createElement('li');
-  item.innerHTML = md2html(content);
-
-  return item;
-}
-
-async function fetchRegion (region) {
+async function fetchRegion(region) {
   const regionSlug = slugo(region);
   return fetchJSON('/' + regionSlug + '/index.json')
   .then(function(data) {
-    return data.map(function(item) {
-      return {
-        value: item.name,
-        label: item.name + ', ' + region,
-        customProperties: {
-          region: regionSlug,
-          lat: item.lat,
-          lon: item.lon
-        }
-      };
-    });
+      return data.map(function(item) {
+          return {
+              value: item.name,
+              label: item.name + ', ' + region,
+              customProperties: {
+                  region: regionSlug,
+                  lat: item.lat,
+                  lon: item.lon
+              }
+          };
+      });
   })
   .catch(function(error) {
     console.error(error);
   });
 }
 
-function flatten (array) {
-  const newArray = [];
-  for (let len = array.length, i = 0; i < len; i++) {
-    for (let jarr = array[i], jen = jarr.length, j = 0; j < jen; j++) {
-      newArray.push(jarr[j]);
-    }
-  }
-
-  return newArray;
-}
-
-async function getCities () {
-  return fetchJSON('/' + getSubdomain() + '.json')
+async function getCities() {
+  return fetchJSON('/' + window.getSubdomain() + '.json')
   .then(async function(regions) {
-    const promises = regions.map(function(region) {
-      return fetchRegion(region);
-    });
-    return Promise.all(promises)
-    .then(function(result) {
-      return flatten(result);
-    })
-    .catch(function(error) {
-      console.error(error);
-    })
+      const promises = regions.map(function(region) {
+          return fetchRegion(region);
+      });
+      return Promise.all(promises)
+      .then(function(result) {
+          return flatten(result);
+      })
+      .catch(function(error) {
+          console.error(error);
+      })
   })
 }
-
-function isCategory (shop) {
-  return shop[0] === '#';
-}
-
-function createLocation (pathname, shop) {
-  return pathname + (shop ? isCategory(shop) ? shop : slugo(shop) + '/' : '');
-}
-
-function createPathName (city) {
-  return '/' + city.customProperties.region + '/' + slugo(city.value) + '/';
-}
-
-function setInputFocus (instance) {
-  instance.input.element.focus();
-}
-// Setup
-function setup(LANG) {
-  let categories;
-  let entries;
-  let vectorLayer;
-  let categoryButtons;
-  let secondColumn;
-
-  // Helpers
-  function getEntries() {
-    return entries ? entries : entries = query('li[data-lat]');
-  }
-  
-  function getCategories() {
-    return categories ? categories : categories = query('.categories button, .categories a');
-  }
-
-  function getGeolocationErrorMessage(error) {
-    let message = LANG.geolocationError.message;
-    switch(error.code) {
-      case error.PERMISSION_DENIED:
-        message = LANG.geolocationError.permissionDenied;
+// Kickstart
+window.addEventListener('DOMContentLoaded', async function() {
+  function clickCategory(category) {
+    const name = category.replace('#', '').toLowerCase();
+    for (let i = 0; i < categoryButtons.length; i++) {
+      const button = categoryButtons[i];
+      if (button.textContent.toLowerCase() === name) {
+        button.click();
         break;
-      case error.POSITION_UNAVAILABLE:
-        message = LANG.geolocationError.positionUnavailable;
-        break;
-      case error.TIMEOUT:
-        message = LANG.geolocationError.timeout;
-        break;
-      case error.UNKNOWN_ERROR:
-        message = LANG.geolocationError.unknownError;
-        break;
+      }
     }
-
-    return message;
   }
+  function showSecondColumn(alwaysShow) {
+    alwaysShow ||
+    secondColumn.getAttribute('data-empty') === 'false' ||
+    secondColumn.getAttribute('data-button') === 'true' ?
+    secondColumn.classList.remove('hidden') : secondColumn.classList.add('hidden') || setupColumns();
+  }
+  window.LANG = await fetchJSON('/lang.json');
+  let secondColumn;
+  let categoryButtons;
+  
   // Buttons
   function setupButtons() {
     const categoryOpenButton = document.getElementById('categories-btn');
     if (categoryOpenButton) {
-      categoryOpenButton.onclick = function () {
+      categoryOpenButton.onclick = function() {
         categoryOpenButton.textContent = categoryOpenButton.textContent === '➕' ? '➖' : '➕';
         document.querySelector('.categories').classList.toggle('d-none');
       }
-    }
-    categoryButtons = query('.categories button');
-    categoryButtons.forEach(function(button) {
-      button.onclick = function () {
-        button.classList.toggle('active');
-  
-        // Any other category buttons active?
-        let categoryButtonActive = false;
-        const length = categoryButtons.length;
-        for (let i = 0; i < length; i++) {
-          if (categoryButtons[i].classList.contains('active')) {
-            categoryButtonActive = true;
-            break;
+      categoryButtons = query('.categories button');
+      categoryButtons.forEach(function(button) {
+        button.onclick = function () {
+          button.classList.toggle('active');
+
+          // Any other category buttons active?
+          let categoryButtonActive = false;
+          const length = categoryButtons.length;
+          for (let i = 0; i < length; i++) {
+            if (categoryButtons[i].classList.contains('active')) {
+              categoryButtonActive = true;
+              break;
+            }
           }
-        }
-        secondColumn.setAttribute('data-button', categoryButtonActive);
-        showSecondColumn(false);
-        if (!categoryButtonActive) {
-          getEntries().forEach(function(entry) {
-            entry.classList.remove('show');
-            entry.classList.remove('hide');
-          });
-        }
-        else {
-          getEntries().forEach(function(entry) {
-            if (entry.dataset.shop === button.textContent) {
-              if (button.classList.contains('active')) {
-                entry.classList.remove('hide');
-                entry.classList.add('show');
-              }
-              else {
-                entry.classList.remove('show');
-                entry.classList.add('hide');
-              }
-            }
-            else if (!entry.classList.contains('show')) {
-              entry.classList.add('hide');
-            }
-          });
-        }
-        updateCount(countVisibleItems(getEntries()), 'entries');
-        updateMap();
-      }
-    });
-    const positionButton = document.getElementById('position-btn');
-    if (positionButton) {
-      positionButton.onclick = function () {
-        if (navigator.geolocation) {
-          positionButton.disabled = true;
-          positionButton.classList.add('loading');
-  
-          navigator.geolocation.getCurrentPosition(function (position) {
-            // Fetch cities
-            getCities()
-            .then(function (cities) {
-              // Calc nearest entry
-              let nearstEntry;
-              let minimumDistance = 10000;
-              for (let i = 0; i < cities.length; i++) {
-                const entry = cities[i];
-                const result = distance(
-                  position.coords.latitude,
-                  position.coords.longitude,
-                  parseFloat(entry.customProperties.lat),
-                  parseFloat(entry.customProperties.lon)
-                );
-                if (result < minimumDistance) {
-                  minimumDistance = result;
-                  nearstEntry = entry;
-                  if (minimumDistance < 1) {
-                    break;
-                  }
+          secondColumn.setAttribute('data-button', categoryButtonActive);
+          showSecondColumn(false);
+          if (!categoryButtonActive) {
+            window.getEntries().forEach(function(entry) {
+              entry.classList.remove('show');
+              entry.classList.remove('hide');
+            });
+          }
+          else {
+            window.getEntries().forEach(function(entry) {
+              if (entry.dataset.shop === button.textContent) {
+                if (button.classList.contains('active')) {
+                  entry.classList.remove('hide');
+                  entry.classList.add('show');
+                }
+                else {
+                  entry.classList.remove('show');
+                  entry.classList.add('hide');
                 }
               }
-              // Relocate
-              window.location = createPathName(nearstEntry);
+              else if (!entry.classList.contains('show')) {
+                entry.classList.add('hide');
+              }
             });
-          }, function(error) {
-            alert(getGeolocationErrorMessage(error));
-            positionButton.disabled = false;
-            positionButton.classList.remove('loading');
-          }, { timeout: 5000 });
+          }
+          updateCount(countVisibleItems(window.getEntries()), 'entries');
+          if (window.vectorLayer) {
+            window.updateMap();
+          }
         }
-        else {
-          alert(LANG.geolocationAlert);
-        }
+      });
+      // When everything is set up, respect category hash in URL
+      const hash = window.location.hash;
+      if (hash) {
+        clickCategory(window.decodeURIComponent(hash));
       }
     }
   };
   // Chat
-  function setupChat() {
-    function appendToList (child) {
-      chatbox.appendChild(child);
-      chatbox.scrollTop = chatbox.scrollHeight;
-    }
-    
-    function sendMessage (message) {
-      appendToList(createMessage(message));
-      ws.send(message);
-    }
-    
-    function sendTextMessage () {
-      if (chatInput.value) {
-        sendMessage(removeTags(chatInput.value));
-        chatInput.value = '';
-      }
-    }
-
-    const chatbox = document.getElementById('chatbox'),
-      chatInput = document.getElementById('chat-input'),
-      chatDetails = document.querySelector('#chat details');
-
-    let incomingMessages = [],
-      scheduled,
-      prefix = '',
-      ws;
-
+  async function setupChat() {
+    let chatDetails = document.querySelector('#chat details');
     if (chatDetails) {
       chatDetails.onclick = function() {
-        if (!ws) {
-          if (getSubdomain() !== 'localhost') {
-            prefix = getSubdomain() + '_';
-          }
-          const protocol = prefix + window.location.pathname.replace(/\//g, '_');
-          ws = new WebSocket('wss://chat.shoogle.net/',  protocol);
-          ws.onmessage = function(message) {
-            incomingMessages.push(createMessage(message.data));
-        
-            if (!scheduled) {
-              scheduled = true;
-              window.requestAnimationFrame(function() {
-                const frag = document.createDocumentFragment();
-                for (let i = 0, len = incomingMessages.length; i < len; i++) {
-                  frag.appendChild(incomingMessages[i]);
-                }
-                appendToList(frag);
-                incomingMessages.length = 0;
-                scheduled = false;
-              })
-            }
-          }
-
-          document.getElementById('chat-btn').onclick = function() {
-            sendTextMessage();
-          };
-
-          document.getElementById('chat-form').onkeypress = function(event) {
-            if (event.keyCode === 13) {
-              event.preventDefault();
-              sendTextMessage();
-            }
-          };
-
-          let emojiButton = document.getElementById('emoji-btn');
-          emojiButton.onclick = function() {
-            loadScript('emoji.js');
-
-            // Remove reference (and handler)
-            emojiButton = null;
-          }
-        }
+        window.loadScript('chat.js');
+        chatDetails = null;
       }
     }
   }
@@ -561,204 +274,79 @@ function setup(LANG) {
       secondColumn.setAttribute('data-listener', 'true');
     }
   };
-  
-  function showSecondColumn(alwaysShow) {
-    alwaysShow ||
-    secondColumn.getAttribute('data-empty') === 'false' ||
-    secondColumn.getAttribute('data-button') === 'true' ?
-    secondColumn.classList.remove('hidden') : secondColumn.classList.add('hidden') || setupColumns();
-  }
   // Filters
-  function updateGUI(value, filter) {
-    const items = filter === 'entries' ? getEntries() : getCategories();
-    const regex = new RegExp(value, 'i');
-    items.forEach(function(item) {
-      value === '' || regex.test(item.textContent) ? item.classList.remove('d-none') : item.classList.add('d-none');
-    });
-    updateCount(countVisibleItems(items), filter);
-  }
-  
-  function startEntriesFilter(value) {
-    secondColumn.setAttribute('data-empty', value === '');
-    showSecondColumn(false);
-    updateGUI(value, 'entries');
-    updateMap();
-  }
-  
-  function startCategoriesFilter(value) {
-    updateGUI(value, 'categories');
-  }
-
   function setupFilters() {
-    const filterInputs = query('.filter input');
-    filterInputs.forEach(function(input) {
-      const isEntriesFilter = input.closest('.filter-entries');
-      const startFilter = isEntriesFilter ? startEntriesFilter : startCategoriesFilter;
-      input.addEventListener('input', debounce(function () {
-        updateCount('Loading...', isEntriesFilter ? 'entries' : 'categories');
-      }, 250));
-      input.addEventListener('input', debounce(function () {
-        startFilter(input.value);
-      }, 500));
-      input.addEventListener('keypress', function(event) {
-        if (event.keyCode === 13) {
-          event.preventDefault();
-        }
-      });
-    });
-  }
-  // Map
-  // multiple markers with clickable popups
-  // via http://harrywood.co.uk/maps/examples/openlayers/marker-popups.view.html
-  function updateMap() {
-    if (vectorLayer) {
-      const matches = [];
-      vectorLayer.features.forEach(function(feature) {
-        const entry = feature.attributes.entry;
-        if (entry) {
-          if (isElementVisible(entry)) {
-            feature.style = null;
-            matches.push(entry);
-          }
-          else {
-            feature.style = { display: 'none' };
-          }
-        }
-      });
-      const count = matches.length;
-      if (count) {
-        const center = getLatLngCenter(matches, count);
-        vectorLayer.map.setCenter(createLonLat(center[1], center[0], vectorLayer.map), determineZoom(matches, count, center));
-      }
-      vectorLayer.redraw();
-    }
-  }
-
-  function setupMap(LANG) {
-    function buildMap() {
-      const map = new OpenLayers.Map('map');
-      map.addLayer(new OpenLayers.Layer.OSM());
-      vectorLayer = new OpenLayers.Layer.Vector('Overlay');
-      map.addLayer(vectorLayer);
-  
-      const epsg4326 = createEPSG();
-      const projectTo = map.getProjectionObject(); // The map projection (Spherical Mercator)
-  
-      getEntries().forEach(function(entry) {
-        const lat = entry.dataset.lat;
-        const lon = entry.dataset.lon;
-        if (lat && lon) {
-          // Define markers as "features" of the vector layer:
-          const link = entry.firstElementChild;
-          const feature = new OpenLayers.Feature.Vector(
-            createGeometryPoint(lon, lat, epsg4326, projectTo),
-            {
-              link: '<a href="' + link.href + '">' + link.textContent + '</a>',
-              entry: entry
-            }
-          );
-          vectorLayer.addFeatures(feature);
-        }
-      });
-      // Add a selector control to the vectorLayer with popup functions
-      const controls = {
-        selector: new OpenLayers.Control.SelectFeature(vectorLayer, { onSelect: createPopup, onUnselect: destroyPopup })
-      };
-  
-      function createPopup(feature) {
-        feature.popup = new OpenLayers.Popup.FramedCloud('pop',
-          feature.geometry.getBounds().getCenterLonLat(),
-          null,
-          feature.attributes.link,
-          null,
-          true,
-          function() {
-            controls['selector'].unselectAll();
-          }
-        );
-        //feature.popup.closeOnMove = true;
-        map.addPopup(feature.popup);
+    let filterInputs = query('.filter input');
+    if (filterInputs) {
+      let categories;
+      function getCategories() {
+        return categories = categories || query('.categories button, .categories a');
       }
       
-      function destroyPopup(feature) {
-        feature.popup.destroy();
-        feature.popup = null;
+      function updateGUI(value, filter) {
+        const items = filter === 'entries' ? window.getEntries() : getCategories();
+        const regex = new RegExp(value, 'i');
+        items.forEach(function(item) {
+          value === '' || regex.test(item.textContent) ? item.classList.remove('d-none') : item.classList.add('d-none');
+        });
+        updateCount(countVisibleItems(items), filter);
       }
-  
-      map.addControl(controls['selector']);
-      controls['selector'].activate();
-
-      let userFeature;
-      let watchID;
-      const locateButton = document.getElementById('locate-btn');
-      locateButton.classList.remove('d-none'); // Dont forget to show
-      locateButton.onclick = function () {
-        if (navigator.geolocation) {
-          if (!this.classList.contains('tracking')) {
-            watchID = navigator.geolocation.watchPosition(function(position) {
-              const longitude = position.coords.longitude;
-              const latitude = position.coords.latitude;
-              const lonLat = createLonLat(longitude, latitude, map);
-              if (!userFeature) {
-                // Create (new) marker for user location
-                userFeature = new OpenLayers.Feature.Vector(
-                  createGeometryPoint(longitude, latitude, epsg4326, projectTo),
-                  {
-                    link: LANG.myLocation
-                  },
-                  {
-                    externalGraphic: '/js/img/marker.png',
-                    graphicHeight: 25,
-                    graphicWidth: 21,
-                    graphicXOffset: -10,
-                    graphicYOffset: -25
-                  }
-                );
-                vectorLayer.addFeatures(userFeature);
-
-                // and center map
-                map.setCenter(lonLat, 16);
-              }
-              else {
-                // Move feature to new position
-                userFeature.move(lonLat);
-              }
-              // Set button
-              locateButton.classList.add('tracking');
-              locateButton.textContent = LANG.stopTracking;
-            },
-            function(error) {
-              alert(getGeolocationErrorMessage(error));
-              locateButton.classList.add('d-none');
-            },
-            { timeout: 5000 });
-          }
-          else {
-            navigator.geolocation.clearWatch(watchID);
-            this.classList.remove('tracking');
-            this.textContent = LANG.trackLocation;
-          }
-        }
-        else {
-          alert(LANG.geolocationAlert);
+      
+      function startEntriesFilter(value) {
+        secondColumn.setAttribute('data-empty', value === '');
+        showSecondColumn(false);
+        updateGUI(value, 'entries');
+        if (window.vectorLayer) {
+            window.updateMap();
         }
       }
-      updateMap();
+      
+      function startCategoriesFilter(value) {
+        updateGUI(value, 'categories');
+      }
+      
+      function debounce(fn, duration) {
+        let timer;
+      
+        return function () {
+          window.clearTimeout(timer);
+          timer = window.setTimeout(fn, duration);
+        }
+      }
+      filterInputs.forEach(function(input) {
+        const isEntriesFilter = input.closest('.filter-entries');
+        const startFilter = isEntriesFilter ? startEntriesFilter : startCategoriesFilter;
+        input.addEventListener('input', debounce(function () {
+          updateCount(window.LANG.loading, isEntriesFilter ? 'entries' : 'categories');
+        }, 250));
+        input.addEventListener('input', debounce(function () {
+          startFilter(input.value);
+        }, 500));
+        input.addEventListener('keypress', function(event) {
+          if (event.keyCode === 13) {
+            event.preventDefault();
+          }
+        });
+      });
+      // Cleanup
+      filterInputs = null;
     }
-
-    const mapButton = document.querySelector('#map button');
+  }
+  // Map
+  function setupMap() {
+    let mapButton = document.querySelector('#map button');
     if (mapButton) {
-      mapButton.onclick = function () {
+      mapButton.onclick = async function() {
         // Preconnect to OSM early
         const tiles = ['a', 'b', 'c'];
         tiles.forEach(function(tile) {
           appendLinkToHead('preconnect', 'https://' + tile + '.tile.openstreetmap.org');
         });
         // Load OSM map library
-        loadScript('OpenLayers.js')
-        .then(function() {
-          buildMap();
-        });
+        await Promise.all([
+          window.loadScript('OpenLayers.js'),
+          window.loadScript('map.js')
+        ]);
         // Hide buttons and overlay and add loader
         const parent = mapButton.parentNode;
         for (let i = 0; i < 3; i++) {
@@ -766,45 +354,35 @@ function setup(LANG) {
         }
         parent.classList.remove('is-overlay');
         parent.classList.add('loading');
+
+        // Cleanup
+        mapButton = null;
       };
     }
   }
   // Opening
-  function setupOpening(LANG) {
-    const openingHours = document.getElementById('opening-hours');
-    if (openingHours) {
-      const opening = new SimpleOpeningHours(openingHours.textContent);
-      // Translate
-      openingHours.textContent = openingHours.textContent.replace('Mo', LANG.weekdays.Mo)
-                                                        .replace('Tu', LANG.weekdays.Tu)
-                                                        .replace('We', LANG.weekdays.We)
-                                                        .replace('Th', LANG.weekdays.Th)
-                                                        .replace('Fr', LANG.weekdays.Fr)
-                                                        .replace('Sa', LANG.weekdays.Sa)
-                                                        .replace('Su', LANG.weekdays.Su)
-                                                        .replace('PH', LANG.weekdays.PH)
-                                                        .replace('off', LANG.weekdays.off);
-      if (opening.isOpen()) {
-        // Append banner
-        const openSamp = document.createElement('samp');
-        openSamp.textContent = LANG.nowOpen;
-        openingHours.appendChild(openSamp);
-      }
+  async function setupOpening() {
+    window.openingHours = document.getElementById('opening-hours');
+    if (window.openingHours) {
+      await Promise.all([
+        window.loadScript('simple-opening-hours.js'),
+        window.loadScript('opening.js')
+      ]);
     }
   }
   // Search
-  function setupSearch(LANG) {
-    let shopsChoices;
-    const cities = document.getElementById('cities');
+  function setupSearch() {
+    let cities = document.getElementById('cities');
     if (cities) {
+      // Cities
       new Choices(cities, {
-        placeholderValue: LANG.choose,
+        placeholderValue: window.LANG.choose,
         searchFields: ['value'],
-        searchPlaceholderValue: LANG.search,
-        loadingText: LANG.loading,
-        noResultsText: LANG.noResultsFound,
+        searchPlaceholderValue: window.LANG.search,
+        loadingText: window.LANG.loading,
+        noResultsText: window.LANG.noResultsFound,
         itemSelectText: '+',
-        noChoicesText: LANG.withAtLeastThreeLetters,
+        noChoicesText: window.LANG.withAtLeastThreeLetters,
         shouldSort: true,
         renderChoiceLimit : 0,
         searchResultLimit: 100,
@@ -813,83 +391,80 @@ function setup(LANG) {
       })
       .setChoices(function() {
         return new Promise(function (resolve) {
-          resolve();
+            resolve();
         });
       })
       .then(function(instance) {
         instance.containerOuter.element.addEventListener('click', function() {
-          // Load data after user input
-          instance.setChoices(async function() {
-            return getCities();
-          })
-          .then(function() {
-            // We have to re-set focus on input again
-            setInputFocus(instance);
-          });
+            // Load data after user input
+            instance.setChoices(async function() {
+                return getCities();
+            })
+            .then(function() {
+                // We have to re-set focus on input again
+                setInputFocus(instance);
+            });
         }, { once: true });
         let city;
         let pathname;
         let shop;
         instance.passedElement.element.addEventListener('change', function() {
-          city = instance.getValue();
-          pathname = createPathName(city);
-          appendLinkToHead('prefetch', pathname);
-          searchButton.disabled = false;
-          shopsChoices.clearStore();
-          shopsChoices.setChoices(function() {
-            return new Promise(function (resolve) {
-              resolve();
-            });
-          })
-          .then(function(instance2) {
-            instance2.containerOuter.element.addEventListener('click', function() {
-              shopsChoices.setChoices(async function() {
-                return fetchJSON(createPathName(city) + 'index.json')
-                .then(function(data) {
-                  return data.map(function(item) {
-                    return {
-                      value: item,
-                      label: item
-                    };
-                  });
+            city = instance.getValue();
+            pathname = createPathName(city);
+            appendLinkToHead('prefetch', pathname);
+            searchButton.disabled = false;
+            shopsChoices.clearStore();
+            shopsChoices.setChoices(function() {
+                return new Promise(function (resolve) {
+                    resolve();
                 });
-              })
-              .then(function() {
-                // We have to re-set focus on input again
-                setInputFocus(instance2);
-              });
-            }, { once: true });
-            instance2.passedElement.element.addEventListener('change', function() {
-              shop = shopsChoices.getValue(true);
-              appendLinkToHead('prefetch', createLocation(pathname, shop));
+            })
+            .then(function(instance2) {
+                instance2.containerOuter.element.addEventListener('click', function() {
+                    shopsChoices.setChoices(async function() {
+                        return fetchJSON(createPathName(city) + 'index.json')
+                        .then(function(data) {
+                            return data.map(function(item) {
+                                return {
+                                    value: item,
+                                    label: item
+                                };
+                            });
+                        });
+                    })
+                    .then(function() {
+                        // We have to re-set focus on input again
+                        setInputFocus(instance2);
+                    });
+                }, { once: true });
+                instance2.passedElement.element.addEventListener('change', function() {
+                    shop = shopsChoices.getValue(true);
+                    appendLinkToHead('prefetch', createLocation(pathname, shop));
+                });
             });
-          });
-          shopsChoices.enable();
+            shopsChoices.enable();
         });
         const searchButton = document.getElementById('search-btn');
         if (searchButton) {
-          searchButton.onclick = function () {
-            if (window.location.pathname === pathname && isCategory(shop)) {
-              // We're on the right page already, only scroll to category
-              clickScrollCategory(shop);
-            }
-            else {
-              // Relocate to new location
-              window.location = createLocation(pathname, shop);
-            }
-          };
+            searchButton.onclick = function () {
+                if (window.location.pathname === pathname && isCategory(shop)) {
+                    // We're on the right page already, only scroll to category
+                    clickCategory(shop);
+                }
+                else {
+                    // Relocate to new location
+                    window.location = createLocation(pathname, shop);
+                }
+            };
         }
       });
-    }
-  
-    const shops = document.getElementById('shops');
-    if (shops) {
-      shopsChoices = new Choices(shops, {
-        placeholderValue: LANG.choose,
+      // Shops
+      const shopsChoices = new Choices(document.getElementById('shops'), {
+        placeholderValue: window.LANG.choose,
         searchFields: ['value'],
-        searchPlaceholderValue: LANG.filter,
-        loadingText: LANG.loading,
-        noResultsText: LANG.noResultsFound,
+        searchPlaceholderValue: window.LANG.filter,
+        loadingText: window.LANG.loading,
+        noResultsText: window.LANG.noResultsFound,
         itemSelectText: '+',
         shouldSort: true,
         renderChoiceLimit : 100,
@@ -897,37 +472,60 @@ function setup(LANG) {
         searchFloor: 1,
         position: 'bottom'
       }).disable();
-    }
-  }
-  // Select to category
-  function clickScrollCategory (category) {
-    const name = category.replace('#', '').toLowerCase();
-    for (let i = 0; i < categoryButtons.length; i++) {
-      const button = categoryButtons[i];
-      if (button.textContent.toLowerCase() === name) {
-        button.click();
-        break;
+      // Position button
+      const positionButton = document.getElementById('position-btn');
+      if (positionButton) {
+        positionButton.onclick = function() {
+          if (navigator.geolocation) {
+            positionButton.disabled = true;
+            positionButton.classList.add('loading');
+                
+            navigator.geolocation.getCurrentPosition(function (position) {
+              // Fetch cities
+              getCities()
+              .then(function (cities) {
+                // Calc nearest entry
+                let nearstEntry;
+                let minimumDistance = 10000;
+                for (let i = 0; i < cities.length; i++) {
+                  const entry = cities[i];
+                  const result = window.calcDistance(
+                    position.coords.latitude,
+                    position.coords.longitude,
+                    parseFloat(entry.customProperties.lat),
+                    parseFloat(entry.customProperties.lon));
+                  if (result < minimumDistance) {
+                    minimumDistance = result;
+                    nearstEntry = entry;
+                    if (minimumDistance < 1) {
+                      break;
+                    }
+                  }
+                }
+                // Relocate
+                window.location = createPathName(nearstEntry);
+              });
+            }, function(error) {
+              alert(getGeolocationErrorMessage(error));
+              positionButton.disabled = false;
+              positionButton.classList.remove('loading');
+            },
+            { timeout: 5000 });
+          }
+          else {
+            alert(LANG.geolocationAlert);
+          }
+        }
       }
+      // Cleanup
+      cities = null;
     }
   }
-  setupButtons();
-  setupChat();
-  setupColumns();
+  setupSearch();
+  setupOpening();
+  setupMap();
   setupFilters();
-  setupMap(LANG);
-  setupOpening(LANG);
-  setupSearch(LANG);
-
-  // When everything is set up, respect category hash in URL
-  const hash = window.location.hash;
-  if (hash) {
-    clickScrollCategory(decodeURIComponent(hash));
-  }
-}
-// Kickstart by loading language file
-window.addEventListener('DOMContentLoaded', function() {
-  fetchJSON('/lang.json')
-  .then(function(LANG) {
-    setup(LANG);
-  });  
+  setupColumns();
+  setupChat();
+  setupButtons();
 });

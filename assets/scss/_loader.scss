@@ -25,6 +25,7 @@
   top: calc(50% - #{em(50)});
   width: em(100);
   border-top-color: var(--color-bg);
+  z-index: -1;
 }
 
 #position-btn::before {

@@ -19,7 +19,7 @@ window.loadScript = function(file) {
   return new Promise(function(resolve, reject) {
     const script = document.createElement('script');
     script.async = false;
-    script.src = '/js/' + file;
+    script.src = document.baseURI + 'js/' + file;
     script.onload = resolve;
     script.onerror = reject;
     if (document.head.lastChild.src !== script.src) {
@@ -146,7 +146,7 @@ async function fetchRegion(region) {
 }
 
 async function getCities() {
-  return fetchJSON('/' + window.getSubdomain() + '.json')
+  return fetchJSON(document.baseURI + window.getSubdomain() + '.json')
   .then(async function(regions) {
       const promises = regions.map(function(region) {
           return fetchRegion(region);
@@ -178,7 +178,7 @@ window.addEventListener('DOMContentLoaded', async function() {
     secondColumn.getAttribute('data-button') === 'true' ?
     secondColumn.classList.remove('hidden') : secondColumn.classList.add('hidden') || setupColumns();
   }
-  window.LANG = await fetchJSON('/lang.json');
+  window.LANG = await fetchJSON(document.baseURI + 'lang.json');
   let secondColumn;
   let categoryButtons;
   
@@ -342,11 +342,6 @@ window.addEventListener('DOMContentLoaded', async function() {
         tiles.forEach(function(tile) {
           appendLinkToHead('preconnect', 'https://' + tile + '.tile.openstreetmap.org');
         });
-        // Load OSM map library
-        await Promise.all([
-          window.loadScript('OpenLayers.js'),
-          window.loadScript('map.js')
-        ]);
         // Hide buttons and overlay and add loader
         const parent = mapButton.parentNode;
         for (let i = 0; i < 3; i++) {
@@ -355,7 +350,13 @@ window.addEventListener('DOMContentLoaded', async function() {
         parent.classList.remove('is-overlay');
         parent.classList.add('loading');
 
+        // Load OSM map library
+        await Promise.all([
+          window.loadScript('OpenLayers.js'),
+          window.loadScript('map.js')
+        ]);
         // Cleanup
+        parent.classList.remove('loading');
         mapButton = null;
       };
     }

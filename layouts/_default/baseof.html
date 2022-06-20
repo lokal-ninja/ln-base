@@ -3,7 +3,11 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <link rel="preload" href="/lang.json" as="fetch" crossorigin>
+    <base href="{{ .Site.BaseURL }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <link rel="preload" href="lang.json" as="fetch" crossorigin>
     <title>{{ block "title" . }}{{ .Title }} | {{ .Site.Params.site }}{{ end }}</title>
     {{- $description := printf "%s %s" (i18n `discover`) .Site.Title }}
     {{- if eq .Kind "section" }}
@@ -20,9 +24,6 @@
       {{- $description = printf "%s%s%s%s %s %s %s %s" (i18n `address`) $opening_hours $phone $website (i18n `of`) .Title (i18n `in`) $name }}
     {{- end }}
     <meta name="description" content="{{ $description }}">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
     <meta property="og:site_name" content="{{ .Site.Params.site }}">
     <meta property="og:title" content="{{ with .Title }}{{ . }}{{ else }}{{ .Site.Title }}{{ end }}">
     <meta property="og:type" content="website">

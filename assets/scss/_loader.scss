@@ -13,9 +13,9 @@
     
   }
   &.loading:before {
-    transition-delay: 0.5s;
     transition-duration: 1s;
     opacity: 1;
+    z-index: 0;
   }
 }
 

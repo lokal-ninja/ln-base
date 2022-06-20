@@ -9,12 +9,12 @@
   <h2 class="visually-hidden">{{ i18n `entries` }}</h2>
   <div class="scrollable-box">
     <ul class="columns m-0">
-      {{- range first 42 (.Site.GetPage "section" "cities").Sections }}
+      {{- range first 24 (.Site.GetPage "section" "cities").Sections }}
       <li data-lat="{{ .Params.latitude }}" data-lon="{{ .Params.longitude }}"><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>
       {{- end }}
     </ul>
     <ul class="columns hidden m-0" data-empty="true" data-button="false" data-listener="false">
-      {{- range after 42 (.Site.GetPage "section" "cities").Sections }}
+      {{- range after 24 (.Site.GetPage "section" "cities").Sections }}
       <li data-lat="{{ .Params.latitude }}" data-lon="{{ .Params.longitude }}"><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>
       {{- end }}
     </ul>
@@ -63,7 +63,7 @@
       </div>
       <div class="col-sm-6">
         <p class="float-right-sm"><strong>{{ i18n `weatherIn` }} {{ .Site.Title }}</strong></p>
-        <img class="img-fluid float-right-sm" src="{{ printf `https://wttr.in/%s_0pQ_I_background=faebdc_lang=%s.png` .Site.Title .Site.LanguageCode }}" width="240" height="98" loading="lazy" alt="{{ i18n `weatherIn` }} {{ .Site.Title }}">
+        <img class="float-right-sm" src="{{ printf `https://wttr.in/%s_0pQ_I_background=faebdc_lang=%s.png` .Site.Title .Site.LanguageCode }}" width="272" height="98" loading="lazy" alt="{{ i18n `weatherIn` }} {{ .Site.Title }}">
       </div>
     </div>
   </aside>

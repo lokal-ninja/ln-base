@@ -146,7 +146,7 @@ async function fetchRegion(region) {
 }
 
 async function getCities() {
-  return fetchJSON(document.baseURI + window.getSubdomain() + '.json')
+  return fetchJSON('/' + window.getSubdomain() + '.json')
   .then(async function(regions) {
       const promises = regions.map(function(region) {
           return fetchRegion(region);

@@ -1,8 +1,8 @@
 {{- define "title" -}}
-{{ .Title }} ({{ .Params.shop }}) - {{ .Parent.Title }} - {{ .Site.Title }} | {{ .Site.Params.site }}
+{{ .Title }} - {{ .Parent.Title }} - {{ .Site.Title }} | {{ .Site.Params.site }}
 {{- end }}
 {{- define "heading" -}}
-{{ i18n `shoppingAt` }} {{ .Title }} ({{ .Params.shop }})
+{{ .Title }}
 {{- end }}
 {{ define "main" }}
 {{- $dirs := split .File.Dir "/" }}

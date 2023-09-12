@@ -1,8 +1,8 @@
 {
     "name": "Shoogle",
-    "lang": "de",
+    "lang": "es",
     "short_name": "Shoogle",
-    "description": "Entdecke alle Geschäfte. Null Tracking - Pures Sucherlebnis",
+    "description": "Descubra todas las tiendas. Cero rastreo - Pura experiencia de búsqueda",
     "icons": [
         {
           "src": "/img/logo-192x192.png",

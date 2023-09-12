@@ -1,31 +1,31 @@
 {
   "geolocationError": {
-    "message": "Standortabfrage nicht erfolgreich.",
-    "permissionDenied": "Nutzer verweigerte die Geolocationanfrage.",
-    "positionUnavailable": "Standortinformation nicht verfügbar.",
-    "timeout": "Zeitüberschreiung bei der Anfrage des Nutzerstandorts.",
-    "unknownError": "Ein unbekannter Fehler trat auf."
+    "message": "Consulta de ubicación fallida.",
+    "permissionDenied": "El usuario ha rechazado la solicitud de geolocalización.",
+    "positionUnavailable": "No se dispone de información sobre la ubicación.",
+    "timeout": "Tiempo de espera al solicitar la ubicación del usuario.",
+    "unknownError": "Se ha producido un error desconocido."
   },
-  "geolocationAlert": "Geolocation wird von deinem Browser nicht unterstützt.",
-  "myLocation": "Mein Standort",
-  "stopTracking": "Tracken beenden",
-  "trackLocation": "Standort tracken",
-  "choose": "wählen",
-  "search": "Suchen...",
-  "loading": "Lädt...",
-  "noResultsFound": "Keine Ergebnisse gefunden",
-  "withAtLeastThreeLetters": "mit wenigstens drei Buchstaben",
-  "filter": "Filtern...",
+  "geolocationAlert": "Su navegador no soporta la geolocalización.",
+  "myLocation": "Mi ubicación",
+  "stopTracking": "Detener el seguimiento",
+  "trackLocation": "Ubicación de la pista",
+  "choose": "seleccione",
+  "search": "Busca...",
+  "loading": "Montones...",
+  "noResultsFound": "No se han encontrado resultados",
+  "withAtLeastThreeLetters": "con al menos tres letras",
+  "filter": "Filtrar...",
   "weekdays": {
-    "Mo": "Mo",
-    "Tu": "Di",
+    "Mo": "Lu",
+    "Tu": "Ma",
     "We": "Mi",
-    "Th": "Do",
-    "Fr": "Fr",
-    "Sa": "Sa",
-    "Su": "So",
-    "PH": "Feiertage",
-    "off": "geschlossen"
+    "Th": "Ju",
+    "Fr": "Vi",
+    "Sa": "Sá",
+    "Su": "Do",
+    "PH": "Vacaciones",
+    "off": "cerrado"
   },
-  "nowOpen": "jetzt geöffnet!"
+  "nowOpen": "¡ya está abierto!"
 }

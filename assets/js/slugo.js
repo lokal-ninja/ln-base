@@ -10,7 +10,8 @@
     .replace(/[!\"#$%\(\)\*\+,\/:;<=>\?\@\[\\\]\^`\{\|\}~]/g, '') // eslint-disable-line no-useless-escape
     // Replace dots and spaces with a short dash
     .replace(/(\s|\.)/g, '-') // Replace long dash with a single dash
-    .replace(/[—']/g, '-') // Remove any leading single dash
+    .replace(/[—']/g, '-') // Triple dash to single
+    .replace(/[---]/g, '-') // Remove any leading single dash
     .replace(/^-{1,}/g, '') // Make the whole thing lowercase
     .toLowerCase() // Replace '&' with 'und'
     .replace(/[&]/g, 'und') // Replace Umlauts

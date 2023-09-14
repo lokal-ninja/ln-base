@@ -14,14 +14,26 @@
     .replace(/[---]/g, '-') // Remove any leading single dash
     .replace(/^-{1,}/g, '') // Make the whole thing lowercase
     .toLowerCase() // Replace '&' with 'und'
-    .replace(/[&]/g, 'et') // Replace Umlauts
-    .replace(/[ÄäÖöÜü]/g, function (char) {
-      var umlauts = {
-        'ä': 'ae',
-        'ö': 'oe',
-        'ü': 'ue'
+    .replace(/[&]/g, 'et') // Replace accents
+    .replace(/[çéâêîôûàèìòùëïü]/g, function (char) {
+      var accents = {
+        'ç': 'c',
+        'é': 'e',
+        'â': 'a',
+        'ê': 'e',
+        'î': 'i',
+        'ô': 'o',
+        'û': 'u',
+        'à': 'a',
+        'è': 'e',
+        'ì': 'i',
+        'ò': 'o',
+        'ù': 'u',
+        'ë': 'e',
+        'ï': 'i',
+        'ü': 'u'
       };
-      return umlauts[char];
+      return accents[char];
     });
   }
 

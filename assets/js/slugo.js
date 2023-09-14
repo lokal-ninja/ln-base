@@ -14,15 +14,7 @@
     .replace(/[---]/g, '-') // Remove any leading single dash
     .replace(/^-{1,}/g, '') // Make the whole thing lowercase
     .toLowerCase() // Replace '&' with 'und'
-    .replace(/[&]/g, 'and') // Replace Umlauts
-    .replace(/[ÄäÖöÜü]/g, function (char) {
-      var umlauts = {
-        'ä': 'ae',
-        'ö': 'oe',
-        'ü': 'ue'
-      };
-      return umlauts[char];
-    });
+    .replace(/[&]/g, 'and');
   }
 
   if (typeof module !== 'undefined') {
